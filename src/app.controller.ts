@@ -1,8 +1,8 @@
 import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
-import { Fighter, Scene } from './models';
-import { SceneActionType } from './models/Scene';
-import TelegramBot = require('node-telegram-bot-api');
+import { BotButtonActionType, Fighter, Scene, WeaponTypes } from './models';
+import { BotListenerService } from './services';
+import TelegramBot from 'node-telegram-bot-api';
+import { take } from 'rxjs';
 
 @Controller()
 export class AppController {
@@ -10,17 +10,32 @@ export class AppController {
   private fighters = new Map<number, Fighter>();
   private finishedScenes = 0;
 
-  private token = '';
+  constructor(private readonly botListenerService: BotListenerService) {
+    this.initCallbackQuerySubscription();
+    this.initChallangeQuerySubscription();
 
-  private bot = new TelegramBot(this.token, { polling: true });
+    // this.botListenerService.bot.on('message', (msg) => {
+    //   console.log(msg.animation.file_id);
+    // });
+  }
 
-  constructor(private readonly appService: AppService) {
-    this.bot.on('callback_query', (d) => {
-      if (!d.data) {
-        return;
-      }
+  private initChallangeQuerySubscription(): void {
+    this.botListenerService.challengeQuery$.subscribe((message) => {
+      const fighter = this.createOrGetExistingFighter(message.from.id, message.from.username);
 
-      const [action, id] = d.data.split('~');
+      const scene = new Scene(this.botListenerService, fighter, message.chat.id);
+      this.scenes.set(scene.id, scene);
+
+      scene.sceneFinished$.pipe(take(1)).subscribe(() => {
+        this.scenes.delete(scene.id);
+        this.finishedScenes++;
+      });
+    });
+  }
+
+  private initCallbackQuerySubscription(): void {
+    this.botListenerService.callbackQuery$.subscribe((query) => {
+      const [action, id] = query.data.split('~');
 
       const scene = this.scenes.get(id);
 
@@ -29,34 +44,30 @@ export class AppController {
       }
 
       switch (action) {
-        case SceneActionType.AcceptFight:
-          const acceptFighter = this.createOrGetExistingFighter(
-            d.from.id,
-            d.from.username,
-          );
+        case BotButtonActionType.AcceptFight:
+          this.acceptFight(scene, query, query.from.id);
 
-          scene.fight(acceptFighter).then(() => {
-            this.scenes.delete(scene.id);
-            this.finishedScenes++;
-          });
+          return;
+        case BotButtonActionType.ChoseAssWeapon:
+          scene.setWeapon(WeaponTypes.Ass, query.from.id);
+          return;
+        case BotButtonActionType.ChoseFingerWeapon:
+          scene.setWeapon(WeaponTypes.Finger, query.from.id);
+          return;
+        case BotButtonActionType.ChoseDickWeapon:
+          scene.setWeapon(WeaponTypes.Dick, query.from.id);
+          return;
       }
     });
+  }
 
-    this.bot.onText(/тест/, (msg) => {
-      const fighter = this.createOrGetExistingFighter(
-        msg.from.id,
-        msg.from.username,
-      );
+  private acceptFight(scene: Scene, query: TelegramBot.CallbackQuery, fighterId: number): void {
+    if (scene.sceneFighterId === fighterId) {
+      return;
+    }
 
-      const scene = new Scene(this.bot, fighter, msg.chat.id);
-      this.scenes.set(scene.id, scene);
-
-      scene.emmitChallenge(msg.chat.id);
-    });
-
-    // this.bot.on('message', (msg) => {
-    //   console.log(msg);
-    // });
+    const acceptFighter = this.createOrGetExistingFighter(query.from.id, query.from.username);
+    scene.fight(acceptFighter);
   }
 
   private createOrGetExistingFighter(id: number, name: string): Fighter {
@@ -76,10 +87,7 @@ export class AppController {
   getHello(): string {
     const fighters = Array.from(this.fighters.values())
       .sort((a, b) => (a.semen > b.semen ? 1 : 0))
-      .reduce(
-        (acc, curr) => `${acc} </br> ${curr.name} (${curr.semen} semen)`,
-        '',
-      );
+      .reduce((acc, curr) => `${acc} </br> ${curr.name} (${curr.semen} semen)`, '');
 
     return `<h3>Битв сыграно: ${this.finishedScenes}</h3> </br> <h3>воины подземелья: </h3> </br> ${fighters}`;
   }

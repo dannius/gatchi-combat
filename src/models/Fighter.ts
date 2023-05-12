@@ -1,6 +1,10 @@
 export class Fighter {
   public semen = 400;
 
+  public fights = 0;
+  public wins = 0;
+  public looses = 0;
+
   constructor(public id: number, public name: string) {}
 
   public fight(enemy: Fighter): { winner: Fighter; looser: Fighter } {

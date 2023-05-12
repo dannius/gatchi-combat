@@ -1,4 +1,4 @@
-export function getRandomItem(min: number, max: number) {
+export function random(min: number, max: number) {
   min = Math.ceil(min);
   max = Math.floor(max);
 

@@ -1,5 +1,5 @@
 import { Fighter, WeaponTypes } from 'src/models';
-import { getRandomItem } from '../min-max';
+import { random } from './../util/random';
 
 type FighterInfo = {
   fighter: Fighter;
@@ -8,11 +8,11 @@ type FighterInfo = {
 };
 
 export function getFinalAnimation(): string {
-  return gifs[getRandomItem(0, gifs.length - 1)];
+  return gifs[random(0, gifs.length - 1)];
 }
 
 export function getFinalMessage(winner: FighterInfo, looser: FighterInfo): string {
-  const index = getRandomItem(0, messages.length - 1);
+  const index = random(0, messages.length - 1);
 
   return messages[index]
     .replace(TextVars.WinnerName, winner.fighter.name)

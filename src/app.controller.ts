@@ -86,8 +86,12 @@ export class AppController {
   @Get()
   getHello(): string {
     const fighters = Array.from(this.fighters.values())
-      .sort((a, b) => (a.semen > b.semen ? 1 : 0))
-      .reduce((acc, curr) => `${acc} </br> ${curr.name} (${curr.semen} semen)`, '');
+      .sort((a, b) => (a.semen > b.semen ? 1 : -1))
+      .reduce(
+        (acc, curr) =>
+          `${acc} </br> ${curr.name} (${curr.semen} semen) / fights: ${curr.fights}, wins: ${curr.wins}, looses: ${curr.looses}`,
+        '',
+      );
 
     return `<h3>Битв сыграно: ${this.finishedScenes}</h3> </br> <h3>воины подземелья: </h3> </br> ${fighters}`;
   }

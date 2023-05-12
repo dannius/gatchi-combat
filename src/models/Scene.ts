@@ -1,9 +1,8 @@
 import { Fighter } from './Fighter';
-import { guid } from 'src/lib/guid';
 import { getAcceptFightKeyboard, getChoseWeaponKeyboard } from 'src/lib/keyboards';
 import { BehaviorSubject, Observable, Subject, merge, take, takeUntil, tap } from 'rxjs';
 import TelegramBot = require('node-telegram-bot-api');
-import { delay } from 'src/lib';
+import { delay, guid } from 'src/lib';
 import { BotListenerService } from 'src/services';
 import { WeaponTypes } from './weapon-types';
 import { getFinalAnimation, getFinalMessage } from 'src/lib/dictionary';
@@ -207,6 +206,12 @@ export class Scene implements SceneEvents {
     // finish
     return this.fightFinished$.pipe(
       tap(async ({ winner, looser }) => {
+        winner.fights += 1;
+        winner.wins += 1;
+
+        looser.fights += 1;
+        looser.looses += 1;
+
         const caption = `${winner.name} -${winner.semen}(+10) мл.\n${looser.name} -${
           looser.semen
         }(+10) мл.\n\n${getFinalMessage(

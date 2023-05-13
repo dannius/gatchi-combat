@@ -2,6 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { BotButtonActionType, Fighter, Mention, Scene, WeaponTypes } from './models';
 import { BotListenerService } from './services';
 import TelegramBot from 'node-telegram-bot-api';
+import { Dictionary } from './lib/dictionary/dictionary';
 
 @Controller()
 export class AppController {
@@ -28,7 +29,7 @@ export class AppController {
   private createFightScene(message: TelegramBot.Message, mentionedUsername?: Mention): void {
     const fighter = this.createOrGetExistingFighter(message.from.id, message.from.username);
 
-    const scene = new Scene(this.botListenerService, message.chat.id, fighter, mentionedUsername);
+    const scene = new Scene(this.botListenerService, Dictionary, message.chat.id, fighter, mentionedUsername);
     this.scenes.set(scene.id, scene);
 
     scene.on('destroy', (isFinished) => {

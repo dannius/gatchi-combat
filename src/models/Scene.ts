@@ -4,8 +4,9 @@ import TelegramBot = require('node-telegram-bot-api');
 import { EventEmitter, delay, guid } from 'src/lib';
 import { BotListenerService } from 'src/services';
 import { WeaponTypes } from './weapon-types';
-import { getFinalAnimation, getFinalMessage } from 'src/lib/dictionary';
+
 import { Mention } from './mention.type';
+import { Dictionary } from 'src/lib/dictionary/dictionary';
 
 // 10 min
 const SCENE_LIVE_TIME = 10 * 1000 * 60;
@@ -43,6 +44,7 @@ export class Scene extends EventEmitter<SceneEvents> {
 
   constructor(
     private tgBotListenerService: BotListenerService,
+    private dictionary: typeof Dictionary,
     private chatId: number,
     private fightEmitter: Fighter,
     private mentionedUserName?: Mention,
@@ -123,11 +125,13 @@ export class Scene extends EventEmitter<SceneEvents> {
 
   private beforeFightEmitterWeaponChooseListener(): void {
     this.on('beforeFightEmitterWeaponChoosen', async () => {
+      const caption = this.dictionary.fightEmitterSelectWeapon.getMessage({ fighter1Name: this.fightEmitter.name });
+
       await this.tgBotListenerService.bot.editMessageMedia(
         {
           type: 'photo',
-          media: `AgACAgIAAxkBAAICE2ReUIvRGmfYuhYVvRIa3MWejmWSAALVyDEbIE35SsOjhK9RpiOyAQADAgADbQADLwQ`,
-          caption: `@${this.fightEmitter.name} выбирай оружие`,
+          media: this.dictionary.fightEmitterSelectWeapon.getMedia(),
+          caption,
         },
         {
           chat_id: this.chatId,
@@ -147,11 +151,13 @@ export class Scene extends EventEmitter<SceneEvents> {
 
   private beforeFightAccepterWeaponChooseListener(): void {
     this.on('beforeFightAccepterWeaponChoosen', async () => {
+      const caption = this.dictionary.fightAccepterSelectWeapon.getMessage({ fighter1Name: this.fightAccepter.name });
+
       await this.tgBotListenerService.bot.editMessageMedia(
         {
           type: 'photo',
-          media: `AgACAgIAAxkBAAICI2ReUsIcbi9_znN-HMZECJx4iAUsAALoyDEbIE35SnGKbAeLK_hvAQADAgADbQADLwQ`,
-          caption: `@${this.fightAccepter.name} выбирай оружие`,
+          media: this.dictionary.fightAccepterSelectWeapon.getMedia(),
+          caption,
         },
         {
           chat_id: this.chatId,
@@ -200,23 +206,28 @@ export class Scene extends EventEmitter<SceneEvents> {
       looser.fights += 1;
       looser.looses += 1;
 
-      const caption = `${winner.name} -${winner.semen}(+10) мл.\n${looser.name} -${
-        looser.semen
-      }(-10) мл.\n\n${getFinalMessage(
-        { fighter: winner, weapon: this.weapons.get(winner.id), semenDelta: 10 },
-        { fighter: looser, weapon: this.weapons.get(looser.id), semenDelta: 10 },
-      )}
-      `;
+      const caption = this.dictionary.final.getMessage({
+        fighter1Name: winner.name,
+        fighter2Name: looser.name,
+        fighter1Weapon: this.weapons.get(winner.id),
+        fighter2Weapon: this.weapons.get(looser.id),
+        fighter1SemenTotal: `${winner.semen}`,
+        fighter2SemenTotal: `${looser.semen}`,
+        fighter1SemenAdded: '+10',
+        fighter2SemenAdded: '-10',
+      });
 
-      this.tgBotListenerService.bot.sendAnimation(this.chatId, getFinalAnimation(), { caption });
+      this.tgBotListenerService.bot.sendAnimation(this.chatId, this.dictionary.final.getMedia(), { caption });
       this.emit('destroy', true);
     });
   }
 
   private startChallenge(): void {
+    const caption = this.dictionary.startChallenge.getMessage({ fighter1Name: this.fightEmitter.name });
+
     this.tgBotListenerService.bot
-      .sendPhoto(this.chatId, 'AgACAgIAAxkBAAIB7mReTBIFbiZsgxL40u1PAr3rc2d6AAK1yDEbIE35SrKQT0SCwsIJAQADAgADeAADLwQ', {
-        caption: `@${this.fightEmitter.name} желает надрать кому нибудь зад`,
+      .sendPhoto(this.chatId, this.dictionary.startChallenge.getMedia(), {
+        caption,
         reply_markup: getAcceptFightKeyboard(this.id).reply_markup,
       })
       .then((message: TelegramBot.Message) => {
@@ -226,9 +237,14 @@ export class Scene extends EventEmitter<SceneEvents> {
   }
 
   private startDuel(mentionedUsername: Mention): void {
+    const caption = this.dictionary.startDuel.getMessage({
+      fighter1Name: this.fightEmitter.name,
+      fighter2Name: mentionedUsername,
+    });
+
     this.tgBotListenerService.bot
-      .sendPhoto(this.chatId, 'AgACAgIAAxkBAAIB7mReTBIFbiZsgxL40u1PAr3rc2d6AAK1yDEbIE35SrKQT0SCwsIJAQADAgADeAADLwQ', {
-        caption: `@${this.fightEmitter.name} изьявил желание надрать ${mentionedUsername} зад, примет ли он бой?`,
+      .sendPhoto(this.chatId, this.dictionary.startDuel.getMedia(), {
+        caption,
         reply_markup: getAcceptFightKeyboard(this.id).reply_markup,
       })
       .then((message: TelegramBot.Message) => {
@@ -238,17 +254,14 @@ export class Scene extends EventEmitter<SceneEvents> {
   }
 
   private async fightStageOne(): Promise<TelegramBot.Message> {
-    return await this.tgBotListenerService.bot.sendAnimation(
-      this.chatId,
-      'CgACAgQAAxkBAAP8ZF1kU9QQZuZJCdEooHsWE6-UgyAAAnYDAAI7WYVSZHYv894om0UvBA',
-    );
+    return await this.tgBotListenerService.bot.sendAnimation(this.chatId, this.dictionary.fightStageOne.getMedia());
   }
 
   private async fightStageTwo(previousMessageId: number): Promise<boolean | TelegramBot.Message> {
     return await this.tgBotListenerService.bot.editMessageMedia(
       {
         type: 'video',
-        media: 'CgACAgQAAxkBAAICHmReUgl12tN_3Ue120iaDgKmAAFhCAACEQMAAjjQBFPXWhNQFYei9S8E',
+        media: this.dictionary.fightStageTwo.getMedia(),
       },
       {
         message_id: previousMessageId,

@@ -4,9 +4,7 @@ import TelegramBot = require('node-telegram-bot-api');
 
 @Injectable()
 export class BotListenerService {
-  private token = '';
-
-  public readonly bot = new TelegramBot(this.token, { polling: true });
+  public readonly bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 
   private readonly _callbackQuery$ = new Subject<TelegramBot.CallbackQuery>();
 

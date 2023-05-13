@@ -202,7 +202,7 @@ export class Scene extends EventEmitter<SceneEvents> {
 
       const caption = `${winner.name} -${winner.semen}(+10) мл.\n${looser.name} -${
         looser.semen
-      }(+10) мл.\n\n${getFinalMessage(
+      }(-10) мл.\n\n${getFinalMessage(
         { fighter: winner, weapon: this.weapons.get(winner.id), semenDelta: 10 },
         { fighter: looser, weapon: this.weapons.get(looser.id), semenDelta: 10 },
       )}

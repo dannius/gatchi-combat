@@ -1,5 +1,5 @@
 export class Fighter {
-  public semen = 400;
+  public semen = 200;
 
   public fights = 0;
   public wins = 0;

@@ -8,5 +8,6 @@ export const Dictionary = {
   fightAccepterSelectWeapon: new DictionaryBase(DictionaryMessages.FightAccepterSelectWeapon),
   fightStageOne: new DictionaryBase(DictionaryMessages.FightStageOne),
   fightStageTwo: new DictionaryBase(DictionaryMessages.FightStageTwo),
+  fightStageThree: new DictionaryBase(DictionaryMessages.FightStageThree),
   final: new DictionaryBase(DictionaryMessages.Final),
 };

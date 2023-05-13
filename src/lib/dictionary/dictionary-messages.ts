@@ -27,6 +27,7 @@ type DictionaryMessageKeys =
   | 'FightEmitterSelectWeapon'
   | 'FightStageOne'
   | 'FightStageTwo'
+  | 'FightStageThree'
   | 'Final';
 
 export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBaseParams> = {
@@ -90,6 +91,26 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
     medias: [
       {
         type: 'video',
+        id: 'CgACAgQAAxkBAAIEDWRf-UDn0UPFY02ujHakoBMX2aphAAIwAwACuK0EU0eFUlnDDmciLwQ',
+      },
+      {
+        type: 'video',
+        id: 'CgACAgQAAxkBAAIETWRf_dMcLqGNzeKW_ZPP5BNcgT_2AALIAgACCkoNU-20zVscn8i3LwQ',
+      },
+      {
+        type: 'video',
+        id: 'CgACAgQAAxkBAAIEUGRf_gxSEYhQwCBDtVtA5VS8mPcBAAIrAwACGvgMU0EZL5c0Fv8TLwQ',
+      },
+      {
+        type: 'video',
+        id: 'CgACAgQAAxkBAAIEVWRf_qz_P1D54cYxEsN2LxlxmuVJAAIxAwACzuQEU7l8tn8_Te-rLwQ',
+      },
+    ],
+  },
+  FightStageTwo: {
+    medias: [
+      {
+        type: 'video',
         id: 'CgACAgQAAxkBAAP8ZF1kU9QQZuZJCdEooHsWE6-UgyAAAnYDAAI7WYVSZHYv894om0UvBA',
       },
       {
@@ -98,16 +119,16 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
       },
     ],
   },
-  FightStageTwo: {
+  FightStageThree: {
     medias: [
       {
         type: 'video',
         id: 'CgACAgQAAxkBAAICHmReUgl12tN_3Ue120iaDgKmAAFhCAACEQMAAjjQBFPXWhNQFYei9S8E',
       },
-      {
-        type: 'video',
-        id: 'CgACAgQAAxkBAAIEBGRf9mZumkVjZ93duYzIlcfV6n3tAAKPAwACKmKEUlzh-KyQdyOlLwQ',
-      },
+      // {
+      //   type: 'video',
+      //   id: 'CgACAgQAAxkBAAIEBGRf9mZumkVjZ93duYzIlcfV6n3tAAKPAwACKmKEUlzh-KyQdyOlLwQ',
+      // },
     ],
   },
   Final: {
@@ -151,6 +172,10 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
       {
         type: 'video',
         id: 'CgACAgQAAxkBAAIEDGRf9wmrcH5dNNFnNh8hHRwZAsYpAALXAgACOeMNU7Y8GBc3iTRhLwQ',
+      },
+      {
+        type: 'video',
+        id: 'CgACAgQAAxkBAAIEUmRf_jgVs9XGwd0iundkmLiDjS5hAAIzAwACBAAB_VE8oVpziDnivy8E',
       },
     ],
   },

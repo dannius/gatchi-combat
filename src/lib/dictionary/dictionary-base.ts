@@ -4,7 +4,7 @@ import { DictionaryBaseParams, Media, TextKeys } from './dictionary-messages';
 type MessageDataset = { [P in keyof typeof TextKeys]: string };
 
 export class DictionaryBase {
-  protected medias: Media[] = [];
+  public medias: Media[] = [];
   protected messagesHeader = [];
   protected messagesBody: string[] = [];
 

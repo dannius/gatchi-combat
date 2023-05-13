@@ -3,6 +3,7 @@ import { BotButtonActionType, Fighter, Mention, Scene, WeaponTypes } from './mod
 import { BotListenerService } from './services';
 import TelegramBot from 'node-telegram-bot-api';
 import { Dictionary } from './lib/dictionary/dictionary';
+import { DictionaryBase } from './lib/dictionary/dictionary-base';
 
 @Controller()
 export class AppController {
@@ -14,6 +15,11 @@ export class AppController {
     this.initCallbackQuerySubscription();
     this.initChallangeQuerySubscription();
     this.initDuelSubscription();
+
+    // debug
+    if (process.env.DEBUG === 'true') {
+      this.debugListeners();
+    }
   }
 
   private initDuelSubscription(): void {
@@ -89,6 +95,37 @@ export class AppController {
     this.fighters.set(id, newFighter);
 
     return newFighter;
+  }
+
+  private debugListeners(): void {
+    const stages = Object.keys(Dictionary);
+
+    this.botListenerService.bot.onText(/\/debug$/, (message) => {
+      this.botListenerService.bot.sendMessage(message.chat.id, stages.join('\n'));
+    });
+
+    const reg = new RegExp(`\/debug\\s(${stages.join('|')})$`);
+
+    this.botListenerService.bot.onText(reg, (message) => {
+      const chatId = message.chat.id;
+      const [_, stage] = message.text.split(' ');
+
+      const stageObject = Dictionary[stage] as DictionaryBase;
+
+      if (!stageObject?.medias?.length) {
+        return;
+      }
+
+      stageObject.medias.forEach((media) => {
+        const caption = media.id;
+
+        if (media.type === 'photo') {
+          this.botListenerService.bot.sendPhoto(chatId, media.id, { caption });
+        } else if (media.type === 'video') {
+          this.botListenerService.bot.sendAnimation(chatId, media.id, { caption });
+        }
+      });
+    });
   }
 
   @Get()

@@ -21,6 +21,7 @@ type SceneEvents = {
   afterFightAccepterWeaponChoosen: [weapon: WeaponTypes];
   fightStageOne: [];
   fightStageTwo: [message: TelegramBot.Message];
+  fightStageThree: [message: TelegramBot.Message];
   fightFinished: [winner: Fighter, looser: Fighter];
   destroy: [finished: boolean];
 };
@@ -66,6 +67,7 @@ export class Scene extends EventEmitter<SceneEvents> {
     this.afterFightAccepterWeaponChooseListener();
     this.initFightStageOneListener();
     this.initFightStageTwoListener();
+    this.initFightStageThreeListener();
     this.initFightFinishedListener();
 
     this.emit('sceneCreated');
@@ -87,7 +89,7 @@ export class Scene extends EventEmitter<SceneEvents> {
       return isValidDuel;
     }
 
-    return (isSelfAccepted && !!process.env.ALLOW_SELF_FIGHT) || !isSelfAccepted;
+    return (isSelfAccepted && process.env.ALLOW_SELF_FIGHT === 'true') || !isSelfAccepted;
   }
 
   public setWeapon(weaponType: WeaponTypes, fighterId: number): void {
@@ -190,7 +192,16 @@ export class Scene extends EventEmitter<SceneEvents> {
 
   private initFightStageTwoListener(): void {
     this.on('fightStageTwo', async (challengeMessage) => {
-      await this.fightStageTwo(challengeMessage.message_id);
+      const message = await this.fightStageTwo(challengeMessage.message_id);
+      await delay(2000);
+
+      this.emit('fightStageThree', message as TelegramBot.Message);
+    });
+  }
+
+  private initFightStageThreeListener(): void {
+    this.on('fightStageThree', async (challengeMessage) => {
+      await this.fightStageThree(challengeMessage.message_id);
       await delay(2000);
 
       await this.tgBotListenerService.bot.deleteMessage(this.chatId, challengeMessage.message_id);
@@ -245,10 +256,15 @@ export class Scene extends EventEmitter<SceneEvents> {
           this.emit('challengeEmitted', message);
         });
     } else if (media.type === 'video') {
-      this.tgBotListenerService.bot.sendAnimation(this.chatId, media.id, {
-        caption,
-        reply_markup: getAcceptFightKeyboard(this.id).reply_markup,
-      });
+      this.tgBotListenerService.bot
+        .sendAnimation(this.chatId, media.id, {
+          caption,
+          reply_markup: getAcceptFightKeyboard(this.id).reply_markup,
+        })
+        .then((message: TelegramBot.Message) => {
+          this.challengeMessageId = message.message_id;
+          this.emit('challengeEmitted', message);
+        });
     }
   }
 
@@ -271,10 +287,15 @@ export class Scene extends EventEmitter<SceneEvents> {
           this.emit('challengeEmitted', message);
         });
     } else if (media.type === 'video') {
-      this.tgBotListenerService.bot.sendAnimation(this.chatId, media.id, {
-        caption,
-        reply_markup: getAcceptFightKeyboard(this.id).reply_markup,
-      });
+      this.tgBotListenerService.bot
+        .sendAnimation(this.chatId, media.id, {
+          caption,
+          reply_markup: getAcceptFightKeyboard(this.id).reply_markup,
+        })
+        .then((message: TelegramBot.Message) => {
+          this.challengeMessageId = message.message_id;
+          this.emit('challengeEmitted', message);
+        });
     }
   }
 
@@ -290,6 +311,21 @@ export class Scene extends EventEmitter<SceneEvents> {
 
   private async fightStageTwo(previousMessageId: number): Promise<boolean | TelegramBot.Message> {
     const media = this.dictionary.fightStageTwo.getMedia();
+
+    return await this.tgBotListenerService.bot.editMessageMedia(
+      {
+        type: media.type,
+        media: media.id,
+      },
+      {
+        message_id: previousMessageId,
+        chat_id: this.chatId,
+      },
+    );
+  }
+
+  private async fightStageThree(previousMessageId: number): Promise<boolean | TelegramBot.Message> {
+    const media = this.dictionary.fightStageThree.getMedia();
 
     return await this.tgBotListenerService.bot.editMessageMedia(
       {

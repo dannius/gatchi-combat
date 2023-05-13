@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { BotButtonActionType, Fighter, Scene, WeaponTypes } from './models';
+import { BotButtonActionType, Fighter, Mention, Scene, WeaponTypes } from './models';
 import { BotListenerService } from './services';
 import TelegramBot from 'node-telegram-bot-api';
 
@@ -17,29 +17,26 @@ export class AppController {
 
   private initDuelSubscription(): void {
     this.botListenerService.on('duel', (message, mentionedUsername) => {
-      const fighter = this.createOrGetExistingFighter(message.from.id, message.from.username);
-
-      const scene = new Scene(this.botListenerService, message.chat.id, fighter, mentionedUsername);
-      this.scenes.set(scene.id, scene);
-
-      scene.on('sceneFinished', () => {
-        this.scenes.delete(scene.id);
-        this.finishedScenes++;
-      });
+      this.createFightScene(message, mentionedUsername);
     });
   }
 
   private initChallangeQuerySubscription(): void {
-    this.botListenerService.on('challengeQuery', (message) => {
-      const fighter = this.createOrGetExistingFighter(message.from.id, message.from.username);
+    this.botListenerService.on('challengeQuery', (message) => this.createFightScene(message));
+  }
 
-      const scene = new Scene(this.botListenerService, message.chat.id, fighter);
-      this.scenes.set(scene.id, scene);
+  private createFightScene(message: TelegramBot.Message, mentionedUsername?: Mention): void {
+    const fighter = this.createOrGetExistingFighter(message.from.id, message.from.username);
 
-      scene.on('sceneFinished', () => {
-        this.scenes.delete(scene.id);
+    const scene = new Scene(this.botListenerService, message.chat.id, fighter, mentionedUsername);
+    this.scenes.set(scene.id, scene);
+
+    scene.on('destroy', (isFinished) => {
+      if (isFinished) {
         this.finishedScenes++;
-      });
+      }
+
+      this.scenes.delete(scene.id);
     });
   }
 

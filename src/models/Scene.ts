@@ -7,6 +7,9 @@ import { WeaponTypes } from './weapon-types';
 import { getFinalAnimation, getFinalMessage } from 'src/lib/dictionary';
 import { Mention } from './mention.type';
 
+// 10 min
+const SCENE_LIVE_TIME = 10 * 1000 * 60;
+
 type SceneEvents = {
   sceneCreated: [];
   challengeEmitted: [message: TelegramBot.Message];
@@ -18,7 +21,7 @@ type SceneEvents = {
   fightStageOne: [];
   fightStageTwo: [message: TelegramBot.Message];
   fightFinished: [winner: Fighter, looser: Fighter];
-  sceneFinished: [];
+  destroy: [finished: boolean];
 };
 
 export class Scene extends EventEmitter<SceneEvents> {
@@ -64,6 +67,13 @@ export class Scene extends EventEmitter<SceneEvents> {
     this.initFightFinishedListener();
 
     this.emit('sceneCreated');
+
+    // destroy scene if no resonse
+    setTimeout(async () => {
+      await this.tgBotListenerService.bot.deleteMessage(this.chatId, this.challengeMessageId);
+
+      this.emit('destroy', false);
+    }, SCENE_LIVE_TIME);
   }
 
   public canAcceptFight({ id, username }: TelegramBot.User): boolean {
@@ -199,7 +209,7 @@ export class Scene extends EventEmitter<SceneEvents> {
       `;
 
       this.tgBotListenerService.bot.sendAnimation(this.chatId, getFinalAnimation(), { caption });
-      this.emit('sceneFinished');
+      this.emit('destroy', true);
     });
   }
 

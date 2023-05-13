@@ -1,27 +1,26 @@
 import { Fighter } from './Fighter';
 import { getAcceptFightKeyboard, getChoseWeaponKeyboard } from 'src/lib/keyboards';
-import { BehaviorSubject, Observable, Subject, merge, take, takeUntil, tap } from 'rxjs';
 import TelegramBot = require('node-telegram-bot-api');
-import { delay, guid } from 'src/lib';
+import { EventEmitter, delay, guid } from 'src/lib';
 import { BotListenerService } from 'src/services';
 import { WeaponTypes } from './weapon-types';
 import { getFinalAnimation, getFinalMessage } from 'src/lib/dictionary';
 
-export interface SceneEvents {
-  sceneCreated$: Observable<void>;
-  challengeEmitted$: Observable<TelegramBot.Message>;
-  fightAccepted$: Observable<Fighter>;
-  beforeFightEmitterWeaponChoosen$: Observable<void>;
-  afterFightEmitterWeaponChoosen$: Observable<WeaponTypes>;
-  beforeFightAccepterWeaponChoosen$: Observable<void>;
-  afterFightAccepterWeaponChoosen$: Observable<WeaponTypes>;
-  fightStageOne$: Observable<void>;
-  fightStageTwo$: Observable<TelegramBot.Message>;
-  fightFinished$: Observable<{ winner: Fighter; looser: Fighter }>;
-  sceneFinished$: Observable<void>;
-}
+type SceneEvents = {
+  sceneCreated: [];
+  challengeEmitted: [message: TelegramBot.Message];
+  fightAccepted: [fighter: Fighter];
+  beforeFightEmitterWeaponChoosen: [];
+  afterFightEmitterWeaponChoosen: [weapon: WeaponTypes];
+  beforeFightAccepterWeaponChoosen: [];
+  afterFightAccepterWeaponChoosen: [weapon: WeaponTypes];
+  fightStageOne: [];
+  fightStageTwo: [message: TelegramBot.Message];
+  fightFinished: [winner: Fighter, looser: Fighter];
+  sceneFinished: [];
+};
 
-export class Scene implements SceneEvents {
+export class Scene extends EventEmitter<SceneEvents> {
   public id = guid();
 
   private fightAccepter: Fighter;
@@ -30,200 +29,152 @@ export class Scene implements SceneEvents {
 
   private challengeMessageId: number;
 
-  private _sceneCreated$ = new BehaviorSubject<void>(undefined);
-  private _challengeEmitted$ = new Subject<TelegramBot.Message>();
-  private _fightAccepted$ = new Subject<Fighter>();
-  private _beforeFightEmitterWeaponChoosen$ = new Subject<void>();
-  private _afterFightEmitterWeaponChoosen$ = new Subject<WeaponTypes>();
-  private _beforeFightAccepterWeaponChoosen$ = new Subject<void>();
-  private _afterFightAccepterWeaponChoosen$ = new Subject<WeaponTypes>();
-  private _fightStageOne$ = new Subject<void>();
-  private _fightStageTwo$ = new Subject<TelegramBot.Message>();
-  private _fightFinished$ = new Subject<{ winner: Fighter; looser: Fighter }>();
-  private _sceneFinished$ = new Subject<void>();
-
-  public sceneCreated$ = this._sceneCreated$.asObservable().pipe(take(1));
-  public challengeEmitted$ = this._challengeEmitted$.asObservable().pipe(take(1));
-  public fightAccepted$ = this._fightAccepted$.asObservable().pipe(take(1));
-  public beforeFightEmitterWeaponChoosen$ = this._beforeFightEmitterWeaponChoosen$.asObservable().pipe(take(1));
-  public afterFightEmitterWeaponChoosen$ = this._afterFightEmitterWeaponChoosen$.asObservable().pipe(take(1));
-  public beforeFightAccepterWeaponChoosen$ = this._beforeFightAccepterWeaponChoosen$.asObservable().pipe(take(1));
-  public afterFightAccepterWeaponChoosen$ = this._afterFightAccepterWeaponChoosen$.asObservable().pipe(take(1));
-  public fightStageOne$ = this._fightStageOne$.asObservable().pipe(take(1));
-  public fightStageTwo$ = this._fightStageTwo$.asObservable().pipe(take(1));
-  public fightFinished$ = this._fightFinished$.asObservable().pipe(take(1));
-  public sceneFinished$ = this._sceneFinished$.asObservable().pipe(take(1));
-
   public get sceneFighterId(): number {
     return this.fightEmitter.id;
   }
 
   constructor(private tgBotListenerService: BotListenerService, private fightEmitter: Fighter, private chatId: number) {
-    this._sceneCreated$.next();
+    super();
+
     this.startChallenge();
 
-    merge(
-      this.initSceneCreatedListener(),
-      this.initСhallengeEmittedListener(),
-      this.initFightAcceptedListener(),
-      this.beforeFightEmitterWeaponChooseListener(),
-      this.afterFightEmitterWeaponChooseListener(),
-      this.beforeFightAccepterWeaponChooseListener(),
-      this.afterFightAccepterWeaponChooseListener(),
-      this.initFightStageOneListener(),
-      this.initFightStageTwoListener(),
-      this.initFightFinishedListener(),
-    )
-      .pipe(takeUntil(this.sceneFinished$))
-      .subscribe();
+    this.initSceneCreatedListener();
+    this.initСhallengeEmittedListener();
+    this.initFightAcceptedListener();
+    this.beforeFightEmitterWeaponChooseListener();
+    this.afterFightEmitterWeaponChooseListener();
+    this.beforeFightAccepterWeaponChooseListener();
+    this.afterFightAccepterWeaponChooseListener();
+    this.initFightStageOneListener();
+    this.initFightStageTwoListener();
+    this.initFightFinishedListener();
+
+    this.emit('sceneCreated');
   }
 
   public setWeapon(weaponType: WeaponTypes, fighterId: number): void {
     const emitterWeapon = this.weapons.get(this.fightEmitter.id);
 
     if (!emitterWeapon && this.fightEmitter.id === fighterId) {
-      this._afterFightEmitterWeaponChoosen$.next(weaponType);
+      this.emit('afterFightEmitterWeaponChoosen', weaponType);
     } else if (!!emitterWeapon && this.fightAccepter.id === fighterId) {
-      this._afterFightAccepterWeaponChoosen$.next(weaponType);
+      this.emit('afterFightAccepterWeaponChoosen', weaponType);
     }
   }
 
   public fight(fightAccepter: Fighter): void {
-    this._fightAccepted$.next(fightAccepter);
+    this.emit('fightAccepted', fightAccepter);
   }
 
-  public destroyScene(): void {
-    this._sceneFinished$.next(undefined);
+  private initSceneCreatedListener(): void {
+    this.on('sceneCreated', () => {
+      ///
+    });
   }
 
-  private initSceneCreatedListener(): Observable<void> {
-    return this.sceneCreated$.pipe(
-      tap(() => {
-        console.log('scene created');
-      }),
-    );
+  private initСhallengeEmittedListener(): void {
+    this.on('challengeEmitted', () => {
+      ///
+    });
   }
 
-  private initСhallengeEmittedListener(): Observable<TelegramBot.Message> {
-    return this.challengeEmitted$.pipe(
-      tap(() => {
-        console.log('Challenge emitted');
-      }),
-    );
+  private initFightAcceptedListener(): void {
+    this.on('fightAccepted', (fighter) => {
+      this.fightAccepter = fighter;
+      this.emit('beforeFightEmitterWeaponChoosen');
+    });
   }
 
-  private initFightAcceptedListener(): Observable<Fighter> {
-    return this.fightAccepted$.pipe(
-      tap(async (fighter) => {
-        this.fightAccepter = fighter;
-        this._beforeFightEmitterWeaponChoosen$.next();
-      }),
-    );
+  private beforeFightEmitterWeaponChooseListener(): void {
+    this.on('beforeFightEmitterWeaponChoosen', async () => {
+      await this.tgBotListenerService.bot.editMessageMedia(
+        {
+          type: 'photo',
+          media: `AgACAgIAAxkBAAICE2ReUIvRGmfYuhYVvRIa3MWejmWSAALVyDEbIE35SsOjhK9RpiOyAQADAgADbQADLwQ`,
+          caption: `${this.fightEmitter.name} выбирай оружие`,
+        },
+        {
+          chat_id: this.chatId,
+          message_id: this.challengeMessageId,
+          reply_markup: getChoseWeaponKeyboard(this.id).reply_markup,
+        },
+      );
+    });
   }
 
-  private beforeFightEmitterWeaponChooseListener(): Observable<void> {
-    return this._beforeFightEmitterWeaponChoosen$.pipe(
-      tap(async () => {
-        await this.tgBotListenerService.bot.editMessageMedia(
-          {
-            type: 'photo',
-            media: `AgACAgIAAxkBAAICE2ReUIvRGmfYuhYVvRIa3MWejmWSAALVyDEbIE35SsOjhK9RpiOyAQADAgADbQADLwQ`,
-            caption: `${this.fightEmitter.name} выбирай оружие`,
-          },
-          {
-            chat_id: this.chatId,
-            message_id: this.challengeMessageId,
-            reply_markup: getChoseWeaponKeyboard(this.id).reply_markup,
-          },
-        );
-      }),
-    );
+  private afterFightEmitterWeaponChooseListener(): void {
+    this.on('afterFightEmitterWeaponChoosen', (weapon) => {
+      this.weapons.set(this.fightEmitter.id, weapon);
+      this.emit('beforeFightAccepterWeaponChoosen');
+    });
   }
 
-  private afterFightEmitterWeaponChooseListener(): Observable<WeaponTypes> {
-    return this._afterFightEmitterWeaponChoosen$.pipe(
-      tap(async (weaponType) => {
-        this.weapons.set(this.fightEmitter.id, weaponType);
-        this._beforeFightAccepterWeaponChoosen$.next();
-      }),
-    );
+  private beforeFightAccepterWeaponChooseListener(): void {
+    this.on('beforeFightAccepterWeaponChoosen', async () => {
+      await this.tgBotListenerService.bot.editMessageMedia(
+        {
+          type: 'photo',
+          media: `AgACAgIAAxkBAAICI2ReUsIcbi9_znN-HMZECJx4iAUsAALoyDEbIE35SnGKbAeLK_hvAQADAgADbQADLwQ`,
+          caption: `${this.fightAccepter.name} выбирай оружие`,
+        },
+        {
+          chat_id: this.chatId,
+          message_id: this.challengeMessageId,
+          reply_markup: getChoseWeaponKeyboard(this.id).reply_markup,
+        },
+      );
+    });
   }
 
-  private beforeFightAccepterWeaponChooseListener(): Observable<void> {
-    return this._beforeFightAccepterWeaponChoosen$.pipe(
-      tap(async () => {
-        await this.tgBotListenerService.bot.editMessageMedia(
-          {
-            type: 'photo',
-            media: `AgACAgIAAxkBAAICI2ReUsIcbi9_znN-HMZECJx4iAUsAALoyDEbIE35SnGKbAeLK_hvAQADAgADbQADLwQ`,
-            caption: `${this.fightAccepter.name} выбирай оружие`,
-          },
-          {
-            chat_id: this.chatId,
-            message_id: this.challengeMessageId,
-            reply_markup: getChoseWeaponKeyboard(this.id).reply_markup,
-          },
-        );
-      }),
-    );
+  private afterFightAccepterWeaponChooseListener(): void {
+    this.on('afterFightAccepterWeaponChoosen', async (weapon) => {
+      await this.tgBotListenerService.bot.deleteMessage(this.chatId, this.challengeMessageId);
+      this.weapons.set(this.fightAccepter.id, weapon);
+
+      this.emit('fightStageOne');
+    });
   }
 
-  private afterFightAccepterWeaponChooseListener(): Observable<WeaponTypes> {
-    return this._afterFightAccepterWeaponChoosen$.pipe(
-      tap(async (weaponType) => {
-        await this.tgBotListenerService.bot.deleteMessage(this.chatId, this.challengeMessageId);
-        this.weapons.set(this.fightAccepter.id, weaponType);
+  private initFightStageOneListener(): void {
+    this.on('fightStageOne', async () => {
+      const message = await this.fightStageOne();
+      await delay(2000);
 
-        this._fightStageOne$.next();
-      }),
-    );
+      this.emit('fightStageTwo', message);
+    });
   }
 
-  private initFightStageOneListener(): Observable<void> {
-    return this.fightStageOne$.pipe(
-      tap(async () => {
-        const message = await this.fightStageOne();
-        await delay(2000);
+  private initFightStageTwoListener(): void {
+    this.on('fightStageTwo', async (challengeMessage) => {
+      await this.fightStageTwo(challengeMessage.message_id);
+      await delay(2000);
 
-        this._fightStageTwo$.next(message);
-      }),
-    );
+      await this.tgBotListenerService.bot.deleteMessage(this.chatId, challengeMessage.message_id);
+      const { winner, looser } = this.fightEmitter.fight(this.fightAccepter);
+      this.emit('fightFinished', winner, looser);
+    });
   }
 
-  private initFightStageTwoListener(): Observable<TelegramBot.Message> {
-    return this.fightStageTwo$.pipe(
-      tap(async (challengeMessage) => {
-        await this.fightStageTwo(challengeMessage.message_id);
-        await delay(2000);
-
-        await this.tgBotListenerService.bot.deleteMessage(this.chatId, challengeMessage.message_id);
-        this._fightFinished$.next(this.fightEmitter.fight(this.fightAccepter));
-      }),
-    );
-  }
-
-  private initFightFinishedListener(): Observable<{ winner: Fighter; looser: Fighter }> {
+  private initFightFinishedListener(): void {
     // finish
-    return this.fightFinished$.pipe(
-      tap(async ({ winner, looser }) => {
-        winner.fights += 1;
-        winner.wins += 1;
+    this.on('fightFinished', (winner, looser) => {
+      winner.fights += 1;
+      winner.wins += 1;
 
-        looser.fights += 1;
-        looser.looses += 1;
+      looser.fights += 1;
+      looser.looses += 1;
 
-        const caption = `${winner.name} -${winner.semen}(+10) мл.\n${looser.name} -${
-          looser.semen
-        }(+10) мл.\n\n${getFinalMessage(
-          { fighter: winner, weapon: this.weapons.get(winner.id), semenDelta: 10 },
-          { fighter: looser, weapon: this.weapons.get(looser.id), semenDelta: 10 },
-        )}
-        `;
+      const caption = `${winner.name} -${winner.semen}(+10) мл.\n${looser.name} -${
+        looser.semen
+      }(+10) мл.\n\n${getFinalMessage(
+        { fighter: winner, weapon: this.weapons.get(winner.id), semenDelta: 10 },
+        { fighter: looser, weapon: this.weapons.get(looser.id), semenDelta: 10 },
+      )}
+      `;
 
-        this.tgBotListenerService.bot.sendAnimation(this.chatId, getFinalAnimation(), { caption });
-        this._sceneFinished$.next();
-      }),
-    );
+      this.tgBotListenerService.bot.sendAnimation(this.chatId, getFinalAnimation(), { caption });
+      this.emit('sceneFinished');
+    });
   }
 
   private startChallenge(): void {
@@ -234,7 +185,7 @@ export class Scene implements SceneEvents {
       })
       .then((message: TelegramBot.Message) => {
         this.challengeMessageId = message.message_id;
-        this._challengeEmitted$.next(message);
+        this.emit('challengeEmitted', message);
       });
   }
 

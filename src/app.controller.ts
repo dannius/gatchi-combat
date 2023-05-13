@@ -2,7 +2,6 @@ import { Controller, Get } from '@nestjs/common';
 import { BotButtonActionType, Fighter, Scene, WeaponTypes } from './models';
 import { BotListenerService } from './services';
 import TelegramBot from 'node-telegram-bot-api';
-import { take } from 'rxjs';
 
 @Controller()
 export class AppController {
@@ -20,13 +19,13 @@ export class AppController {
   }
 
   private initChallangeQuerySubscription(): void {
-    this.botListenerService.challengeQuery$.subscribe((message) => {
+    this.botListenerService.on('challengeQuery', (message) => {
       const fighter = this.createOrGetExistingFighter(message.from.id, message.from.username);
 
       const scene = new Scene(this.botListenerService, fighter, message.chat.id);
       this.scenes.set(scene.id, scene);
 
-      scene.sceneFinished$.pipe(take(1)).subscribe(() => {
+      scene.on('sceneFinished', () => {
         this.scenes.delete(scene.id);
         this.finishedScenes++;
       });
@@ -34,7 +33,7 @@ export class AppController {
   }
 
   private initCallbackQuerySubscription(): void {
-    this.botListenerService.callbackQuery$.subscribe((query) => {
+    this.botListenerService.on('callbackQuery', (query) => {
       const [action, id] = query.data.split('~');
 
       const scene = this.scenes.get(id);
@@ -62,7 +61,7 @@ export class AppController {
   }
 
   private acceptFight(scene: Scene, query: TelegramBot.CallbackQuery, fighterId: number): void {
-    if (scene.sceneFighterId === fighterId) {
+    if (!process.env.ALLOW_SELF_FIGHT && scene.sceneFighterId === fighterId) {
       return;
     }
 

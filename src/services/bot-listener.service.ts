@@ -1,20 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { Subject } from 'rxjs';
 import TelegramBot = require('node-telegram-bot-api');
+import { EventEmitter } from 'src/lib';
+
+type BotEvents = {
+  callbackQuery: [query: TelegramBot.CallbackQuery];
+  challengeQuery: [message: TelegramBot.Message];
+};
 
 @Injectable()
-export class BotListenerService {
+export class BotListenerService extends EventEmitter<BotEvents> {
   public readonly bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 
-  private readonly _callbackQuery$ = new Subject<TelegramBot.CallbackQuery>();
-
-  private readonly _challengeQuery$ = new Subject<TelegramBot.Message>();
-
-  public readonly challengeQuery$ = this._challengeQuery$.asObservable();
-
-  public readonly callbackQuery$ = this._callbackQuery$.asObservable();
-
   constructor() {
+    super();
+
     this.initMessageActionListeners();
     this.initCallbackQueryListener();
   }
@@ -25,11 +24,11 @@ export class BotListenerService {
         return;
       }
 
-      this._callbackQuery$.next(query);
+      this.emit('callbackQuery', query);
     });
   }
 
   private initMessageActionListeners(): void {
-    this.bot.onText(/тест/, (msg) => this._challengeQuery$.next(msg));
+    this.bot.onText(/тест/, (msg) => this.emit('challengeQuery', msg));
   }
 }

@@ -1,10 +1,10 @@
 import { random } from '../util/random';
-import { DictionaryBaseParams, TextKeys } from './dictionary-messages';
+import { DictionaryBaseParams, Media, TextKeys } from './dictionary-messages';
 
 type MessageDataset = { [P in keyof typeof TextKeys]: string };
 
 export class DictionaryBase {
-  protected medias: string[] = [];
+  protected medias: Media[] = [];
   protected messagesHeader = [];
   protected messagesBody: string[] = [];
 
@@ -22,7 +22,7 @@ export class DictionaryBase {
     }
   }
 
-  getMedia(): string {
+  getMedia(): Media {
     return this.medias[random(0, this.medias.length - 1)];
   }
 

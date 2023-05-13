@@ -22,6 +22,10 @@ export class BotListenerService extends EventEmitter<BotEvents> {
       this.initCallbackQueryListener();
       this.initDuelListener();
     });
+
+    this.bot.on('message', (query) => {
+      console.log(query?.document?.file_id);
+    });
   }
 
   private async setMe(): Promise<TelegramBot.User> {

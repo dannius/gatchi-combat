@@ -1,7 +1,12 @@
+export interface Media {
+  id: string;
+  type: 'video' | 'photo';
+}
+
 export interface DictionaryBaseParams {
   messagesBody?: string[];
   messagesHeader?: string[];
-  medias?: string[];
+  medias?: Media[];
 }
 
 export const TextKeys = {
@@ -27,25 +32,83 @@ type DictionaryMessageKeys =
 export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBaseParams> = {
   StartChallenge: {
     messagesBody: [`@${TextKeys.fighter1Name} желает надрать кому нибудь зад`],
-    medias: ['AgACAgIAAxkBAAIB7mReTBIFbiZsgxL40u1PAr3rc2d6AAK1yDEbIE35SrKQT0SCwsIJAQADAgADeAADLwQ'],
+    medias: [
+      {
+        type: 'photo',
+        id: 'AgACAgIAAxkBAAIB7mReTBIFbiZsgxL40u1PAr3rc2d6AAK1yDEbIE35SrKQT0SCwsIJAQADAgADeAADLwQ',
+      },
+      {
+        type: 'video',
+        id: 'CgACAgQAAxkBAAID32Rf9NYuETvYVepJS3D8PsLqxyXjAALYAgACPFkMU_EQyoCfDo7ILwQ',
+      },
+    ],
   },
   StartDuel: {
     messagesBody: [`@${TextKeys.fighter1Name} изьявил желание надрать ${TextKeys.fighter2Name} зад, примет ли он бой?`],
-    medias: ['AgACAgIAAxkBAAIB7mReTBIFbiZsgxL40u1PAr3rc2d6AAK1yDEbIE35SrKQT0SCwsIJAQADAgADeAADLwQ'],
-  },
-  FightAccepterSelectWeapon: {
-    messagesBody: [`@${TextKeys.fighter1Name} выбирай оружие`],
-    medias: ['AgACAgIAAxkBAAICI2ReUsIcbi9_znN-HMZECJx4iAUsAALoyDEbIE35SnGKbAeLK_hvAQADAgADbQADLwQ'],
+    medias: [
+      {
+        type: 'photo',
+        id: 'AgACAgIAAxkBAAIB7mReTBIFbiZsgxL40u1PAr3rc2d6AAK1yDEbIE35SrKQT0SCwsIJAQADAgADeAADLwQ',
+      },
+      {
+        type: 'video',
+        id: 'CgACAgQAAxkBAAID32Rf9NYuETvYVepJS3D8PsLqxyXjAALYAgACPFkMU_EQyoCfDo7ILwQ',
+      },
+    ],
   },
   FightEmitterSelectWeapon: {
     messagesBody: [`@${TextKeys.fighter1Name} выбирай оружие`],
-    medias: ['AgACAgIAAxkBAAICE2ReUIvRGmfYuhYVvRIa3MWejmWSAALVyDEbIE35SsOjhK9RpiOyAQADAgADbQADLwQ'],
+    medias: [
+      {
+        type: 'photo',
+        id: 'AgACAgIAAxkBAAICE2ReUIvRGmfYuhYVvRIa3MWejmWSAALVyDEbIE35SsOjhK9RpiOyAQADAgADbQADLwQ',
+      },
+      {
+        type: 'video',
+        id: 'CgACAgQAAxkBAAID82Rf9c49WcrqNpU4Mj5kTePaXIXCAAI0AwACUhYFU2e5v6be_iCSLwQ',
+      },
+    ],
+  },
+  FightAccepterSelectWeapon: {
+    messagesBody: [`@${TextKeys.fighter1Name} выбирай оружие`],
+    medias: [
+      {
+        type: 'photo',
+        id: 'AgACAgIAAxkBAAICI2ReUsIcbi9_znN-HMZECJx4iAUsAALoyDEbIE35SnGKbAeLK_hvAQADAgADbQADLwQ',
+      },
+      {
+        type: 'video',
+        id: 'CgACAgQAAxkBAAID8mRf9ao3-5c2GT2XUYGtm6yZ5u6dAAIOAwACIf8EU4xXiz_M6f9lLwQ',
+      },
+      {
+        type: 'video',
+        id: 'CgACAgQAAxkBAAIEC2Rf9ugWtZjIrqXZCrIQoZoM98tYAAI-AwACqcB0Up_UUwccf_zRLwQ',
+      },
+    ],
   },
   FightStageOne: {
-    medias: ['CgACAgQAAxkBAAP8ZF1kU9QQZuZJCdEooHsWE6-UgyAAAnYDAAI7WYVSZHYv894om0UvBA'],
+    medias: [
+      {
+        type: 'video',
+        id: 'CgACAgQAAxkBAAP8ZF1kU9QQZuZJCdEooHsWE6-UgyAAAnYDAAI7WYVSZHYv894om0UvBA',
+      },
+      {
+        type: 'video',
+        id: 'CgACAgQAAxkBAAIEA2Rf9kxSz-Kd5OBOczTHJUTGkZ_zAAIwAwACsNcFUw8O9xaV3yb_LwQ',
+      },
+    ],
   },
   FightStageTwo: {
-    medias: ['CgACAgQAAxkBAAICHmReUgl12tN_3Ue120iaDgKmAAFhCAACEQMAAjjQBFPXWhNQFYei9S8E'],
+    medias: [
+      {
+        type: 'video',
+        id: 'CgACAgQAAxkBAAICHmReUgl12tN_3Ue120iaDgKmAAFhCAACEQMAAjjQBFPXWhNQFYei9S8E',
+      },
+      {
+        type: 'video',
+        id: 'CgACAgQAAxkBAAIEBGRf9mZumkVjZ93duYzIlcfV6n3tAAKPAwACKmKEUlzh-KyQdyOlLwQ',
+      },
+    ],
   },
   Final: {
     messagesBody: [
@@ -57,13 +120,38 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
       `${TextKeys.fighter1Name} - ${TextKeys.fighter1SemenTotal}(${TextKeys.fighter1SemenAdded}) мл.\n${TextKeys.fighter2Name} - ${TextKeys.fighter2SemenTotal}(${TextKeys.fighter2SemenAdded}) мл.\n\n`,
     ],
     medias: [
-      'CgACAgQAAxkBAAICKGReUxZb5InnO6WATPATDv7A8t9nAALYAgACPFkMU_EQyoCfDo7ILwQ',
-      'CgACAgQAAxkBAAICZWReXfg6ExQ1yyzkCu5F-DZXbXHBAAILAwACl81EUmhWtU51srqWLwQ',
-      'CgACAgQAAxkBAAICZmReXfoOZ3zi0K9nLMvt1i4u8-x0AAKyAgACFztMUtQLGxMv5-7gLwQ',
-      'CgACAgQAAxkBAAICZ2ReXfwlMSE6AcB7wzbG_VmpdT-fAAIVAwACP91EUsLiLjUFVfDhLwQ',
-      'CgACAgQAAxkBAAICaGReXf1ZQvYSh_BRJV5nX0X3tKiRAALfAgACm0BMUtl5i3cZ0cZfLwQ',
-      'CgACAgQAAxkBAAICaWReXhq9TJQu44uDSc43Q3rtq7gWAALMAgACNKRMUpVDFwvIn-5mLwQ',
-      'CgACAgQAAxkBAAICamReXhwDrBtgiQOOBY9Hlpv5vUTrAAMDAAIIIk1SNBSI17OddkQvBA',
+      {
+        type: 'video',
+        id: 'CgACAgQAAxkBAAICKGReUxZb5InnO6WATPATDv7A8t9nAALYAgACPFkMU_EQyoCfDo7ILwQ',
+      },
+      {
+        type: 'video',
+        id: 'CgACAgQAAxkBAAICZWReXfg6ExQ1yyzkCu5F-DZXbXHBAAILAwACl81EUmhWtU51srqWLwQ',
+      },
+      {
+        type: 'video',
+        id: 'CgACAgQAAxkBAAICZmReXfoOZ3zi0K9nLMvt1i4u8-x0AAKyAgACFztMUtQLGxMv5-7gLwQ',
+      },
+      {
+        type: 'video',
+        id: 'CgACAgQAAxkBAAICZ2ReXfwlMSE6AcB7wzbG_VmpdT-fAAIVAwACP91EUsLiLjUFVfDhLwQ',
+      },
+      {
+        type: 'video',
+        id: 'CgACAgQAAxkBAAICaGReXf1ZQvYSh_BRJV5nX0X3tKiRAALfAgACm0BMUtl5i3cZ0cZfLwQ',
+      },
+      {
+        type: 'video',
+        id: 'CgACAgQAAxkBAAICaWReXhq9TJQu44uDSc43Q3rtq7gWAALMAgACNKRMUpVDFwvIn-5mLwQ',
+      },
+      {
+        type: 'video',
+        id: 'CgACAgQAAxkBAAICamReXhwDrBtgiQOOBY9Hlpv5vUTrAAMDAAIIIk1SNBSI17OddkQvBA',
+      },
+      {
+        type: 'video',
+        id: 'CgACAgQAAxkBAAIEDGRf9wmrcH5dNNFnNh8hHRwZAsYpAALXAgACOeMNU7Y8GBc3iTRhLwQ',
+      },
     ],
   },
 };

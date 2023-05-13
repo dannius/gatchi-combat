@@ -126,11 +126,12 @@ export class Scene extends EventEmitter<SceneEvents> {
   private beforeFightEmitterWeaponChooseListener(): void {
     this.on('beforeFightEmitterWeaponChoosen', async () => {
       const caption = this.dictionary.fightEmitterSelectWeapon.getMessage({ fighter1Name: this.fightEmitter.name });
+      const media = this.dictionary.fightEmitterSelectWeapon.getMedia();
 
       await this.tgBotListenerService.bot.editMessageMedia(
         {
-          type: 'photo',
-          media: this.dictionary.fightEmitterSelectWeapon.getMedia(),
+          type: media.type,
+          media: media.id,
           caption,
         },
         {
@@ -152,11 +153,12 @@ export class Scene extends EventEmitter<SceneEvents> {
   private beforeFightAccepterWeaponChooseListener(): void {
     this.on('beforeFightAccepterWeaponChoosen', async () => {
       const caption = this.dictionary.fightAccepterSelectWeapon.getMessage({ fighter1Name: this.fightAccepter.name });
+      const media = this.dictionary.fightAccepterSelectWeapon.getMedia();
 
       await this.tgBotListenerService.bot.editMessageMedia(
         {
-          type: 'photo',
-          media: this.dictionary.fightAccepterSelectWeapon.getMedia(),
+          type: media.type,
+          media: media.id,
           caption,
         },
         {
@@ -217,23 +219,37 @@ export class Scene extends EventEmitter<SceneEvents> {
         fighter2SemenAdded: '-10',
       });
 
-      this.tgBotListenerService.bot.sendAnimation(this.chatId, this.dictionary.final.getMedia(), { caption });
+      const media = this.dictionary.final.getMedia();
+
+      if (media.type === 'photo') {
+        this.tgBotListenerService.bot.sendPhoto(this.chatId, media.id, { caption });
+      } else if (media.type === 'video') {
+        this.tgBotListenerService.bot.sendAnimation(this.chatId, media.id, { caption });
+      }
       this.emit('destroy', true);
     });
   }
 
   private startChallenge(): void {
     const caption = this.dictionary.startChallenge.getMessage({ fighter1Name: this.fightEmitter.name });
+    const media = this.dictionary.startChallenge.getMedia();
 
-    this.tgBotListenerService.bot
-      .sendPhoto(this.chatId, this.dictionary.startChallenge.getMedia(), {
+    if (media.type === 'photo') {
+      this.tgBotListenerService.bot
+        .sendPhoto(this.chatId, media.id, {
+          caption,
+          reply_markup: getAcceptFightKeyboard(this.id).reply_markup,
+        })
+        .then((message: TelegramBot.Message) => {
+          this.challengeMessageId = message.message_id;
+          this.emit('challengeEmitted', message);
+        });
+    } else if (media.type === 'video') {
+      this.tgBotListenerService.bot.sendAnimation(this.chatId, media.id, {
         caption,
         reply_markup: getAcceptFightKeyboard(this.id).reply_markup,
-      })
-      .then((message: TelegramBot.Message) => {
-        this.challengeMessageId = message.message_id;
-        this.emit('challengeEmitted', message);
       });
+    }
   }
 
   private startDuel(mentionedUsername: Mention): void {
@@ -242,26 +258,43 @@ export class Scene extends EventEmitter<SceneEvents> {
       fighter2Name: mentionedUsername,
     });
 
-    this.tgBotListenerService.bot
-      .sendPhoto(this.chatId, this.dictionary.startDuel.getMedia(), {
+    const media = this.dictionary.startDuel.getMedia();
+
+    if (media.type === 'photo') {
+      this.tgBotListenerService.bot
+        .sendPhoto(this.chatId, media.id, {
+          caption,
+          reply_markup: getAcceptFightKeyboard(this.id).reply_markup,
+        })
+        .then((message: TelegramBot.Message) => {
+          this.challengeMessageId = message.message_id;
+          this.emit('challengeEmitted', message);
+        });
+    } else if (media.type === 'video') {
+      this.tgBotListenerService.bot.sendAnimation(this.chatId, media.id, {
         caption,
         reply_markup: getAcceptFightKeyboard(this.id).reply_markup,
-      })
-      .then((message: TelegramBot.Message) => {
-        this.challengeMessageId = message.message_id;
-        this.emit('challengeEmitted', message);
       });
+    }
   }
 
   private async fightStageOne(): Promise<TelegramBot.Message> {
-    return await this.tgBotListenerService.bot.sendAnimation(this.chatId, this.dictionary.fightStageOne.getMedia());
+    const media = this.dictionary.fightStageOne.getMedia();
+
+    if (media.type === 'photo') {
+      return this.tgBotListenerService.bot.sendPhoto(this.chatId, media.id);
+    } else if (media.type === 'video') {
+      return await this.tgBotListenerService.bot.sendAnimation(this.chatId, media.id);
+    }
   }
 
   private async fightStageTwo(previousMessageId: number): Promise<boolean | TelegramBot.Message> {
+    const media = this.dictionary.fightStageTwo.getMedia();
+
     return await this.tgBotListenerService.bot.editMessageMedia(
       {
-        type: 'video',
-        media: this.dictionary.fightStageTwo.getMedia(),
+        type: media.type,
+        media: media.id,
       },
       {
         message_id: previousMessageId,

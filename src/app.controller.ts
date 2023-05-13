@@ -12,17 +12,28 @@ export class AppController {
   constructor(private readonly botListenerService: BotListenerService) {
     this.initCallbackQuerySubscription();
     this.initChallangeQuerySubscription();
+    this.initDuelSubscription();
+  }
 
-    // this.botListenerService.bot.on('message', (msg) => {
-    //   console.log(msg.animation.file_id);
-    // });
+  private initDuelSubscription(): void {
+    this.botListenerService.on('duel', (message, mentionedUsername) => {
+      const fighter = this.createOrGetExistingFighter(message.from.id, message.from.username);
+
+      const scene = new Scene(this.botListenerService, message.chat.id, fighter, mentionedUsername);
+      this.scenes.set(scene.id, scene);
+
+      scene.on('sceneFinished', () => {
+        this.scenes.delete(scene.id);
+        this.finishedScenes++;
+      });
+    });
   }
 
   private initChallangeQuerySubscription(): void {
     this.botListenerService.on('challengeQuery', (message) => {
       const fighter = this.createOrGetExistingFighter(message.from.id, message.from.username);
 
-      const scene = new Scene(this.botListenerService, fighter, message.chat.id);
+      const scene = new Scene(this.botListenerService, message.chat.id, fighter);
       this.scenes.set(scene.id, scene);
 
       scene.on('sceneFinished', () => {
@@ -44,7 +55,7 @@ export class AppController {
 
       switch (action) {
         case BotButtonActionType.AcceptFight:
-          this.acceptFight(scene, query, query.from.id);
+          this.acceptFight(scene, query);
 
           return;
         case BotButtonActionType.ChoseAssWeapon:
@@ -60,8 +71,8 @@ export class AppController {
     });
   }
 
-  private acceptFight(scene: Scene, query: TelegramBot.CallbackQuery, fighterId: number): void {
-    if (!process.env.ALLOW_SELF_FIGHT && scene.sceneFighterId === fighterId) {
+  private acceptFight(scene: Scene, query: TelegramBot.CallbackQuery): void {
+    if (!scene.canAcceptFight(query.from)) {
       return;
     }
 

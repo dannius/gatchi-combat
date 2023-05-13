@@ -5,6 +5,7 @@ import { EventEmitter, delay, guid } from 'src/lib';
 import { BotListenerService } from 'src/services';
 import { WeaponTypes } from './weapon-types';
 import { getFinalAnimation, getFinalMessage } from 'src/lib/dictionary';
+import { Mention } from './mention.type';
 
 type SceneEvents = {
   sceneCreated: [];
@@ -29,14 +30,27 @@ export class Scene extends EventEmitter<SceneEvents> {
 
   private challengeMessageId: number;
 
-  public get sceneFighterId(): number {
+  private get sceneFighterId(): number {
     return this.fightEmitter.id;
   }
 
-  constructor(private tgBotListenerService: BotListenerService, private fightEmitter: Fighter, private chatId: number) {
+  private get isDuel(): boolean {
+    return !!this.mentionedUserName;
+  }
+
+  constructor(
+    private tgBotListenerService: BotListenerService,
+    private chatId: number,
+    private fightEmitter: Fighter,
+    private mentionedUserName?: Mention,
+  ) {
     super();
 
-    this.startChallenge();
+    if (this.mentionedUserName) {
+      this.startDuel(mentionedUserName);
+    } else {
+      this.startChallenge();
+    }
 
     this.initSceneCreatedListener();
     this.initСhallengeEmittedListener();
@@ -50,6 +64,18 @@ export class Scene extends EventEmitter<SceneEvents> {
     this.initFightFinishedListener();
 
     this.emit('sceneCreated');
+  }
+
+  public canAcceptFight({ id, username }: TelegramBot.User): boolean {
+    const isSelfAccepted = this.sceneFighterId === id;
+
+    if (this.isDuel) {
+      const isValidDuel = this.mentionedUserName === `@${username}`;
+
+      return isValidDuel;
+    }
+
+    return (isSelfAccepted && !!process.env.ALLOW_SELF_FIGHT) || !isSelfAccepted;
   }
 
   public setWeapon(weaponType: WeaponTypes, fighterId: number): void {
@@ -91,7 +117,7 @@ export class Scene extends EventEmitter<SceneEvents> {
         {
           type: 'photo',
           media: `AgACAgIAAxkBAAICE2ReUIvRGmfYuhYVvRIa3MWejmWSAALVyDEbIE35SsOjhK9RpiOyAQADAgADbQADLwQ`,
-          caption: `${this.fightEmitter.name} выбирай оружие`,
+          caption: `@${this.fightEmitter.name} выбирай оружие`,
         },
         {
           chat_id: this.chatId,
@@ -115,7 +141,7 @@ export class Scene extends EventEmitter<SceneEvents> {
         {
           type: 'photo',
           media: `AgACAgIAAxkBAAICI2ReUsIcbi9_znN-HMZECJx4iAUsAALoyDEbIE35SnGKbAeLK_hvAQADAgADbQADLwQ`,
-          caption: `${this.fightAccepter.name} выбирай оружие`,
+          caption: `@${this.fightAccepter.name} выбирай оружие`,
         },
         {
           chat_id: this.chatId,
@@ -180,7 +206,19 @@ export class Scene extends EventEmitter<SceneEvents> {
   private startChallenge(): void {
     this.tgBotListenerService.bot
       .sendPhoto(this.chatId, 'AgACAgIAAxkBAAIB7mReTBIFbiZsgxL40u1PAr3rc2d6AAK1yDEbIE35SrKQT0SCwsIJAQADAgADeAADLwQ', {
-        caption: `${this.fightEmitter.name} желает надрать кому нибудь зад`,
+        caption: `@${this.fightEmitter.name} желает надрать кому нибудь зад`,
+        reply_markup: getAcceptFightKeyboard(this.id).reply_markup,
+      })
+      .then((message: TelegramBot.Message) => {
+        this.challengeMessageId = message.message_id;
+        this.emit('challengeEmitted', message);
+      });
+  }
+
+  private startDuel(mentionedUsername: Mention): void {
+    this.tgBotListenerService.bot
+      .sendPhoto(this.chatId, 'AgACAgIAAxkBAAIB7mReTBIFbiZsgxL40u1PAr3rc2d6AAK1yDEbIE35SrKQT0SCwsIJAQADAgADeAADLwQ', {
+        caption: `@${this.fightEmitter.name} изьявил желание надрать ${mentionedUsername} зад, примет ли он бой?`,
         reply_markup: getAcceptFightKeyboard(this.id).reply_markup,
       })
       .then((message: TelegramBot.Message) => {

@@ -1,3 +1,4 @@
+export { Mention } from './mention.type';
 export { WeaponTypes } from './weapon-types';
 
 export { BotButtonActionType, BotButtonActionTitles } from './bot-button-action-type.enum';

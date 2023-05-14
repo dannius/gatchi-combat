@@ -47,6 +47,10 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
         type: 'photo',
         id: 'AgACAgIAAxkBAANRZGAiLRGdv_GqcjTqxsT8MbOcKnYAAprGMRuPBQhLIK8h7VRC-AoBAAMCAANtAAMvBA',
       },
+      {
+        type: 'video',
+        id: 'CgACAgIAAxkBAANkZGA2YbkRkCBJObW1qMZZe2OW-IAAAp8rAAKPBQhLjhZczgmGy-QvBA',
+      },
     ],
   },
   StartDuel: {
@@ -55,6 +59,10 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
       {
         type: 'photo',
         id: 'AgACAgIAAxkBAANRZGAiLRGdv_GqcjTqxsT8MbOcKnYAAprGMRuPBQhLIK8h7VRC-AoBAAMCAANtAAMvBA',
+      },
+      {
+        type: 'video',
+        id: 'CgACAgIAAxkBAANkZGA2YbkRkCBJObW1qMZZe2OW-IAAAp8rAAKPBQhLjhZczgmGy-QvBA',
       },
     ],
   },
@@ -273,10 +281,6 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
       {
         type: 'video',
         id: 'CgACAgIAAxkBAANjZGA2YZj0DSB1YjdRiSOT0NUpRgIAAp4rAAKPBQhLURuQKbsdHFgvBA',
-      },
-      {
-        type: 'video',
-        id: 'CgACAgIAAxkBAANkZGA2YbkRkCBJObW1qMZZe2OW-IAAAp8rAAKPBQhLjhZczgmGy-QvBA',
       },
       {
         type: 'video',

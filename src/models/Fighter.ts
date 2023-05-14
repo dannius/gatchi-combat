@@ -1,5 +1,5 @@
 export class Fighter {
-  public scores = 200;
+  public scores = 600;
 
   public fights = 0;
   public wins = 0;
@@ -51,7 +51,6 @@ export class Fighter {
     const resultScore = this.getScoreResult(winner.scores, loser.scores);
     winner.scores += resultScore.winnerScore;
     loser.scores -= resultScore.looserScore;
-    console.log('winner', winner, loser);
 
     return {
       winner: winner,

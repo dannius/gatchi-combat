@@ -23,7 +23,7 @@ type SceneEvents = {
   fightStageOne: [];
   fightStageTwo: [message: TelegramBot.Message];
   fightStageThree: [message: TelegramBot.Message];
-  fightFinished: [winner: Fighter, looser: Fighter];
+  fightFinished: [winner: Fighter, looser: Fighter, addedWin: number, addedLose: number];
   destroy: [finished: boolean];
 };
 
@@ -206,14 +206,14 @@ export class Scene extends EventEmitter<SceneEvents> {
       await delay(FIGHT_DELAY);
 
       await this.tgBotListenerService.bot.deleteMessage(this.chatId, challengeMessage.message_id);
-      const { winner, looser } = this.fightEmitter.fight(this.fightAccepter);
-      this.emit('fightFinished', winner, looser);
+      const { winner, looser, addedWin, addedLose } = this.fightEmitter.fight(this.fightAccepter);
+      this.emit('fightFinished', winner, looser, addedWin, addedLose);
     });
   }
 
   private initFightFinishedListener(): void {
     // finish
-    this.on('fightFinished', (winner, looser) => {
+    this.on('fightFinished', (winner, looser, addedWin, addedLose) => {
       winner.fights += 1;
       winner.wins += 1;
 
@@ -227,8 +227,8 @@ export class Scene extends EventEmitter<SceneEvents> {
         fighter2Weapon: this.weapons.get(looser.id),
         fighter1ScoresTotal: `${winner.scores}`,
         fighter2ScoresTotal: `${looser.scores}`,
-        fighter1ScoresAdded: '+10',
-        fighter2ScoresAdded: '-10',
+        fighter1ScoresAdded: `+${addedWin}`,
+        fighter2ScoresAdded: `-${addedLose}`,
       });
 
       const media = this.dictionary.Final.getMedia();

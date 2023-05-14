@@ -1,13 +1,8 @@
 import { DictionaryBase } from './dictionary-base';
-import { DictionaryMessages } from './dictionary-messages';
+import { DictionaryMessageKeys, DictionaryMessages } from './dictionary-messages';
 
-export const Dictionary = {
-  startChallenge: new DictionaryBase(DictionaryMessages.StartChallenge),
-  startDuel: new DictionaryBase(DictionaryMessages.StartDuel),
-  fightEmitterSelectWeapon: new DictionaryBase(DictionaryMessages.FightEmitterSelectWeapon),
-  fightAccepterSelectWeapon: new DictionaryBase(DictionaryMessages.FightAccepterSelectWeapon),
-  fightStageOne: new DictionaryBase(DictionaryMessages.FightStageOne),
-  fightStageTwo: new DictionaryBase(DictionaryMessages.FightStageTwo),
-  fightStageThree: new DictionaryBase(DictionaryMessages.FightStageThree),
-  final: new DictionaryBase(DictionaryMessages.Final),
-};
+export const Dictionary = Object.entries(DictionaryMessages).reduce((acc, [key, val]) => {
+  acc[key] = new DictionaryBase(val);
+
+  return acc;
+}, {} as Record<DictionaryMessageKeys, DictionaryBase>);

@@ -1,9 +1,10 @@
 import { Controller, Get } from '@nestjs/common';
-import { BotButtonActionType, Fighter, Mention, Scene, WeaponTypes } from './models';
+import { Fighter, Mention, Scene } from './models';
 import { BotListenerService } from './services';
 import TelegramBot from 'node-telegram-bot-api';
 import { Dictionary } from './lib/dictionary/dictionary';
 import { DictionaryBase } from './lib/dictionary/dictionary-base';
+import { ActionType, WeaponType } from './lib';
 
 @Controller()
 export class AppController {
@@ -20,6 +21,10 @@ export class AppController {
     if (process.env.DEBUG === 'true') {
       this.debugListeners();
     }
+
+    // if (process.env.FILES === 'true') {
+    //   this.filesListener();
+    // }
   }
 
   private initDuelSubscription(): void {
@@ -58,18 +63,18 @@ export class AppController {
       }
 
       switch (action) {
-        case BotButtonActionType.AcceptFight:
+        case ActionType.AcceptFight:
           this.acceptFight(scene, query);
 
           return;
-        case BotButtonActionType.ChoseAssWeapon:
-          scene.setWeapon(WeaponTypes.Ass, query.from.id);
+        case WeaponType.Rock:
+          scene.setWeapon(WeaponType.Rock, query.from.id);
           return;
-        case BotButtonActionType.ChoseFingerWeapon:
-          scene.setWeapon(WeaponTypes.Finger, query.from.id);
+        case WeaponType.Scissors:
+          scene.setWeapon(WeaponType.Scissors, query.from.id);
           return;
-        case BotButtonActionType.ChoseDickWeapon:
-          scene.setWeapon(WeaponTypes.Dick, query.from.id);
+        case WeaponType.Paper:
+          scene.setWeapon(WeaponType.Paper, query.from.id);
           return;
       }
     });
@@ -95,6 +100,13 @@ export class AppController {
     this.fighters.set(id, newFighter);
 
     return newFighter;
+  }
+
+  private filesListener(): void {
+    this.botListenerService.bot.on('message', (query) => {
+      // console.log(query?.photo);
+      console.log(query?.document?.file_id);
+    });
   }
 
   private debugListeners(): void {
@@ -131,10 +143,10 @@ export class AppController {
   @Get()
   getHello(): string {
     const fighters = Array.from(this.fighters.values())
-      .sort((a, b) => (a.semen > b.semen ? 1 : -1))
+      .sort((a, b) => (a.scores > b.scores ? -1 : 1))
       .reduce(
         (acc, curr) =>
-          `${acc} </br> ${curr.name} (${curr.semen} semen) / fights: ${curr.fights}, wins: ${curr.wins}, looses: ${curr.looses}`,
+          `${acc} </br> ${curr.name} (${curr.scores} scores) / fights: ${curr.fights}, wins: ${curr.wins}, looses: ${curr.looses}`,
         '',
       );
 

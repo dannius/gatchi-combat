@@ -1,24 +1,23 @@
-import { BotButtonActionTitles, BotButtonActionType, WeaponTypes } from 'src/models';
+import { DictionaryActionTitles } from '../dictionary/dictionary-messages';
+import { WeaponType } from '../types';
 
-export function getChoseWeaponKeyboard(sceneId: string) {
+export function getChoseWeaponReplyMarkup(sceneId: string) {
   return {
-    reply_markup: {
-      inline_keyboard: [
-        [
-          {
-            text: BotButtonActionTitles[BotButtonActionType.ChoseAssWeapon],
-            callback_data: `${BotButtonActionType.ChoseAssWeapon}~${sceneId}`,
-          },
-          {
-            text: BotButtonActionTitles[BotButtonActionType.ChoseDickWeapon],
-            callback_data: `${BotButtonActionType.ChoseDickWeapon}~${sceneId}`,
-          },
-          {
-            text: BotButtonActionTitles[BotButtonActionType.ChoseFingerWeapon],
-            callback_data: `${BotButtonActionType.ChoseFingerWeapon}~${sceneId}`,
-          },
-        ],
+    inline_keyboard: [
+      [
+        {
+          text: DictionaryActionTitles[WeaponType.Rock],
+          callback_data: `${WeaponType.Rock}~${sceneId}`,
+        },
+        {
+          text: DictionaryActionTitles[WeaponType.Scissors],
+          callback_data: `${WeaponType.Scissors}~${sceneId}`,
+        },
+        {
+          text: DictionaryActionTitles[WeaponType.Paper],
+          callback_data: `${WeaponType.Paper}~${sceneId}`,
+        },
       ],
-    },
+    ],
   };
 }

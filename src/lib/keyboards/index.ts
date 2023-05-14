@@ -1,2 +1,2 @@
-export { getChoseWeaponKeyboard } from './chose-weapon.keyboard';
-export { getAcceptFightKeyboard } from './accept-fight.keyboard';
+export { getChoseWeaponReplyMarkup } from './chose-weapon.keyboard';
+export { getAcceptFightReplyMarkup } from './accept-fight.keyboard';

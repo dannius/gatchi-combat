@@ -1,9 +1,8 @@
 import { Fighter } from './Fighter';
-import { getAcceptFightKeyboard, getChoseWeaponKeyboard } from 'src/lib/keyboards';
+import { getAcceptFightReplyMarkup, getChoseWeaponReplyMarkup } from 'src/lib/keyboards';
 import TelegramBot = require('node-telegram-bot-api');
-import { EventEmitter, delay, guid } from 'src/lib';
+import { EventEmitter, WeaponType, delay, guid } from 'src/lib';
 import { BotListenerService } from 'src/services';
-import { WeaponTypes } from './weapon-types';
 
 import { Mention } from './mention.type';
 import { Dictionary } from 'src/lib/dictionary/dictionary';
@@ -11,14 +10,16 @@ import { Dictionary } from 'src/lib/dictionary/dictionary';
 // 10 min
 const SCENE_LIVE_TIME = 10 * 1000 * 60;
 
+const FIGHT_DELAY = 3 * 1000;
+
 type SceneEvents = {
   sceneCreated: [];
   challengeEmitted: [message: TelegramBot.Message];
   fightAccepted: [fighter: Fighter];
   beforeFightEmitterWeaponChoosen: [];
-  afterFightEmitterWeaponChoosen: [weapon: WeaponTypes];
+  afterFightEmitterWeaponChoosen: [weapon: WeaponType];
   beforeFightAccepterWeaponChoosen: [];
-  afterFightAccepterWeaponChoosen: [weapon: WeaponTypes];
+  afterFightAccepterWeaponChoosen: [weapon: WeaponType];
   fightStageOne: [];
   fightStageTwo: [message: TelegramBot.Message];
   fightStageThree: [message: TelegramBot.Message];
@@ -31,7 +32,7 @@ export class Scene extends EventEmitter<SceneEvents> {
 
   private fightAccepter: Fighter;
 
-  private readonly weapons = new Map<number, WeaponTypes>();
+  private readonly weapons = new Map<number, WeaponType>();
 
   private challengeMessageId: number;
 
@@ -92,7 +93,7 @@ export class Scene extends EventEmitter<SceneEvents> {
     return (isSelfAccepted && process.env.ALLOW_SELF_FIGHT === 'true') || !isSelfAccepted;
   }
 
-  public setWeapon(weaponType: WeaponTypes, fighterId: number): void {
+  public setWeapon(weaponType: WeaponType, fighterId: number): void {
     const emitterWeapon = this.weapons.get(this.fightEmitter.id);
 
     if (!emitterWeapon && this.fightEmitter.id === fighterId) {
@@ -127,8 +128,8 @@ export class Scene extends EventEmitter<SceneEvents> {
 
   private beforeFightEmitterWeaponChooseListener(): void {
     this.on('beforeFightEmitterWeaponChoosen', async () => {
-      const caption = this.dictionary.fightEmitterSelectWeapon.getMessage({ fighter1Name: this.fightEmitter.name });
-      const media = this.dictionary.fightEmitterSelectWeapon.getMedia();
+      const caption = this.dictionary.FightEmitterSelectWeapon.getMessage({ fighter1Name: this.fightEmitter.name });
+      const media = this.dictionary.FightEmitterSelectWeapon.getMedia();
 
       await this.tgBotListenerService.bot.editMessageMedia(
         {
@@ -139,7 +140,7 @@ export class Scene extends EventEmitter<SceneEvents> {
         {
           chat_id: this.chatId,
           message_id: this.challengeMessageId,
-          reply_markup: getChoseWeaponKeyboard(this.id).reply_markup,
+          reply_markup: getChoseWeaponReplyMarkup(this.id),
         },
       );
     });
@@ -154,8 +155,8 @@ export class Scene extends EventEmitter<SceneEvents> {
 
   private beforeFightAccepterWeaponChooseListener(): void {
     this.on('beforeFightAccepterWeaponChoosen', async () => {
-      const caption = this.dictionary.fightAccepterSelectWeapon.getMessage({ fighter1Name: this.fightAccepter.name });
-      const media = this.dictionary.fightAccepterSelectWeapon.getMedia();
+      const caption = this.dictionary.FightAccepterSelectWeapon.getMessage({ fighter1Name: this.fightAccepter.name });
+      const media = this.dictionary.FightAccepterSelectWeapon.getMedia();
 
       await this.tgBotListenerService.bot.editMessageMedia(
         {
@@ -166,7 +167,7 @@ export class Scene extends EventEmitter<SceneEvents> {
         {
           chat_id: this.chatId,
           message_id: this.challengeMessageId,
-          reply_markup: getChoseWeaponKeyboard(this.id).reply_markup,
+          reply_markup: getChoseWeaponReplyMarkup(this.id),
         },
       );
     });
@@ -184,7 +185,7 @@ export class Scene extends EventEmitter<SceneEvents> {
   private initFightStageOneListener(): void {
     this.on('fightStageOne', async () => {
       const message = await this.fightStageOne();
-      await delay(2000);
+      await delay(FIGHT_DELAY);
 
       this.emit('fightStageTwo', message);
     });
@@ -193,7 +194,7 @@ export class Scene extends EventEmitter<SceneEvents> {
   private initFightStageTwoListener(): void {
     this.on('fightStageTwo', async (challengeMessage) => {
       const message = await this.fightStageTwo(challengeMessage.message_id);
-      await delay(2000);
+      await delay(FIGHT_DELAY);
 
       this.emit('fightStageThree', message as TelegramBot.Message);
     });
@@ -202,7 +203,7 @@ export class Scene extends EventEmitter<SceneEvents> {
   private initFightStageThreeListener(): void {
     this.on('fightStageThree', async (challengeMessage) => {
       await this.fightStageThree(challengeMessage.message_id);
-      await delay(2000);
+      await delay(FIGHT_DELAY);
 
       await this.tgBotListenerService.bot.deleteMessage(this.chatId, challengeMessage.message_id);
       const { winner, looser } = this.fightEmitter.fight(this.fightAccepter);
@@ -219,18 +220,18 @@ export class Scene extends EventEmitter<SceneEvents> {
       looser.fights += 1;
       looser.looses += 1;
 
-      const caption = this.dictionary.final.getMessage({
+      const caption = this.dictionary.Final.getMessage({
         fighter1Name: winner.name,
         fighter2Name: looser.name,
         fighter1Weapon: this.weapons.get(winner.id),
         fighter2Weapon: this.weapons.get(looser.id),
-        fighter1SemenTotal: `${winner.semen}`,
-        fighter2SemenTotal: `${looser.semen}`,
-        fighter1SemenAdded: '+10',
-        fighter2SemenAdded: '-10',
+        fighter1ScoresTotal: `${winner.scores}`,
+        fighter2ScoresTotal: `${looser.scores}`,
+        fighter1ScoresAdded: '+10',
+        fighter2ScoresAdded: '-10',
       });
 
-      const media = this.dictionary.final.getMedia();
+      const media = this.dictionary.Final.getMedia();
 
       if (media.type === 'photo') {
         this.tgBotListenerService.bot.sendPhoto(this.chatId, media.id, { caption });
@@ -242,14 +243,14 @@ export class Scene extends EventEmitter<SceneEvents> {
   }
 
   private startChallenge(): void {
-    const caption = this.dictionary.startChallenge.getMessage({ fighter1Name: this.fightEmitter.name });
-    const media = this.dictionary.startChallenge.getMedia();
+    const caption = this.dictionary.StartChallenge.getMessage({ fighter1Name: this.fightEmitter.name });
+    const media = this.dictionary.StartChallenge.getMedia();
 
     if (media.type === 'photo') {
       this.tgBotListenerService.bot
         .sendPhoto(this.chatId, media.id, {
           caption,
-          reply_markup: getAcceptFightKeyboard(this.id).reply_markup,
+          reply_markup: getAcceptFightReplyMarkup(this.id),
         })
         .then((message: TelegramBot.Message) => {
           this.challengeMessageId = message.message_id;
@@ -259,7 +260,7 @@ export class Scene extends EventEmitter<SceneEvents> {
       this.tgBotListenerService.bot
         .sendAnimation(this.chatId, media.id, {
           caption,
-          reply_markup: getAcceptFightKeyboard(this.id).reply_markup,
+          reply_markup: getAcceptFightReplyMarkup(this.id),
         })
         .then((message: TelegramBot.Message) => {
           this.challengeMessageId = message.message_id;
@@ -269,18 +270,18 @@ export class Scene extends EventEmitter<SceneEvents> {
   }
 
   private startDuel(mentionedUsername: Mention): void {
-    const caption = this.dictionary.startDuel.getMessage({
+    const caption = this.dictionary.StartDuel.getMessage({
       fighter1Name: this.fightEmitter.name,
       fighter2Name: mentionedUsername,
     });
 
-    const media = this.dictionary.startDuel.getMedia();
+    const media = this.dictionary.StartDuel.getMedia();
 
     if (media.type === 'photo') {
       this.tgBotListenerService.bot
         .sendPhoto(this.chatId, media.id, {
           caption,
-          reply_markup: getAcceptFightKeyboard(this.id).reply_markup,
+          reply_markup: getAcceptFightReplyMarkup(this.id),
         })
         .then((message: TelegramBot.Message) => {
           this.challengeMessageId = message.message_id;
@@ -290,7 +291,7 @@ export class Scene extends EventEmitter<SceneEvents> {
       this.tgBotListenerService.bot
         .sendAnimation(this.chatId, media.id, {
           caption,
-          reply_markup: getAcceptFightKeyboard(this.id).reply_markup,
+          reply_markup: getAcceptFightReplyMarkup(this.id),
         })
         .then((message: TelegramBot.Message) => {
           this.challengeMessageId = message.message_id;
@@ -300,7 +301,7 @@ export class Scene extends EventEmitter<SceneEvents> {
   }
 
   private async fightStageOne(): Promise<TelegramBot.Message> {
-    const media = this.dictionary.fightStageOne.getMedia();
+    const media = this.dictionary.FightStageOne.getMedia();
 
     if (media.type === 'photo') {
       return this.tgBotListenerService.bot.sendPhoto(this.chatId, media.id);
@@ -310,7 +311,7 @@ export class Scene extends EventEmitter<SceneEvents> {
   }
 
   private async fightStageTwo(previousMessageId: number): Promise<boolean | TelegramBot.Message> {
-    const media = this.dictionary.fightStageTwo.getMedia();
+    const media = this.dictionary.FightStageTwo.getMedia();
 
     return await this.tgBotListenerService.bot.editMessageMedia(
       {
@@ -325,7 +326,7 @@ export class Scene extends EventEmitter<SceneEvents> {
   }
 
   private async fightStageThree(previousMessageId: number): Promise<boolean | TelegramBot.Message> {
-    const media = this.dictionary.fightStageThree.getMedia();
+    const media = this.dictionary.FightStageThree.getMedia();
 
     return await this.tgBotListenerService.bot.editMessageMedia(
       {

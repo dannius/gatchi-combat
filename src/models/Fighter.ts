@@ -1,5 +1,5 @@
 export class Fighter {
-  public semen = 200;
+  public scores = 200;
 
   public fights = 0;
   public wins = 0;
@@ -11,16 +11,16 @@ export class Fighter {
     const rand = Math.floor(Math.random() * 2);
 
     if (rand === 0) {
-      this.semen += 10;
-      enemy.semen -= 10;
+      this.scores += 10;
+      enemy.scores -= 10;
 
       return {
         winner: this,
         looser: enemy,
       };
     } else {
-      this.semen -= 10;
-      enemy.semen += 10;
+      this.scores -= 10;
+      enemy.scores += 10;
 
       return {
         winner: enemy,

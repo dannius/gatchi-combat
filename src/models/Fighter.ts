@@ -20,8 +20,8 @@ export class Fighter {
   }
 
   private getScoreResult(scoreWin: number, scoreLose: number): { winnerScore: number; looserScore: number } {
-    let finalWinScore = Math.floor(scoreLose * 0.134 + Math.random() * 50);
-    let finalLoseScore = Math.floor(scoreWin * 0.134 + Math.random() * 50);
+    let finalWinScore = Math.floor(scoreLose * 0.11 + Math.random() * 50);
+    let finalLoseScore = Math.floor(scoreWin * 0.11 + Math.random() * 50);
 
     if ((finalLoseScore / finalWinScore) * 100 < 80) {
       finalWinScore = Math.floor(scoreLose * 0.05 + Math.random() * 50);

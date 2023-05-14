@@ -262,9 +262,9 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
   },
   Final: {
     messagesBody: [
-      `Ебать ты!\nВсе белое!\n${TextKeys.fighter1Name} доказал, что он ⚣man⚣.\nУмело используя ${TextKeys.fighter1Weapon} он лишает ${TextKeys.fighter2Name} ${TextKeys.fighter2ScoresTotal} мл. ⚣semen⚣.`,
+      `Ебать ты!\nВсе белое!\n${TextKeys.fighter1Name} доказал, что он ⚣man⚣.\nУмело используя ${TextKeys.fighter1Weapon} он лишает ${TextKeys.fighter2Name} ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
       `${TextKeys.fighter2Name}, дружок пирожок,\nкажется ты ошибся дверью,\nклуб для ♂slaves♂ на 2 блока ниже`,
-      `${TextKeys.fighter1Name} Вот это ты дал используя ${TextKeys.fighter1Weapon},\nвсе в semen, ${TextKeys.fighter2Name} обесчестен,\nу него теперь ${TextKeys.fighter2ScoresTotal} на мл. меньше ⚣semen⚣ и сломанный ${TextKeys.fighter2Weapon}`,
+      `${TextKeys.fighter1Name} Вот это ты дал используя ${TextKeys.fighter1Weapon},\nвсе в semen, ${TextKeys.fighter2Name} обесчестен,\nу него теперь ${TextKeys.fighter2ScoresAdded} на мл. меньше ⚣semen⚣ и сломанный ${TextKeys.fighter2Weapon}`,
     ],
     messagesHeader: [
       `${TextKeys.fighter1Name} - ${TextKeys.fighter1ScoresTotal}(${TextKeys.fighter1ScoresAdded}) мл.\n${TextKeys.fighter2Name} - ${TextKeys.fighter2ScoresTotal}(${TextKeys.fighter2ScoresAdded}) мл.\n\n`,

@@ -6,6 +6,7 @@ import { BotListenerService } from 'src/services';
 
 import { Mention } from './mention.type';
 import { Dictionary } from 'src/lib/dictionary/dictionary';
+import { DictionaryActionTitles } from 'src/lib/dictionary/dictionary-messages';
 
 // 10 min
 const SCENE_LIVE_TIME = 10 * 1000 * 60;
@@ -223,8 +224,8 @@ export class Scene extends EventEmitter<SceneEvents> {
       const caption = this.dictionary.Final.getMessage({
         fighter1Name: winner.name,
         fighter2Name: looser.name,
-        fighter1Weapon: this.weapons.get(winner.id),
-        fighter2Weapon: this.weapons.get(looser.id),
+        fighter1Weapon: DictionaryActionTitles[this.weapons.get(winner.id)],
+        fighter2Weapon: DictionaryActionTitles[this.weapons.get(looser.id)],
         fighter1ScoresTotal: `${winner.scores}`,
         fighter2ScoresTotal: `${looser.scores}`,
         fighter1ScoresAdded: '+10',

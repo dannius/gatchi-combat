@@ -82,7 +82,7 @@ export class BotListenerService extends EventEmitter<BotEvents> {
   }
 
   private initQuoteListener(): void {
-    const quoteReg = new RegExp(`\/quote`);
+    const quoteReg = new RegExp(`^\/quote`);
 
     this.bot.onText(quoteReg, (msg) => {
       this.emit('quote', msg);
@@ -90,7 +90,7 @@ export class BotListenerService extends EventEmitter<BotEvents> {
   }
 
   private initStatisticListener(): void {
-    const StatsReg = new RegExp(`\/stats`);
+    const StatsReg = new RegExp(`^\/stats`);
 
     this.bot.onText(StatsReg, (msg) => {
       this.emit('stats', msg);

@@ -20,8 +20,8 @@ export class Fighter {
   }
 
   private getScoreResult(scoreWin: number, scoreLose: number): { winnerScore: number; looserScore: number } {
-    let finalWinScore = Math.floor(scoreLose * 0.134 + Math.floor(Math.random() * 50));
-    let finalLoseScore = Math.floor(scoreWin * 0.123 + Math.floor(Math.random() * 50));
+    let finalWinScore = Math.floor(scoreLose * 0.134 + Math.random() * 50);
+    let finalLoseScore = Math.floor(scoreWin * 0.134 + Math.random() * 50);
 
     if ((finalLoseScore / finalWinScore) * 100 < 80) {
       finalWinScore = Math.floor(scoreLose * 0.05 + Math.random() * 50);
@@ -33,10 +33,15 @@ export class Fighter {
       finalLoseScore = Math.floor(scoreWin * 0.05 + Math.random() * 50);
     }
 
-    // lucky win
     const isLuckyWin = 1 === Math.floor(Math.random() * 10);
+    const isLuckyLose = 2 === Math.floor(Math.random() * 10);
 
-    if (isLuckyWin) {
+    // lucky lose
+    if (isLuckyLose) {
+      finalWinScore = Math.floor(Math.random() * 10);
+      finalLoseScore = Math.floor(Math.random() * 10);
+      // lucky win
+    } else if (isLuckyWin) {
       finalWinScore = Math.floor(scoreLose * 0.25 + Math.random() * 80);
       finalLoseScore = Math.floor(scoreWin * 0.25 + Math.random() * 80);
     }

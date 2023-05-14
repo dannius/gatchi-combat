@@ -23,7 +23,7 @@ export class AppController {
     }
 
     // if (process.env.FILES === 'true') {
-    //   this.filesListener();
+    // this.filesListener();
     // }
   }
 

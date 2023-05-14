@@ -4,7 +4,9 @@ import { BotListenerService } from './services';
 import TelegramBot from 'node-telegram-bot-api';
 import { Dictionary } from './lib/dictionary/dictionary';
 import { DictionaryBase } from './lib/dictionary/dictionary-base';
-import { ActionType, WeaponType } from './lib';
+import { ActionType, NotifyMessage, WeaponType } from './lib';
+import { getQuoteOfTheDay } from './lib/dictionary/quotes';
+import { dailyRepeat } from './lib/util/deaily-repeat';
 
 @Controller()
 export class AppController {
@@ -12,10 +14,14 @@ export class AppController {
   private fighters = new Map<number, Fighter>();
   private finishedScenes = 0;
 
+  private quoteOfTheDay: NotifyMessage;
+
   constructor(private readonly botListenerService: BotListenerService) {
     this.initCallbackQuerySubscription();
     this.initChallangeQuerySubscription();
     this.initDuelSubscription();
+    this.initQuoteListener();
+    this.initStatsListener();
 
     // debug
     if (process.env.DEBUG === 'true') {
@@ -25,6 +31,33 @@ export class AppController {
     // if (process.env.FILES === 'true') {
     // this.filesListener();
     // }
+
+    this.quoteOfTheDay = getQuoteOfTheDay();
+
+    dailyRepeat(17, 54, () => {
+      this.quoteOfTheDay = getQuoteOfTheDay();
+      // this.botListenerService.notifyChats([1], this.quoteOfTheDay);
+    });
+  }
+
+  private initQuoteListener(): void {
+    this.botListenerService.on('quote', (message) => {
+      this.botListenerService.notifyChats([message.chat.id], this.quoteOfTheDay);
+    });
+  }
+
+  private initStatsListener(): void {
+    this.botListenerService.on('stats', (message) => {
+      const stats = Array.from(this.fighters.values())
+        .sort((a, b) => (a.scores > b.scores ? -1 : 1))
+        .reduce(
+          (acc, curr) =>
+            `${acc} </br> ${curr.name} (${curr.scores} scores) / fights: ${curr.fights}, wins: ${curr.wins}, looses: ${curr.looses}`,
+          '',
+        );
+
+      this.botListenerService.notifyChats([message.chat.id], { message: stats || 'Пусто' });
+    });
   }
 
   private initDuelSubscription(): void {

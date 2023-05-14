@@ -7,7 +7,8 @@ type BotEvents = {
   callbackQuery: [query: TelegramBot.CallbackQuery];
   challengeQuery: [message: TelegramBot.Message];
   duel: [message: TelegramBot.Message, mentionedUser: Mention];
-  quote: [message: TelegramBot.Message];
+  dailyQuote: [message: TelegramBot.Message];
+  randomQuote: [message: TelegramBot.Message];
   stats: [message: TelegramBot.Message];
 };
 
@@ -23,7 +24,8 @@ export class BotListenerService extends EventEmitter<BotEvents> {
       this.initMessageActionListeners();
       this.initCallbackQueryListener();
       this.initDuelListener();
-      this.initQuoteListener();
+      this.initRanodmQuoteListener();
+      this.initDailyQuoteListener();
       this.initStatisticListener();
     });
   }
@@ -81,16 +83,23 @@ export class BotListenerService extends EventEmitter<BotEvents> {
     });
   }
 
-  private initQuoteListener(): void {
-    const quoteReg = new RegExp(`\/quote`);
+  private initDailyQuoteListener(): void {
+    const quoteReg = new RegExp(`^\/daily_quote`);
 
     this.bot.onText(quoteReg, (msg) => {
-      this.emit('quote', msg);
+      this.emit('dailyQuote', msg);
+    });
+  }
+  private initRanodmQuoteListener(): void {
+    const quoteReg = new RegExp(`^\/random_quote`);
+
+    this.bot.onText(quoteReg, (msg) => {
+      this.emit('randomQuote', msg);
     });
   }
 
   private initStatisticListener(): void {
-    const StatsReg = new RegExp(`\/stats`);
+    const StatsReg = new RegExp(`^\/stats`);
 
     this.bot.onText(StatsReg, (msg) => {
       this.emit('stats', msg);

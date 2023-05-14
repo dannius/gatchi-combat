@@ -667,7 +667,7 @@ const medias: Media[] = [
   },
 ];
 
-export function getQuoteOfTheDay(): NotifyMessage {
+export function getQuote(): NotifyMessage {
   const quoteIndex = random(0, quotes.length - 1);
   const mediaIndex = random(0, medias.length - 1);
 

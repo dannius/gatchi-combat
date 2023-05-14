@@ -5,7 +5,7 @@ import TelegramBot from 'node-telegram-bot-api';
 import { Dictionary } from './lib/dictionary/dictionary';
 import { DictionaryBase } from './lib/dictionary/dictionary-base';
 import { ActionType, NotifyMessage, WeaponType } from './lib';
-import { getQuoteOfTheDay } from './lib/dictionary/quotes';
+import { getQuote } from './lib/dictionary/quotes';
 import { dailyRepeat } from './lib/util/deaily-repeat';
 
 @Controller()
@@ -20,7 +20,8 @@ export class AppController {
     this.initCallbackQuerySubscription();
     this.initChallangeQuerySubscription();
     this.initDuelSubscription();
-    this.initQuoteListener();
+    this.initRandomQuoteListener();
+    this.initDailyQuoteListener();
     this.initStatsListener();
 
     // debug
@@ -32,16 +33,22 @@ export class AppController {
     // this.filesListener();
     // }
 
-    this.quoteOfTheDay = getQuoteOfTheDay();
+    this.quoteOfTheDay = getQuote();
 
     dailyRepeat(17, 54, () => {
-      this.quoteOfTheDay = getQuoteOfTheDay();
+      this.quoteOfTheDay = getQuote();
       // this.botListenerService.notifyChats([1], this.quoteOfTheDay);
     });
   }
 
-  private initQuoteListener(): void {
-    this.botListenerService.on('quote', (message) => {
+  private initRandomQuoteListener(): void {
+    this.botListenerService.on('randomQuote', (message) => {
+      this.botListenerService.notifyChats([message.chat.id], getQuote());
+    });
+  }
+
+  private initDailyQuoteListener(): void {
+    this.botListenerService.on('dailyQuote', (message) => {
       this.botListenerService.notifyChats([message.chat.id], this.quoteOfTheDay);
     });
   }

@@ -1,12 +1,22 @@
-export class Fighter {
-  public scores = 600;
+import { FighterDTO } from 'src/db/fighters';
 
+export class Fighter implements FighterDTO {
+  public userId: number;
+  public name: string;
+  public scores = 600;
   public fights = 0;
   public wins = 0;
   public looses = 0;
   private resultStatuses = ['win', 'lose'];
 
-  constructor(public id: number, public name: string) {}
+  constructor(dto: Partial<FighterDTO>) {
+    if (dto.userId) this.userId = dto.userId;
+    if (dto.name) this.name = dto.name;
+    if (dto.scores) this.scores = dto.scores;
+    if (dto.fights) this.fights = dto.fights;
+    if (dto.wins) this.wins = dto.wins;
+    if (dto.looses) this.looses = dto.looses;
+  }
 
   public fight(enemy: Fighter): { winner: Fighter; looser: Fighter; addedWin: number; addedLose: number } {
     const rand = this.resultStatuses[Math.floor(Math.random() * 2)];

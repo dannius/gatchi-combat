@@ -1,22 +1,25 @@
 import { Controller, Get } from '@nestjs/common';
-import { Fighter, Mention, Scene } from './models';
+import { Fighter, Scene } from './models';
 import { BotListenerService } from './services';
 import TelegramBot from 'node-telegram-bot-api';
 import { Dictionary } from './lib/dictionary/dictionary';
 import { DictionaryBase } from './lib/dictionary/dictionary-base';
-import { ActionType, NotifyMessage, WeaponType } from './lib';
+import { ActionType, NotifyMessage, WeaponType, Mention } from './lib';
 import { getQuote } from './lib/dictionary/quotes';
 import { dailyRepeat } from './lib/util/deaily-repeat';
+import { FighterService } from './db/fighters';
 
 @Controller()
 export class AppController {
   private scenes = new Map<string, Scene>();
-  private fighters = new Map<number, Fighter>();
   private finishedScenes = 0;
 
   private quoteOfTheDay: NotifyMessage;
 
-  constructor(private readonly botListenerService: BotListenerService) {
+  constructor(
+    private readonly botListenerService: BotListenerService,
+    private readonly fightersService: FighterService,
+  ) {
     this.initCallbackQuerySubscription();
     this.initChallangeQuerySubscription();
     this.initDuelSubscription();
@@ -54,8 +57,10 @@ export class AppController {
   }
 
   private initStatsListener(): void {
-    this.botListenerService.on('stats', (message) => {
-      const stats = Array.from(this.fighters.values())
+    this.botListenerService.on('stats', async (message) => {
+      const fighters = await this.fightersService.findAll();
+
+      const stats = Array.from(fighters)
         .sort((a, b) => (a.scores > b.scores ? -1 : 1))
         .reduce(
           (acc, curr) =>
@@ -77,8 +82,8 @@ export class AppController {
     this.botListenerService.on('challengeQuery', (message) => this.createFightScene(message));
   }
 
-  private createFightScene(message: TelegramBot.Message, mentionedUsername?: Mention): void {
-    const fighter = this.createOrGetExistingFighter(message.from.id, message.from.username);
+  private async createFightScene(message: TelegramBot.Message, mentionedUsername?: Mention): Promise<void> {
+    const fighter = await this.createOrGetExistingFighter(message.from.id, message.from.username);
 
     const scene = new Scene(this.botListenerService, Dictionary, message.chat.id, fighter, mentionedUsername);
     this.scenes.set(scene.id, scene);
@@ -120,24 +125,24 @@ export class AppController {
     });
   }
 
-  private acceptFight(scene: Scene, query: TelegramBot.CallbackQuery): void {
+  private async acceptFight(scene: Scene, query: TelegramBot.CallbackQuery): Promise<void> {
     if (!scene.canAcceptFight(query.from)) {
       return;
     }
 
-    const acceptFighter = this.createOrGetExistingFighter(query.from.id, query.from.username);
+    const acceptFighter = await this.createOrGetExistingFighter(query.from.id, query.from.username);
     scene.fight(acceptFighter);
   }
 
-  private createOrGetExistingFighter(id: number, name: string): Fighter {
-    const existingFighter = this.fighters.get(id);
+  private async createOrGetExistingFighter(id: number, name: string): Promise<Fighter> {
+    const fighterDTO = await this.fightersService.get(id);
 
-    if (existingFighter) {
-      return existingFighter;
+    if (fighterDTO) {
+      return new Fighter(fighterDTO);
     }
 
-    const newFighter = new Fighter(id, name);
-    this.fighters.set(id, newFighter);
+    const newFighter = new Fighter({ userId: id, name });
+    this.fightersService.create(newFighter).then(() => console.log('created'));
 
     return newFighter;
   }
@@ -181,8 +186,9 @@ export class AppController {
   }
 
   @Get()
-  getHello(): string {
-    const fighters = Array.from(this.fighters.values())
+  async getHello(): Promise<string> {
+    const fighters = await this.fightersService.findAll();
+    fighters
       .sort((a, b) => (a.scores > b.scores ? -1 : 1))
       .reduce(
         (acc, curr) =>

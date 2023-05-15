@@ -1,7 +1,7 @@
+import { Mention } from 'src/lib';
 import { Injectable } from '@nestjs/common';
 import TelegramBot = require('node-telegram-bot-api');
 import { EventEmitter, NotifyMessage } from 'src/lib';
-import { Mention } from 'src/models';
 
 type BotEvents = {
   callbackQuery: [query: TelegramBot.CallbackQuery];

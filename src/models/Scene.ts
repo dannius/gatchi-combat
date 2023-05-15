@@ -1,10 +1,9 @@
 import { Fighter } from './Fighter';
 import { getAcceptFightReplyMarkup, getChoseWeaponReplyMarkup } from 'src/lib/keyboards';
 import TelegramBot = require('node-telegram-bot-api');
-import { EventEmitter, WeaponType, delay, guid } from 'src/lib';
+import { EventEmitter, WeaponType, delay, guid, Mention } from 'src/lib';
 import { BotListenerService } from 'src/services';
 
-import { Mention } from './mention.type';
 import { Dictionary } from 'src/lib/dictionary/dictionary';
 import { DictionaryActionTitles } from 'src/lib/dictionary/dictionary-messages';
 
@@ -38,7 +37,7 @@ export class Scene extends EventEmitter<SceneEvents> {
   private challengeMessageId: number;
 
   private get sceneFighterId(): number {
-    return this.fightEmitter.id;
+    return this.fightEmitter.userId;
   }
 
   private get isDuel(): boolean {
@@ -95,11 +94,11 @@ export class Scene extends EventEmitter<SceneEvents> {
   }
 
   public setWeapon(weaponType: WeaponType, fighterId: number): void {
-    const emitterWeapon = this.weapons.get(this.fightEmitter.id);
+    const emitterWeapon = this.weapons.get(this.fightEmitter.userId);
 
-    if (!emitterWeapon && this.fightEmitter.id === fighterId) {
+    if (!emitterWeapon && this.fightEmitter.userId === fighterId) {
       this.emit('afterFightEmitterWeaponChoosen', weaponType);
-    } else if (!!emitterWeapon && this.fightAccepter.id === fighterId) {
+    } else if (!!emitterWeapon && this.fightAccepter.userId === fighterId) {
       this.emit('afterFightAccepterWeaponChoosen', weaponType);
     }
   }
@@ -149,7 +148,7 @@ export class Scene extends EventEmitter<SceneEvents> {
 
   private afterFightEmitterWeaponChooseListener(): void {
     this.on('afterFightEmitterWeaponChoosen', (weapon) => {
-      this.weapons.set(this.fightEmitter.id, weapon);
+      this.weapons.set(this.fightEmitter.userId, weapon);
       this.emit('beforeFightAccepterWeaponChoosen');
     });
   }
@@ -177,7 +176,7 @@ export class Scene extends EventEmitter<SceneEvents> {
   private afterFightAccepterWeaponChooseListener(): void {
     this.on('afterFightAccepterWeaponChoosen', async (weapon) => {
       await this.tgBotListenerService.bot.deleteMessage(this.chatId, this.challengeMessageId);
-      this.weapons.set(this.fightAccepter.id, weapon);
+      this.weapons.set(this.fightAccepter.userId, weapon);
 
       this.emit('fightStageOne');
     });
@@ -224,8 +223,8 @@ export class Scene extends EventEmitter<SceneEvents> {
       const caption = this.dictionary.Final.getMessage({
         fighter1Name: winner.name,
         fighter2Name: looser.name,
-        fighter1Weapon: DictionaryActionTitles[this.weapons.get(winner.id)],
-        fighter2Weapon: DictionaryActionTitles[this.weapons.get(looser.id)],
+        fighter1Weapon: DictionaryActionTitles[this.weapons.get(winner.userId)],
+        fighter2Weapon: DictionaryActionTitles[this.weapons.get(looser.userId)],
         fighter1ScoresTotal: `${winner.scores}`,
         fighter2ScoresTotal: `${looser.scores}`,
         fighter1ScoresAdded: `+${addedWin}`,

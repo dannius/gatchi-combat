@@ -38,10 +38,10 @@ export class Fighter {
       return { winnerScore: finalWinScore, looserScore: finalLoseScore };
     }
 
-    if ((finalLoseScore / finalWinScore) * 100 < 70) {
+    if ((scoreLose / scoreWin) * 100 < 70) {
       finalWinScore = Math.floor(scoreLose * 0.05 + Math.random() * 40);
       finalLoseScore = Math.floor(scoreWin * 0.05 + Math.random() * 40);
-    } else if ((finalWinScore / finalLoseScore) * 100 < 60) {
+    } else if ((scoreWin / scoreLose) * 100 < 60) {
       finalWinScore = Math.floor(scoreLose * 0.15 + Math.random() * 60);
       finalLoseScore = Math.floor(scoreWin * 0.15 + Math.random() * 60);
     }

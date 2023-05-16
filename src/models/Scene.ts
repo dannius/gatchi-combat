@@ -9,7 +9,6 @@ import { DictionaryActionTitles } from 'src/lib/dictionary/dictionary-messages';
 
 // 10 min
 const SCENE_LIVE_TIME = 10 * 1000 * 60;
-
 const FIGHT_DELAY = 3 * 1000;
 
 type SceneEvents = {
@@ -24,6 +23,7 @@ type SceneEvents = {
   fightStageTwo: [message: TelegramBot.Message];
   fightStageThree: [message: TelegramBot.Message];
   fightFinished: [winner: Fighter, looser: Fighter, addedWin: number, addedLose: number];
+  // scene might be removed and not finished
   destroy: [finished: boolean];
 };
 

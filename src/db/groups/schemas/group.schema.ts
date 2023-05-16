@@ -1,16 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
 
 export interface GroupDTO {
   groupId: number;
   name: string;
-  users: string[];
+  fighters: { userId: number; scores: number }[];
 }
 
-export type GroupDocument = HydratedDocument<Group>;
-
 @Schema()
-export class Group {
+export class Group implements GroupDTO {
   @Prop()
   groupId: number;
 
@@ -18,7 +15,7 @@ export class Group {
   name: string;
 
   @Prop()
-  users: string[];
+  fighters: { userId: number; scores: number }[];
 }
 
 export const GroupSchema = SchemaFactory.createForClass(Group);

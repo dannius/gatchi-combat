@@ -1,5 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
 
 export interface FighterDTO {
   userId: number;
@@ -10,10 +9,8 @@ export interface FighterDTO {
   looses: number;
 }
 
-export type FighterDocument = HydratedDocument<Fighter>;
-
 @Schema()
-export class Fighter {
+export class Fighter implements FighterDTO {
   @Prop()
   userId: number;
 

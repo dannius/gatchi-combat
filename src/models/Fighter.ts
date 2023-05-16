@@ -10,12 +10,12 @@ export class Fighter implements FighterDTO {
   private resultStatuses = ['win', 'lose'];
 
   constructor(dto: Partial<FighterDTO>) {
-    if (dto.userId) this.userId = dto.userId;
-    if (dto.name) this.name = dto.name;
-    if (dto.scores) this.scores = dto.scores;
-    if (dto.fights) this.fights = dto.fights;
-    if (dto.wins) this.wins = dto.wins;
-    if (dto.looses) this.looses = dto.looses;
+    if (dto.userId !== undefined) this.userId = dto.userId;
+    if (dto.name !== undefined) this.name = dto.name;
+    if (dto.scores !== undefined) this.scores = dto.scores;
+    if (dto.fights !== undefined) this.fights = dto.fights;
+    if (dto.wins !== undefined) this.wins = dto.wins;
+    if (dto.looses !== undefined) this.looses = dto.looses;
   }
 
   public fight(enemy: Fighter): { winner: Fighter; looser: Fighter; addedWin: number; addedLose: number } {

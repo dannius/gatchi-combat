@@ -75,7 +75,9 @@ export class Scene extends EventEmitter<SceneEvents> {
 
     // destroy scene if no resonse
     setTimeout(async () => {
-      await this.tgBotListenerService.bot.deleteMessage(this.chatId, this.challengeMessageId);
+      try {
+        await this.tgBotListenerService.bot.deleteMessage(this.chatId, this.challengeMessageId);
+      } catch {}
 
       this.emit('destroy', false);
     }, SCENE_LIVE_TIME);

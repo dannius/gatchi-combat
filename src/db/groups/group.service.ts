@@ -5,23 +5,23 @@ import { Group, GroupDTO } from './schemas/group.schema';
 
 @Injectable()
 export class GroupService {
-  constructor(@InjectModel(Group.name) private fighterModel: Model<Group>) {}
+  constructor(@InjectModel(Group.name) private groupModel: Model<Group>) {}
 
-  async create(fighterDto: GroupDTO): Promise<GroupDTO> {
-    const createFighter = new this.fighterModel(fighterDto);
+  async create(groupDto: GroupDTO): Promise<GroupDTO> {
+    const createFighter = new this.groupModel(groupDto);
 
     return createFighter.save();
   }
 
   async get(groupId: number): Promise<GroupDTO> {
-    return this.fighterModel.findOne({ groupId }).exec();
+    return this.groupModel.findOne({ groupId }).exec();
   }
 
   async findAll(): Promise<GroupDTO[]> {
-    return this.fighterModel.find().exec();
+    return this.groupModel.find().exec();
   }
 
   async update(group: Group): Promise<Group> {
-    return this.fighterModel.findOneAndUpdate({ groupId: group.groupId }, group, { new: true });
+    return this.groupModel.findOneAndUpdate({ groupId: group.groupId }, group, { new: true });
   }
 }

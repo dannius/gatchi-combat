@@ -20,4 +20,8 @@ export class FighterService {
   async findAll(): Promise<FighterDTO[]> {
     return this.fighterModel.find().exec();
   }
+
+  async update(fighter: Fighter): Promise<Fighter> {
+    return this.fighterModel.findOneAndUpdate({ userId: fighter.userId }, fighter, { new: true });
+  }
 }

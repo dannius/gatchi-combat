@@ -30,7 +30,7 @@ type SceneEvents = {
 export class Scene extends EventEmitter<SceneEvents> {
   public id = guid();
 
-  private fightAccepter: Fighter;
+  public fightAccepter: Fighter;
 
   private readonly weapons = new Map<number, WeaponType>();
 
@@ -48,7 +48,7 @@ export class Scene extends EventEmitter<SceneEvents> {
     private tgBotListenerService: BotListenerService,
     private dictionary: typeof Dictionary,
     private chatId: number,
-    private fightEmitter: Fighter,
+    public fightEmitter: Fighter,
     private mentionedUserName?: Mention,
   ) {
     super();

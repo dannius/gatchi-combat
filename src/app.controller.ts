@@ -91,6 +91,8 @@ export class AppController {
     scene.on('destroy', (isFinished) => {
       if (isFinished) {
         this.finishedScenes++;
+        this.fightersService.update(scene.fightEmitter);
+        this.fightersService.update(scene.fightAccepter);
       }
 
       this.scenes.delete(scene.id);

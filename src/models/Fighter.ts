@@ -30,8 +30,10 @@ export class Fighter implements FighterDTO {
   }
 
   private getScoreResult(scoreWin: number, scoreLose: number): { winnerScore: number; looserScore: number } {
-    let finalWinScore = Math.floor(scoreLose * 0.11 + Math.random() * 50);
-    let finalLoseScore = Math.floor(scoreWin * 0.11 + Math.random() * 50);
+    const scoreWinAbs = Math.abs(scoreWin);
+    const scoreLoseAbs = Math.abs(scoreLose);
+    let finalWinScore = Math.floor(scoreLoseAbs * 0.11 + Math.random() * 50);
+    let finalLoseScore = Math.floor(scoreWinAbs * 0.11 + Math.random() * 50);
 
     const isLuckyWin = 1 === Math.floor(Math.random() * 10);
     const isLuckyLose = 2 === Math.floor(Math.random() * 10);
@@ -43,17 +45,17 @@ export class Fighter implements FighterDTO {
       return { winnerScore: finalWinScore, looserScore: finalLoseScore };
       // lucky win
     } else if (isLuckyWin) {
-      finalWinScore = Math.floor(scoreLose * 0.25 + Math.random() * 80);
-      finalLoseScore = Math.floor(scoreWin * 0.25 + Math.random() * 80);
+      finalWinScore = Math.floor(scoreLoseAbs * 0.25 + Math.random() * 80);
+      finalLoseScore = Math.floor(scoreWinAbs * 0.25 + Math.random() * 80);
       return { winnerScore: finalWinScore, looserScore: finalLoseScore };
     }
 
-    if ((scoreLose / scoreWin) * 100 < 70) {
-      finalWinScore = Math.floor(scoreLose * 0.05 + Math.random() * 40);
-      finalLoseScore = Math.floor(scoreWin * 0.05 + Math.random() * 40);
-    } else if ((scoreWin / scoreLose) * 100 < 60) {
-      finalWinScore = Math.floor(scoreLose * 0.15 + Math.random() * 60);
-      finalLoseScore = Math.floor(scoreWin * 0.15 + Math.random() * 60);
+    if ((scoreLoseAbs / scoreWinAbs) * 100 < 70) {
+      finalWinScore = Math.floor(scoreLoseAbs * 0.05 + Math.random() * 40);
+      finalLoseScore = Math.floor(scoreWinAbs * 0.05 + Math.random() * 40);
+    } else if ((scoreWinAbs / scoreLoseAbs) * 100 < 60) {
+      finalWinScore = Math.floor(scoreLoseAbs * 0.15 + Math.random() * 60);
+      finalLoseScore = Math.floor(scoreWinAbs * 0.15 + Math.random() * 60);
     }
 
     return { winnerScore: finalWinScore, looserScore: finalLoseScore };

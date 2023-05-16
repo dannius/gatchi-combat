@@ -1,7 +1,7 @@
 import { FighterDTO } from 'src/db/fighters';
 
 export class Fighter implements FighterDTO {
-  public userId: number;
+  public userId: string;
   public name: string;
   public scores = 600;
   public fights = 0;

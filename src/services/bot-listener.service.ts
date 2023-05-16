@@ -6,10 +6,13 @@ import { EventEmitter, NotifyMessage } from 'src/lib';
 type BotEvents = {
   callbackQuery: [query: TelegramBot.CallbackQuery];
   challengeQuery: [message: TelegramBot.Message];
+  addedToGroup: [message: TelegramBot.Message];
   duel: [message: TelegramBot.Message, mentionedUser: Mention];
   dailyQuote: [message: TelegramBot.Message];
   randomQuote: [message: TelegramBot.Message];
   stats: [message: TelegramBot.Message];
+  chatStats: [message: TelegramBot.Message];
+  toggleDailyQuote: [message: TelegramBot.Message];
 };
 
 @Injectable()
@@ -27,6 +30,8 @@ export class BotListenerService extends EventEmitter<BotEvents> {
       this.initRanodmQuoteListener();
       this.initDailyQuoteListener();
       this.initStatisticListener();
+      this.initGroupStatisticListener();
+      this.initDailyQuoteSwitcherListener();
     });
   }
 
@@ -103,6 +108,22 @@ export class BotListenerService extends EventEmitter<BotEvents> {
 
     this.bot.onText(StatsReg, (msg) => {
       this.emit('stats', msg);
+    });
+  }
+
+  private initGroupStatisticListener(): void {
+    const StatsReg = new RegExp(`^\/chat_stats`);
+
+    this.bot.onText(StatsReg, (msg) => {
+      this.emit('chatStats', msg);
+    });
+  }
+
+  private initDailyQuoteSwitcherListener(): void {
+    const StatsReg = new RegExp(`^\/toggle_daily_quote`);
+
+    this.bot.onText(StatsReg, (msg) => {
+      this.emit('toggleDailyQuote', msg);
     });
   }
 

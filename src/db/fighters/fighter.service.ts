@@ -1,11 +1,11 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Fighter, FighterDTO } from './schemas/fighter.schema';
+import { FightersTable, FighterDTO } from './schemas/fighter.schema';
 
 @Injectable()
 export class FighterService {
-  constructor(@InjectModel(Fighter.name) private fighterModel: Model<Fighter>) {}
+  constructor(@InjectModel(FightersTable.name) private fighterModel: Model<FightersTable>) {}
 
   async create(fighterDto: FighterDTO): Promise<FighterDTO> {
     const createFighter = new this.fighterModel(fighterDto);
@@ -13,15 +13,15 @@ export class FighterService {
     return createFighter.save();
   }
 
-  async get(userId: number): Promise<FighterDTO> {
+  async get(userId: string): Promise<FighterDTO> {
     return this.fighterModel.findOne({ userId }).exec();
   }
 
-  async findAll(): Promise<FighterDTO[]> {
-    return this.fighterModel.find().exec();
+  async findAllWithLimit(limit = 100): Promise<FighterDTO[]> {
+    return this.fighterModel.find().sort({ scores: 1 }).limit(limit).exec();
   }
 
-  async update(fighter: Fighter): Promise<Fighter> {
+  async update(fighter: FightersTable): Promise<FightersTable> {
     return this.fighterModel.findOneAndUpdate({ userId: fighter.userId }, fighter, { new: true });
   }
 }

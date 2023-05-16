@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { FighterService } from './fighter.service';
-import { Fighter, FighterSchema } from './schemas/fighter.schema';
+import { FightersTable, FighterSchema } from './schemas/fighter.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Fighter.name, schema: FighterSchema }])],
+  imports: [MongooseModule.forFeature([{ name: FightersTable.name, schema: FighterSchema }])],
   providers: [FighterService],
   exports: [FighterService],
 })

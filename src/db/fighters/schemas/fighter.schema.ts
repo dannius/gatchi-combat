@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 export interface FighterDTO {
-  userId: number;
+  userId: string;
   name: string;
   scores: number;
   fights: number;
@@ -10,9 +10,9 @@ export interface FighterDTO {
 }
 
 @Schema()
-export class Fighter implements FighterDTO {
+export class FightersTable implements FighterDTO {
   @Prop()
-  userId: number;
+  userId: string;
 
   @Prop()
   name: string;
@@ -30,4 +30,4 @@ export class Fighter implements FighterDTO {
   looses: number;
 }
 
-export const FighterSchema = SchemaFactory.createForClass(Fighter);
+export const FighterSchema = SchemaFactory.createForClass(FightersTable);

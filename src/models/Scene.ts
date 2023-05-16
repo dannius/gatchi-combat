@@ -11,6 +11,12 @@ import { DictionaryActionTitles } from 'src/lib/dictionary/dictionary-messages';
 const SCENE_LIVE_TIME = 10 * 1000 * 60;
 const FIGHT_DELAY = 3 * 1000;
 
+export type FinisSceneFighter = {
+  fighter: Fighter;
+  weapon: WeaponType;
+  addedScores: number;
+};
+
 type SceneEvents = {
   sceneCreated: [];
   challengeEmitted: [message: TelegramBot.Message];
@@ -22,21 +28,21 @@ type SceneEvents = {
   fightStageOne: [];
   fightStageTwo: [message: TelegramBot.Message];
   fightStageThree: [message: TelegramBot.Message];
-  fightFinished: [winner: Fighter, looser: Fighter, addedWin: number, addedLose: number];
+  fightFinished: [winner: FinisSceneFighter, looser: FinisSceneFighter];
   // scene might be removed and not finished
-  destroy: [finished: boolean];
+  destroy: [];
 };
 
 export class Scene extends EventEmitter<SceneEvents> {
   public id = guid();
 
-  public fightAccepter: Fighter;
+  private fightAccepter: Fighter;
 
-  private readonly weapons = new Map<number, WeaponType>();
+  private readonly weapons = new Map<string, WeaponType>();
 
   private challengeMessageId: number;
 
-  private get sceneFighterId(): number {
+  private get sceneFighterId(): string {
     return this.fightEmitter.userId;
   }
 
@@ -48,7 +54,7 @@ export class Scene extends EventEmitter<SceneEvents> {
     private tgBotListenerService: BotListenerService,
     private dictionary: typeof Dictionary,
     private chatId: number,
-    public fightEmitter: Fighter,
+    private fightEmitter: Fighter,
     private mentionedUserName?: Mention,
   ) {
     super();
@@ -79,12 +85,12 @@ export class Scene extends EventEmitter<SceneEvents> {
         await this.tgBotListenerService.bot.deleteMessage(this.chatId, this.challengeMessageId);
       } catch {}
 
-      this.emit('destroy', false);
+      this.emit('destroy');
     }, SCENE_LIVE_TIME);
   }
 
   public canAcceptFight({ id, username }: TelegramBot.User): boolean {
-    const isSelfAccepted = this.sceneFighterId === id;
+    const isSelfAccepted = this.sceneFighterId === `${id}`;
 
     if (this.isDuel) {
       const isValidDuel = this.mentionedUserName === `@${username}`;
@@ -95,8 +101,8 @@ export class Scene extends EventEmitter<SceneEvents> {
     return (isSelfAccepted && process.env.ALLOW_SELF_FIGHT === 'true') || !isSelfAccepted;
   }
 
-  public setWeapon(weaponType: WeaponType, fighterId: number): void {
-    const emitterWeapon = this.weapons.get(this.fightEmitter.userId);
+  public setWeapon(weaponType: WeaponType, fighterId: string): void {
+    const emitterWeapon = this.getWeapon(this.fightEmitter.userId);
 
     if (!emitterWeapon && this.fightEmitter.userId === fighterId) {
       this.emit('afterFightEmitterWeaponChoosen', weaponType);
@@ -107,6 +113,10 @@ export class Scene extends EventEmitter<SceneEvents> {
 
   public fight(fightAccepter: Fighter): void {
     this.emit('fightAccepted', fightAccepter);
+  }
+
+  private getWeapon(userId: string): WeaponType {
+    return this.weapons.get(userId);
   }
 
   private initSceneCreatedListener(): void {
@@ -209,28 +219,41 @@ export class Scene extends EventEmitter<SceneEvents> {
 
       await this.tgBotListenerService.bot.deleteMessage(this.chatId, challengeMessage.message_id);
       const { winner, looser, addedWin, addedLose } = this.fightEmitter.fight(this.fightAccepter);
-      this.emit('fightFinished', winner, looser, addedWin, addedLose);
+
+      const winObject = {
+        fighter: winner,
+        addedScores: addedWin,
+        weapon: this.getWeapon(winner.userId),
+      };
+
+      const loseObject = {
+        fighter: looser,
+        addedScores: addedLose,
+        weapon: this.getWeapon(looser.userId),
+      };
+
+      this.emit('fightFinished', winObject, loseObject);
     });
   }
 
   private initFightFinishedListener(): void {
     // finish
-    this.on('fightFinished', (winner, looser, addedWin, addedLose) => {
-      winner.fights += 1;
-      winner.wins += 1;
+    this.on('fightFinished', (winner, looser) => {
+      winner.fighter.fights += 1;
+      winner.fighter.wins += 1;
 
-      looser.fights += 1;
-      looser.looses += 1;
+      looser.fighter.fights += 1;
+      looser.fighter.looses += 1;
 
       const caption = this.dictionary.Final.getMessage({
-        fighter1Name: winner.name,
-        fighter2Name: looser.name,
-        fighter1Weapon: DictionaryActionTitles[this.weapons.get(winner.userId)],
-        fighter2Weapon: DictionaryActionTitles[this.weapons.get(looser.userId)],
-        fighter1ScoresTotal: `${winner.scores}`,
-        fighter2ScoresTotal: `${looser.scores}`,
-        fighter1ScoresAdded: `+${addedWin}`,
-        fighter2ScoresAdded: `-${addedLose}`,
+        fighter1Name: winner.fighter.name,
+        fighter2Name: looser.fighter.name,
+        fighter1Weapon: DictionaryActionTitles[this.getWeapon(winner.fighter.userId)],
+        fighter2Weapon: DictionaryActionTitles[this.getWeapon(looser.fighter.userId)],
+        fighter1ScoresTotal: `${winner.fighter.scores}`,
+        fighter2ScoresTotal: `${looser.fighter.scores}`,
+        fighter1ScoresAdded: `+${winner.addedScores}`,
+        fighter2ScoresAdded: `-${looser.addedScores}`,
       });
 
       const media = this.dictionary.Final.getMedia();
@@ -240,7 +263,7 @@ export class Scene extends EventEmitter<SceneEvents> {
       } else if (media.type === 'video') {
         this.tgBotListenerService.bot.sendAnimation(this.chatId, media.id, { caption });
       }
-      this.emit('destroy', true);
+      this.emit('destroy');
     });
   }
 

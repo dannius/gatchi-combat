@@ -2,20 +2,20 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 export interface GroupDTO {
   groupId: number;
-  name: string;
-  fighters: { userId: number; scores: number }[];
+  allowDailyQuote: boolean;
+  fighters: Map<string, { name: string; scores: number }>;
 }
 
 @Schema()
-export class Group implements GroupDTO {
+export class GroupsTable implements GroupDTO {
   @Prop()
   groupId: number;
 
   @Prop()
-  name: string;
+  fighters: Map<string, { name: string; scores: number }>;
 
   @Prop()
-  fighters: { userId: number; scores: number }[];
+  allowDailyQuote: boolean;
 }
 
-export const GroupSchema = SchemaFactory.createForClass(Group);
+export const GroupSchema = SchemaFactory.createForClass(GroupsTable);

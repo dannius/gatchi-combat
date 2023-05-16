@@ -41,7 +41,10 @@ export const DictionaryActionTitles: Record<ActionType | WeaponType, string> = {
 
 export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBaseParams> = {
   StartChallenge: {
-    messagesBody: [`@${TextKeys.fighter1Name} желает надрать кому нибудь зад`, `@${TextKeys.fighter1Name} спускается в ♂dungeon♂ и желает померяться ♂semen♂`],
+    messagesBody: [
+      `@${TextKeys.fighter1Name} желает надрать кому нибудь зад`,
+      `@${TextKeys.fighter1Name} спускается в ♂dungeon♂ и желает померяться ♂semen♂`,
+    ],
     medias: [
       {
         type: 'photo',
@@ -54,7 +57,10 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
     ],
   },
   StartDuel: {
-    messagesBody: [`@${TextKeys.fighter1Name} изьявил желание надрать ${TextKeys.fighter2Name} зад, примет ли он бой?`, `@${TextKeys.fighter1Name} хочет проверить ${TextKeys.fighter2Name} на прочность`],
+    messagesBody: [
+      `@${TextKeys.fighter1Name} изьявил желание надрать ${TextKeys.fighter2Name} зад, примет ли он бой?`,
+      `@${TextKeys.fighter1Name} хочет проверить ${TextKeys.fighter2Name} на прочность`,
+    ],
     medias: [
       {
         type: 'photo',
@@ -104,7 +110,7 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
     ],
   },
   FightAccepterSelectWeapon: {
-    messagesBody: [`@${TextKeys.fighter1Name} выбирай оружие`],
+    messagesBody: [`Твой ход @${TextKeys.fighter1Name}`],
     medias: [
       {
         type: 'video',

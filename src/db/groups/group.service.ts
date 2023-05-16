@@ -1,11 +1,11 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Group, GroupDTO } from './schemas/group.schema';
+import { GroupsTable, GroupDTO } from './schemas/group.schema';
 
 @Injectable()
 export class GroupService {
-  constructor(@InjectModel(Group.name) private groupModel: Model<Group>) {}
+  constructor(@InjectModel(GroupsTable.name) private groupModel: Model<GroupsTable>) {}
 
   async create(groupDto: GroupDTO): Promise<GroupDTO> {
     const createFighter = new this.groupModel(groupDto);
@@ -21,7 +21,11 @@ export class GroupService {
     return this.groupModel.find().exec();
   }
 
-  async update(group: Group): Promise<Group> {
+  async findDailyQuotesGroups(): Promise<GroupDTO[]> {
+    return this.groupModel.find({ allowDailyQuote: true }).exec();
+  }
+
+  async update(group: GroupsTable): Promise<GroupsTable> {
     return this.groupModel.findOneAndUpdate({ groupId: group.groupId }, group, { new: true });
   }
 }

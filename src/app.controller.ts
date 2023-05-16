@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { Fighter, Scene } from './models';
+import { Fighter, Group, Scene } from './models';
 import { BotListenerService } from './services';
 import TelegramBot from 'node-telegram-bot-api';
 import { Dictionary } from './lib/dictionary/dictionary';
@@ -7,7 +7,9 @@ import { DictionaryBase } from './lib/dictionary/dictionary-base';
 import { ActionType, NotifyMessage, WeaponType, Mention } from './lib';
 import { getQuote } from './lib/dictionary/quotes';
 import { dailyRepeat } from './lib/util/deaily-repeat';
-import { FighterService } from './db/fighters';
+import { FighterDTO, FighterService } from './db/fighters';
+import { GroupService } from './db/groups';
+import { SceneService } from './db/scene';
 
 @Controller()
 export class AppController {
@@ -19,6 +21,8 @@ export class AppController {
   constructor(
     private readonly botListenerService: BotListenerService,
     private readonly fightersService: FighterService,
+    private readonly groupService: GroupService,
+    private readonly sceneService: SceneService,
   ) {
     this.initCallbackQuerySubscription();
     this.initChallangeQuerySubscription();
@@ -26,6 +30,8 @@ export class AppController {
     this.initRandomQuoteListener();
     this.initDailyQuoteListener();
     this.initStatsListener();
+    this.initGroupStatsListener();
+    this.toggleDailyQuoteListener();
 
     // debug
     if (process.env.DEBUG === 'true') {
@@ -38,9 +44,14 @@ export class AppController {
 
     this.quoteOfTheDay = getQuote();
 
-    dailyRepeat(17, 54, () => {
+    dailyRepeat(12, 1, async () => {
       this.quoteOfTheDay = getQuote();
-      // this.botListenerService.notifyChats([1], this.quoteOfTheDay);
+      const groups = await this.groupService.findDailyQuotesGroups();
+
+      if (groups.length) {
+        const ids = groups.map((g) => g.groupId);
+        this.botListenerService.notifyChats(ids, this.quoteOfTheDay);
+      }
     });
   }
 
@@ -58,18 +69,67 @@ export class AppController {
 
   private initStatsListener(): void {
     this.botListenerService.on('stats', async (message) => {
-      const fighters = await this.fightersService.findAll();
-
-      const stats = Array.from(fighters)
-        .sort((a, b) => (a.scores > b.scores ? -1 : 1))
-        .reduce(
-          (acc, curr) =>
-            `${acc} </br> ${curr.name} (${curr.scores} scores) / fights: ${curr.fights}, wins: ${curr.wins}, looses: ${curr.looses}`,
-          '',
-        );
+      const fighters = await this.fightersService.findAllWithLimit(10);
+      const stats = await this.getGlobalStatsMessage(fighters);
 
       this.botListenerService.notifyChats([message.chat.id], { message: stats || 'Пусто' });
     });
+  }
+
+  private initGroupStatsListener(): void {
+    this.botListenerService.on('chatStats', async (message) => {
+      const groupDto = await this.groupService.get(message.chat.id);
+
+      const fighters = Array.from(groupDto.fighters).map(([userId, rest]) => ({ userId, ...rest }));
+      const stats = await this.getGroupStatsMessage(fighters);
+
+      this.botListenerService.notifyChats([message.chat.id], { message: stats || 'Пусто' });
+    });
+  }
+
+  private toggleDailyQuoteListener(): void {
+    this.botListenerService.on('toggleDailyQuote', async (message) => {
+      const group = await this.getOrCreateGroup(message.chat.id);
+      group.allowDailyQuote = !group.allowDailyQuote;
+
+      await this.groupService.update(group);
+      const notificationMessage = group.allowDailyQuote ? 'Цитаты дня включены' : 'Цитаты дня выключены';
+
+      this.botListenerService.notifyChats([message.chat.id], { message: notificationMessage });
+    });
+  }
+
+  private async getOrCreateGroup(groupId: number): Promise<Group> {
+    const dto = await this.groupService.get(groupId);
+
+    if (dto) {
+      return new Group(dto);
+    }
+
+    const newGroup = new Group({ groupId });
+    this.groupService.create(newGroup);
+
+    return newGroup;
+  }
+
+  private async getGroupStatsMessage(fighters: Pick<FighterDTO, 'userId' | 'scores' | 'name'>[]): Promise<string> {
+    const stats = Array.from(fighters)
+      .sort((a, b) => (a.scores > b.scores ? -1 : 1))
+      .reduce((acc, curr, index) => `${acc}\n${index + 1}) @${curr.name} - (${curr.scores} scores)`, '');
+
+    return stats;
+  }
+
+  private async getGlobalStatsMessage(fighters: FighterDTO[]): Promise<string> {
+    const stats = Array.from(fighters).reduce(
+      (acc, curr, index) =>
+        `${acc}\n${index + 1}) @${curr.name} (${curr.scores} scores) / fights: ${curr.fights}, wins: ${
+          curr.wins
+        }, looses: ${curr.looses}`,
+      '',
+    );
+
+    return stats;
   }
 
   private initDuelSubscription(): void {
@@ -83,18 +143,35 @@ export class AppController {
   }
 
   private async createFightScene(message: TelegramBot.Message, mentionedUsername?: Mention): Promise<void> {
-    const fighter = await this.createOrGetExistingFighter(message.from.id, message.from.username);
+    const fighter = await this.createOrGetExistingFighter(`${message.from.id}`, message.from.username);
 
     const scene = new Scene(this.botListenerService, Dictionary, message.chat.id, fighter, mentionedUsername);
     this.scenes.set(scene.id, scene);
 
-    scene.on('destroy', (isFinished) => {
-      if (isFinished) {
-        this.finishedScenes++;
-        this.fightersService.update(scene.fightEmitter);
-        this.fightersService.update(scene.fightAccepter);
+    scene.on('fightFinished', async (winner, looser) => {
+      this.finishedScenes++;
+      this.fightersService.update(winner.fighter);
+      this.fightersService.update(looser.fighter);
+
+      const groupDto = await this.groupService.get(message.chat.id);
+      const group = new Group(groupDto ? groupDto : { groupId: message.chat.id });
+      group.updateFightersScores(winner, looser);
+
+      if (groupDto) {
+        this.groupService.update(group);
+      } else {
+        this.groupService.create(group);
       }
 
+      this.sceneService.create({
+        winnerId: winner.fighter.userId,
+        winnerWeapon: winner.weapon,
+        looserId: looser.fighter.userId,
+        looserWeapon: looser.weapon,
+      });
+    });
+
+    scene.on('destroy', () => {
       this.scenes.delete(scene.id);
     });
   }
@@ -115,13 +192,13 @@ export class AppController {
 
           return;
         case WeaponType.Rock:
-          scene.setWeapon(WeaponType.Rock, query.from.id);
+          scene.setWeapon(WeaponType.Rock, `${query.from.id}`);
           return;
         case WeaponType.Scissors:
-          scene.setWeapon(WeaponType.Scissors, query.from.id);
+          scene.setWeapon(WeaponType.Scissors, `${query.from.id}`);
           return;
         case WeaponType.Paper:
-          scene.setWeapon(WeaponType.Paper, query.from.id);
+          scene.setWeapon(WeaponType.Paper, `${query.from.id}`);
           return;
       }
     });
@@ -132,29 +209,29 @@ export class AppController {
       return;
     }
 
-    const acceptFighter = await this.createOrGetExistingFighter(query.from.id, query.from.username);
-    scene.fight(acceptFighter);
+    const fighter = await this.createOrGetExistingFighter(`${query.from.id}`, query.from.username);
+    scene.fight(fighter);
   }
 
-  private async createOrGetExistingFighter(id: number, name: string): Promise<Fighter> {
-    const fighterDTO = await this.fightersService.get(id);
+  private async createOrGetExistingFighter(id: string, name: string): Promise<Fighter> {
+    const dbFighter = await this.fightersService.get(id);
 
-    if (fighterDTO) {
-      return new Fighter(fighterDTO);
+    if (dbFighter) {
+      return new Fighter(dbFighter);
     }
 
-    const newFighter = new Fighter({ userId: id, name });
-    this.fightersService.create(newFighter).then(() => console.log('created'));
+    const newFighter = new Fighter({ userId: `${id}`, name });
+    this.fightersService.create(newFighter);
 
     return newFighter;
   }
 
-  private filesListener(): void {
-    this.botListenerService.bot.on('message', (query) => {
-      // console.log(query?.photo);
-      console.log(query?.document?.file_id);
-    });
-  }
+  // private filesListener(): void {
+  //   this.botListenerService.bot.on('message', (query) => {
+  //     // console.log(query?.photo);
+  //     console.log(query?.document?.file_id);
+  //   });
+  // }
 
   private debugListeners(): void {
     const stages = Object.keys(Dictionary);
@@ -189,7 +266,7 @@ export class AppController {
 
   @Get()
   async getHello(): Promise<string> {
-    const fighters = await this.fightersService.findAll();
+    const fighters = await this.fightersService.findAllWithLimit(999);
     fighters
       .sort((a, b) => (a.scores > b.scores ? -1 : 1))
       .reduce(

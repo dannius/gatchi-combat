@@ -1,2 +1,3 @@
+export { Group } from './Group';
 export { Fighter } from './Fighter';
-export { Scene } from './Scene';
+export { Scene, FinisSceneFighter } from './Scene';

@@ -9,7 +9,7 @@ export class Group implements GroupDTO {
 
   constructor(data: Partial<GroupDTO>) {
     this.groupId = data.groupId;
-    this.allowDailyQuote = data.allowDailyQuote || false;
+    this.allowDailyQuote = data.allowDailyQuote === undefined || data.allowDailyQuote;
     this.fighters = data.fighters || new Map<string, { name: string; scores: number }>();
   }
 

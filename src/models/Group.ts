@@ -1,5 +1,6 @@
 import { GroupDTO } from 'src/db/groups';
 import { FinisSceneFighter } from './Scene';
+import { DEFAULT_STATING_SCORES } from './Fighter';
 
 export class Group implements GroupDTO {
   groupId: number;
@@ -16,8 +17,12 @@ export class Group implements GroupDTO {
     const winnerGroup = this.fighters.get(`${winner.fighter.userId}`);
     const looserGroup = this.fighters.get(`${looser.fighter.userId}`);
 
-    const winnerScores = winnerGroup ? winnerGroup.scores - winner.addedScores : winner.fighter.scores;
-    const looserScores = looserGroup ? looserGroup.scores + looser.addedScores : looser.fighter.scores;
+    const winnerScores = winnerGroup
+      ? winnerGroup.scores + winner.addedScores
+      : DEFAULT_STATING_SCORES + winner.addedScores;
+    const looserScores = looserGroup
+      ? looserGroup.scores - looser.addedScores
+      : DEFAULT_STATING_SCORES - looser.addedScores;
 
     this.fighters.set(`${winner.fighter.userId}`, { name: winner.fighter.name, scores: winnerScores });
     this.fighters.set(`${looser.fighter.userId}`, { name: looser.fighter.name, scores: looserScores });

@@ -10,7 +10,7 @@ import { ScenesModule } from './db/scene';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot('mongodb://127.0.0.1:27017/testdb'),
+    MongooseModule.forRoot('mongodb://127.0.0.1:27017/gachitest'),
     FightersModule,
     GroupsModule,
     ScenesModule,

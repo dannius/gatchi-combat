@@ -1,9 +1,10 @@
 import { FighterDTO } from 'src/db/fighters';
+export const DEFAULT_STATING_SCORES = 600;
 
 export class Fighter implements FighterDTO {
   public userId: string;
   public name: string;
-  public scores = 600;
+  public scores = DEFAULT_STATING_SCORES;
   public fights = 0;
   public wins = 0;
   public looses = 0;

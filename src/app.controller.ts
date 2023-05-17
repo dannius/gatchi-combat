@@ -80,7 +80,13 @@ export class AppController {
     this.botListenerService.on('chatStats', async (message) => {
       const groupDto = await this.groupService.get(message.chat.id);
 
-      const fighters = Array.from(groupDto.fighters).map(([userId, rest]) => ({ userId, ...rest }));
+      if (!groupDto) {
+        return;
+      }
+
+      const fighters = Array.from(groupDto.fighters)
+        .map(([userId, rest]) => ({ userId, ...rest }))
+        .sort((a, b) => (a.scores > b.scores ? -1 : 1));
       const stats = await this.getGroupStatsMessage(fighters);
 
       this.botListenerService.notifyChats([message.chat.id], { message: stats || 'Пусто' });

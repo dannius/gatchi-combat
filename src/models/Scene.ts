@@ -142,19 +142,19 @@ export class Scene extends EventEmitter<SceneEvents> {
     this.on('beforeFightEmitterWeaponChoosen', async () => {
       const caption = this.dictionary.FightEmitterSelectWeapon.getMessage({ fighter1Name: this.fightEmitter.name });
       const media = this.dictionary.FightEmitterSelectWeapon.getMedia();
+      const reply_markup = getChoseWeaponReplyMarkup(this.id);
+      const params = { caption, reply_markup };
 
-      await this.tgBotListenerService.bot.editMessageMedia(
-        {
-          type: media.type,
-          media: media.id,
-          caption,
-        },
-        {
-          chat_id: this.chatId,
-          message_id: this.challengeMessageId,
-          reply_markup: getChoseWeaponReplyMarkup(this.id),
-        },
-      );
+      try {
+        await this.tgBotListenerService.bot.deleteMessage(this.chatId, this.challengeMessageId);
+        if (media.type === 'photo') {
+          const message = await this.tgBotListenerService.bot.sendPhoto(this.chatId, media.id, params);
+          this.challengeMessageId = message.message_id;
+        } else if (media.type === 'video') {
+          const message = await this.tgBotListenerService.bot.sendAnimation(this.chatId, media.id, params);
+          this.challengeMessageId = message.message_id;
+        }
+      } catch {}
     });
   }
 
@@ -169,28 +169,29 @@ export class Scene extends EventEmitter<SceneEvents> {
     this.on('beforeFightAccepterWeaponChoosen', async () => {
       const caption = this.dictionary.FightAccepterSelectWeapon.getMessage({ fighter1Name: this.fightAccepter.name });
       const media = this.dictionary.FightAccepterSelectWeapon.getMedia();
+      const reply_markup = getChoseWeaponReplyMarkup(this.id);
+      const params = { caption, reply_markup };
 
-      await this.tgBotListenerService.bot.editMessageMedia(
-        {
-          type: media.type,
-          media: media.id,
-          caption,
-        },
-        {
-          chat_id: this.chatId,
-          message_id: this.challengeMessageId,
-          reply_markup: getChoseWeaponReplyMarkup(this.id),
-        },
-      );
+      try {
+        await this.tgBotListenerService.bot.deleteMessage(this.chatId, this.challengeMessageId);
+        if (media.type === 'photo') {
+          const message = await this.tgBotListenerService.bot.sendPhoto(this.chatId, media.id, params);
+          this.challengeMessageId = message.message_id;
+        } else if (media.type === 'video') {
+          const message = await this.tgBotListenerService.bot.sendAnimation(this.chatId, media.id, params);
+          this.challengeMessageId = message.message_id;
+        }
+      } catch {}
     });
   }
 
   private afterFightAccepterWeaponChooseListener(): void {
     this.on('afterFightAccepterWeaponChoosen', async (weapon) => {
-      await this.tgBotListenerService.bot.deleteMessage(this.chatId, this.challengeMessageId);
-      this.weapons.set(this.fightAccepter.userId, weapon);
-
-      this.emit('fightStageOne');
+      try {
+        await this.tgBotListenerService.bot.deleteMessage(this.chatId, this.challengeMessageId);
+        this.weapons.set(this.fightAccepter.userId, weapon);
+        this.emit('fightStageOne');
+      } catch {}
     });
   }
 

@@ -18,7 +18,7 @@ export class FighterService {
   }
 
   async findAllWithLimit(limit = 100): Promise<FighterDTO[]> {
-    return this.fighterModel.find().sort({ scores: 1 }).limit(limit).exec();
+    return this.fighterModel.find().sort({ scores: -1 }).limit(limit).exec();
   }
 
   async update(fighter: FightersTable): Promise<FightersTable> {

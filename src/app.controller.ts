@@ -74,11 +74,11 @@ export class AppController {
 
   private initStatsListener(): void {
     this.botListenerService.on('stats', async (message) => {
-      const fighters = await this.fightersService.findAllWithLimit(10);
+      const fighters = await this.fightersService.findAllWithLimit(50);
       const stats = await this.getGroupStatsMessage(fighters);
 
       this.botListenerService.notifyChats([message.chat.id], {
-        message: stats ? `Мировой рейтинг:${stats}` : 'Пусто',
+        message: stats ? `Мировой рейтинг ⚣semen⚣:${stats}` : 'Пусто',
       });
     });
   }
@@ -97,7 +97,7 @@ export class AppController {
       const stats = await this.getGroupStatsMessage(fighters);
 
       this.botListenerService.notifyChats([message.chat.id], {
-        message: stats ? `Групповой рейтинг:${stats}` : 'Пусто',
+        message: stats ? `Групповой рейтинг ⚣semen⚣:${stats}` : 'Пусто',
       });
     });
   }
@@ -130,7 +130,7 @@ export class AppController {
   private async getGroupStatsMessage(fighters: Pick<FighterDTO, 'userId' | 'scores' | 'name'>[]): Promise<string> {
     const stats = Array.from(fighters)
       .sort((a, b) => (a.scores > b.scores ? -1 : 1))
-      .reduce((acc, curr, index) => `${acc}\n${index + 1}) ${curr.name} - (${curr.scores} scores)`, '');
+      .reduce((acc, curr, index) => `${acc}\n${index + 1}) ${curr.name} - ${curr.scores} мл.`, '');
 
     return stats;
   }

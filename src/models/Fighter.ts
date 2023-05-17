@@ -1,4 +1,5 @@
 import { FighterDTO } from 'src/db/fighters';
+import { random } from 'src/lib';
 export const DEFAULT_STATING_SCORES = 600;
 
 export class Fighter implements FighterDTO {
@@ -8,7 +9,6 @@ export class Fighter implements FighterDTO {
   public fights = 0;
   public wins = 0;
   public looses = 0;
-  private resultStatuses = ['win', 'lose'];
 
   constructor(dto: Partial<FighterDTO>) {
     if (dto.userId !== undefined) this.userId = dto.userId;
@@ -20,12 +20,10 @@ export class Fighter implements FighterDTO {
   }
 
   public fight(enemy: Fighter): { winner: Fighter; looser: Fighter; addedWin: number; addedLose: number } {
-    const rand = this.resultStatuses[Math.floor(Math.random() * 2)];
-
-    switch (rand) {
-      case 'win':
+    switch (random(0, 1)) {
+      case 0:
         return this.getWinner(this, enemy);
-      case 'lose':
+      case 1:
         return this.getWinner(enemy, this);
     }
   }

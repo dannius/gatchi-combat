@@ -1,0 +1,31 @@
+import { BotListenerService } from './services';
+import { FighterService } from './db/fighters';
+import { GroupService } from './db/groups';
+import { SceneService } from './db/scene';
+export declare class AppController {
+    private readonly botListenerService;
+    private readonly fightersService;
+    private readonly groupService;
+    private readonly sceneService;
+    private scenes;
+    private finishedScenes;
+    private quoteOfTheDay;
+    constructor(botListenerService: BotListenerService, fightersService: FighterService, groupService: GroupService, sceneService: SceneService);
+    private setDailyQuote;
+    private initRandomQuoteListener;
+    private initDailyQuoteListener;
+    private initStatsListener;
+    private initGroupStatsListener;
+    private toggleDailyQuoteListener;
+    private getOrCreateGroup;
+    private getGroupStatsMessage;
+    private getGlobalStatsMessage;
+    private initDuelSubscription;
+    private initChallangeQuerySubscription;
+    private createFightScene;
+    private initCallbackQuerySubscription;
+    private acceptFight;
+    private createOrGetExistingFighter;
+    private debugListeners;
+    getHello(): Promise<string>;
+}

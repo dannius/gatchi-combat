@@ -75,9 +75,11 @@ export class AppController {
   private initStatsListener(): void {
     this.botListenerService.on('stats', async (message) => {
       const fighters = await this.fightersService.findAllWithLimit(10);
-      const stats = await this.getGlobalStatsMessage(fighters);
+      const stats = await this.getGroupStatsMessage(fighters);
 
-      this.botListenerService.notifyChats([message.chat.id], { message: stats || 'Пусто' });
+      this.botListenerService.notifyChats([message.chat.id], {
+        message: stats ? `Мировой рейтинг:${stats}` : 'Пусто',
+      });
     });
   }
 
@@ -94,7 +96,9 @@ export class AppController {
         .sort((a, b) => (a.scores > b.scores ? -1 : 1));
       const stats = await this.getGroupStatsMessage(fighters);
 
-      this.botListenerService.notifyChats([message.chat.id], { message: stats || 'Пусто' });
+      this.botListenerService.notifyChats([message.chat.id], {
+        message: stats ? `Групповой рейтинг:${stats}` : 'Пусто',
+      });
     });
   }
 
@@ -126,7 +130,7 @@ export class AppController {
   private async getGroupStatsMessage(fighters: Pick<FighterDTO, 'userId' | 'scores' | 'name'>[]): Promise<string> {
     const stats = Array.from(fighters)
       .sort((a, b) => (a.scores > b.scores ? -1 : 1))
-      .reduce((acc, curr, index) => `${acc}\n${index + 1}) @${curr.name} - (${curr.scores} scores)`, '');
+      .reduce((acc, curr, index) => `${acc}\n${index + 1}) ${curr.name} - (${curr.scores} scores)`, '');
 
     return stats;
   }
@@ -134,7 +138,7 @@ export class AppController {
   private async getGlobalStatsMessage(fighters: FighterDTO[]): Promise<string> {
     const stats = Array.from(fighters).reduce(
       (acc, curr, index) =>
-        `${acc}\n${index + 1}) @${curr.name} (${curr.scores} scores) / fights: ${curr.fights}, wins: ${
+        `${acc}\n${index + 1}) ${curr.name} (${curr.scores} scores) / fights: ${curr.fights}, wins: ${
           curr.wins
         }, looses: ${curr.looses}`,
       '',

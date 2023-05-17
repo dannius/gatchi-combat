@@ -42,10 +42,10 @@ export class AppController {
     // this.filesListener();
     // }
 
-    this.quoteOfTheDay = getQuote();
+    this.setDailyQuote();
 
     dailyRepeat(12, 1, async () => {
-      this.quoteOfTheDay = getQuote();
+      this.setDailyQuote();
       const groups = await this.groupService.findDailyQuotesGroups();
 
       if (groups.length) {
@@ -53,6 +53,11 @@ export class AppController {
         this.botListenerService.notifyChats(ids, this.quoteOfTheDay);
       }
     });
+  }
+
+  private setDailyQuote(): void {
+    this.quoteOfTheDay = getQuote();
+    this.quoteOfTheDay.message = `Цитата дня:\n${this.quoteOfTheDay.message}`;
   }
 
   private initRandomQuoteListener(): void {

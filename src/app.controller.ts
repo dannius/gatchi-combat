@@ -31,54 +31,10 @@ export class AppController {
     this.initRandomQuoteListener();
     this.initDailyQuoteListener();
     this.initStatsListener();
+    this.initMyStatsListener();
     this.initGroupStatsListener();
     this.toggleDailyQuoteListener();
     this.initBdModeSubscription();
-
-    setTimeout(() => {
-      const bdMode = new RegExp(`^@${this.botListenerService.me.username} /migrate`);
-
-      this.botListenerService.bot.onText(bdMode, async (msg) => {
-        const groups = await this.groupService.findAll();
-        const fighters = await this.fightersService.findAllWithLimit(999);
-
-        const fighterObjs = fighters
-          .map((f) => {
-            const obj = new Fighter(f);
-
-            obj.username = obj.name;
-
-            return obj;
-          })
-          .filter(async (f) => {
-            if (f.name && f.name !== 'undefined' && f.name !== 'null') {
-              return f;
-            }
-
-            await this.fightersService.remove(f);
-          });
-
-        fighterObjs.forEach(async (f) => {
-          await this.fightersService.update(f);
-        });
-
-        groups.forEach(async (g) => {
-          const fightersMap = new Map();
-          Array.from(g.fighters).map(async ([key, value]) => {
-            if (key && key !== 'undefined' && key !== 'null') {
-              const fighter = fighterObjs.find((obj) => obj.name === value.name);
-              if (fighter) {
-                value.name = fighter.name;
-                fightersMap.set(key, value);
-
-                g.fighters = fightersMap;
-                await this.groupService.update(g);
-              }
-            }
-          });
-        });
-      });
-    }, 1000);
 
     // debug
     if (process.env.DEBUG === 'true') {
@@ -121,12 +77,32 @@ export class AppController {
 
   private initStatsListener(): void {
     this.botListenerService.on('stats', async (message) => {
-      const fighters = await this.fightersService.findAllWithLimit(50);
+      const count = 20;
+      const fighters = await this.fightersService.findAllWithLimit(count);
       const stats = await this.getGroupStatsMessage(fighters);
 
       this.botListenerService.notifyChats([message.chat.id], {
-        message: stats ? `Мировой рейтинг ⚣semen⚣:${stats}` : 'Пусто',
+        message: stats ? `Топ ${count} ⚣masters⚣:${stats}` : 'Пусто',
       });
+    });
+  }
+
+  private initMyStatsListener(): void {
+    this.botListenerService.on('myStats', async (message) => {
+      const fighters = await this.fightersService.findAllWithLimit(999);
+
+      const yourIndex = fighters.findIndex((fighter) => fighter.userId === `${message.from.id}`);
+      if (yourIndex >= 0) {
+        const fighter = fighters[yourIndex];
+
+        this.botListenerService.notifyChats([message.chat.id], {
+          message: fighter
+            ? `(${yourIndex + 1} из ${fighters.length})\nУ тебя в баке ${fighter.scores} ⚣semen⚣\n${
+                fighter.wins
+              } Побед\n${fighter.looses} Поражений`
+            : 'Пусто',
+        });
+      }
     });
   }
 

@@ -15,6 +15,7 @@ export declare class AppController {
     private initRandomQuoteListener;
     private initDailyQuoteListener;
     private initStatsListener;
+    private initMyStatsListener;
     private initGroupStatsListener;
     private toggleDailyQuoteListener;
     private getOrCreateGroup;

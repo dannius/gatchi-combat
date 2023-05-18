@@ -172,7 +172,13 @@ class Scene extends lib_1.EventEmitter {
             const latestWinnerDto = await this.fighterService.get({ userId: winner.userId });
             const latestLooserDto = await this.fighterService.get({ userId: looser.userId });
             winner.scores = latestWinnerDto.scores + addedWin;
+            winner.fights = latestWinnerDto.fights + 1;
+            winner.wins = latestWinnerDto.wins + 1;
             looser.scores = latestLooserDto.scores - addedLose;
+            looser.fights = latestLooserDto.fights + 1;
+            looser.looses = latestLooserDto.looses + 1;
+            this.fighterService.update(winner);
+            this.fighterService.update(looser);
             const winObject = {
                 fighter: winner,
                 addedScores: addedWin,
@@ -188,12 +194,6 @@ class Scene extends lib_1.EventEmitter {
     }
     initFightFinishedListener() {
         this.on('fightFinished', (winner, looser) => {
-            winner.fighter.fights += 1;
-            winner.fighter.wins += 1;
-            looser.fighter.fights += 1;
-            looser.fighter.looses += 1;
-            this.fighterService.update(winner.fighter);
-            this.fighterService.update(looser.fighter);
             const caption = this.dictionary.Final.getMessage({
                 fighter1Name: this.fightEmitter.username ? this.fightEmitter.username : this.fightEmitter.name,
                 fighter2Name: this.fightAccepter.username ? this.fightAccepter.username : this.fightAccepter.name,

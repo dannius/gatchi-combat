@@ -50,7 +50,11 @@ exports.DictionaryMessages = {
             },
             {
                 type: 'video',
-                id: 'CgACAgIAAxkBAANkZGA2YbkRkCBJObW1qMZZe2OW-IAAAp8rAAKPBQhLjhZczgmGy-QvBA',
+                id: 'CgACAgIAAxkBAAIKM2RmpBtso_vs-DJFVgUIlBWpmJYhAAJnKQACReQ5S332ZyL8SDm5LwQ',
+            },
+            {
+                type: 'video',
+                id: 'CgACAgIAAxkBAAIKNGRmpEC85GH_N9mdAzipHiY_CzezAAJoKQACReQ5S_Bc3H4E2b6zLwQ',
             },
         ],
     },
@@ -130,6 +134,10 @@ exports.DictionaryMessages = {
                 type: 'video',
                 id: 'CgACAgIAAxkBAAOhZGA4gv_g_v124rH2bOJEw_qPcDoAAt8rAAKPBQhLbp6cmfNPk2IvBA',
             },
+            {
+                type: 'video',
+                id: 'CgACAgIAAxkBAAIKMmRmo-RZa8pF2c3nTPdxofxuUmF0AAJlKQACReQ5SxILG8O8WZe5LwQ',
+            },
         ],
     },
     FightStageOne: {
@@ -154,6 +162,10 @@ exports.DictionaryMessages = {
                 type: 'video',
                 id: 'CgACAgIAAxkBAAOSZGA3vhONfqE45fnrOmjsKfDtZ0QAAs0rAAKPBQhL9WLpdkCvwG4vBA',
             },
+            {
+                type: 'video',
+                id: 'CgACAgIAAxkBAAIKN2RmpJBUqOjazIz1pOnXHMMzJ4B0AAJsKQACReQ5SxHEDvwL8kkTLwQ',
+            },
         ],
     },
     FightStageTwo: {
@@ -161,6 +173,10 @@ exports.DictionaryMessages = {
             {
                 type: 'video',
                 id: 'CgACAgIAAxkBAANzZGA299UxwrqAY3BRRwPG9lAAAWJYAAKuKwACjwUIS6xJ106X0o9vLwQ',
+            },
+            {
+                type: 'video',
+                id: 'CgACAgIAAxkBAAIKNmRmpH7kwbJ6GvfJnotZa1d24C5DAAJrKQACReQ5S7vom7doXwaULwQ',
             },
             {
                 type: 'video',
@@ -202,6 +218,14 @@ exports.DictionaryMessages = {
                 type: 'video',
                 id: 'CgACAgIAAxkBAAN8ZGA2-5Ho3tZ_LTv50iQpUxBGDx8AArcrAAKPBQhLiWVIkXp_FbgvBA',
             },
+            {
+                type: 'video',
+                id: 'CgACAgIAAxkBAAIKL2Rmo4wifxVUcpb0qCfgVlvaDA5IAAJiKQACReQ5S7ow1yhRD029LwQ',
+            },
+            {
+                type: 'video',
+                id: 'CgACAgIAAxkBAAIKMWRmo8Dk4hmzVXUNSixhs59y7y0jAAJkKQACReQ5S9kI_vHW1uxQLwQ',
+            },
         ],
     },
     FightStageThree: {
@@ -209,6 +233,10 @@ exports.DictionaryMessages = {
             {
                 type: 'video',
                 id: 'CgACAgIAAxkBAANoZGA2vb3J5IG7NsP_8PoyyPoCIVgAAqMrAAKPBQhLiswbe8-n3eIvBA',
+            },
+            {
+                type: 'video',
+                id: 'CgACAgIAAxkBAAIKLmRmo2GD_9iBXWbwm2SdEk9a0B0LAAJhKQACReQ5S6FmQK8wqQxVLwQ',
             },
             {
                 type: 'video',
@@ -253,6 +281,14 @@ exports.DictionaryMessages = {
             {
                 type: 'video',
                 id: 'CgACAgIAAxkBAANyZGA2wvM2MecIRvQNzF5uWYVRIXgAAq0rAAKPBQhLqWSJV0NRDVcvBA',
+            },
+            {
+                type: 'video',
+                id: 'CgACAgIAAxkBAAIKMGRmo6WzLkanMslraeS8jkOP5Ps0AAJjKQACReQ5S8G7SGGkd6p7LwQ',
+            },
+            {
+                type: 'video',
+                id: 'CgACAgIAAxkBAAIKNWRmpFXZtWTWS2G5V0n8KVy-Mg8sAAJqKQACReQ5SxHXvE50umvyLwQ',
             },
         ],
     },
@@ -302,6 +338,14 @@ exports.DictionaryMessages = {
             {
                 type: 'video',
                 id: 'CgACAgIAAxkBAAIJzmRmamOlEvUUQFNfGFBUoZAv8CCsAAIrKAACReQ5S9n0kp2iPpudLwQ',
+            },
+            {
+                type: 'video',
+                id: 'CgACAgIAAxkBAAIKLWRmozDX6YEERLepCBgJAQwLBnt4AAJgKQACReQ5S0RkFTXdZo5fLwQ',
+            },
+            {
+                type: 'video',
+                id: 'CgACAgIAAxkBAAIKOGRmpKAWjXuXqJExCAdUqOOHnDvvAAJuKQACReQ5S6CIaNq_AijSLwQ',
             },
         ],
     },

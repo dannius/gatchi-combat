@@ -12,6 +12,7 @@ type BotEvents = {
   randomQuote: [message: TelegramBot.Message];
   stats: [message: TelegramBot.Message];
   chatStats: [message: TelegramBot.Message];
+  myStats: [message: TelegramBot.Message];
   toggleDailyQuote: [message: TelegramBot.Message];
   bdMode: [username: Mention, status: boolean];
 };
@@ -36,6 +37,7 @@ export class BotListenerService extends EventEmitter<BotEvents> {
       this.initGroupStatisticListener();
       this.initDailyQuoteSwitcherListener();
       this.initBdModeListener();
+      this.initMyStatisticListener();
     });
   }
 
@@ -140,6 +142,14 @@ export class BotListenerService extends EventEmitter<BotEvents> {
 
     this.bot.onText(StatsReg, (msg) => {
       this.emit('chatStats', msg);
+    });
+  }
+
+  private initMyStatisticListener(): void {
+    const StatsReg = new RegExp(`^\/my_stats`);
+
+    this.bot.onText(StatsReg, (msg) => {
+      this.emit('myStats', msg);
     });
   }
 

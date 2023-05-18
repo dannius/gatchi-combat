@@ -10,6 +10,7 @@ type BotEvents = {
     randomQuote: [message: TelegramBot.Message];
     stats: [message: TelegramBot.Message];
     chatStats: [message: TelegramBot.Message];
+    myStats: [message: TelegramBot.Message];
     toggleDailyQuote: [message: TelegramBot.Message];
     bdMode: [username: Mention, status: boolean];
 };
@@ -26,6 +27,7 @@ export declare class BotListenerService extends EventEmitter<BotEvents> {
     private initRanodmQuoteListener;
     private initStatisticListener;
     private initGroupStatisticListener;
+    private initMyStatisticListener;
     private initDailyQuoteSwitcherListener;
     private initMessageActionListeners;
 }

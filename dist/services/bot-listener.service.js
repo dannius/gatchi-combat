@@ -28,6 +28,7 @@ let BotListenerService = class BotListenerService extends lib_1.EventEmitter {
             this.initGroupStatisticListener();
             this.initDailyQuoteSwitcherListener();
             this.initBdModeListener();
+            this.initMyStatisticListener();
         });
     }
     notifyChats(chatIds, notification) {
@@ -115,6 +116,12 @@ let BotListenerService = class BotListenerService extends lib_1.EventEmitter {
         const StatsReg = new RegExp(`^\/chat_stats`);
         this.bot.onText(StatsReg, (msg) => {
             this.emit('chatStats', msg);
+        });
+    }
+    initMyStatisticListener() {
+        const StatsReg = new RegExp(`^\/my_stats`);
+        this.bot.onText(StatsReg, (msg) => {
+            this.emit('myStats', msg);
         });
     }
     initDailyQuoteSwitcherListener() {

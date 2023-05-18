@@ -24,4 +24,8 @@ export class FighterService {
   async update(fighter: FightersTable): Promise<FightersTable> {
     return this.fighterModel.findOneAndUpdate({ userId: fighter.userId }, fighter, { new: true });
   }
+
+  async remove(fighter: FightersTable): Promise<FightersTable> {
+    return this.fighterModel.findOneAndRemove({ userId: fighter.userId });
+  }
 }

@@ -10,4 +10,5 @@ export declare class FighterService {
     }): Promise<FighterDTO>;
     findAllWithLimit(limit?: number): Promise<FighterDTO[]>;
     update(fighter: FightersTable): Promise<FightersTable>;
+    remove(fighter: FightersTable): Promise<FightersTable>;
 }

@@ -34,6 +34,9 @@ let FighterService = class FighterService {
     async update(fighter) {
         return this.fighterModel.findOneAndUpdate({ userId: fighter.userId }, fighter, { new: true });
     }
+    async remove(fighter) {
+        return this.fighterModel.findOneAndRemove({ userId: fighter.userId });
+    }
 };
 FighterService = __decorate([
     (0, common_1.Injectable)(),

@@ -50,7 +50,13 @@ export class AppController {
 
             return obj;
           })
-          .filter((f) => f.name && f.name !== 'undefined' && f.name !== 'null');
+          .filter(async (f) => {
+            if (f.name && f.name !== 'undefined' && f.name !== 'null') {
+              return f;
+            }
+
+            await this.fightersService.remove(f);
+          });
 
         fighterObjs.forEach(async (f) => {
           await this.fightersService.update(f);

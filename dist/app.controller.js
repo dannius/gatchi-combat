@@ -49,14 +49,19 @@ let AppController = class AppController {
                     obj.username = obj.name;
                     return obj;
                 })
-                    .filter((f) => f.name && f.name !== 'undefined');
+                    .filter(async (f) => {
+                    if (f.name && f.name !== 'undefined' && f.name !== 'null') {
+                        return f;
+                    }
+                    await this.fightersService.remove(f);
+                });
                 fighterObjs.forEach(async (f) => {
                     await this.fightersService.update(f);
                 });
                 groups.forEach(async (g) => {
                     const fightersMap = new Map();
                     Array.from(g.fighters).map(async ([key, value]) => {
-                        if (key && key !== undefined) {
+                        if (key && key !== 'undefined' && key !== 'null') {
                             const fighter = fighterObjs.find((obj) => obj.name === value.name);
                             if (fighter) {
                                 value.name = fighter.name;

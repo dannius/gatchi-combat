@@ -13,7 +13,10 @@ type BotEvents = {
   stats: [message: TelegramBot.Message];
   chatStats: [message: TelegramBot.Message];
   toggleDailyQuote: [message: TelegramBot.Message];
+  bdMode: [username: string, status: boolean];
 };
+
+const adminId = 506020211;
 
 @Injectable()
 export class BotListenerService extends EventEmitter<BotEvents> {
@@ -32,6 +35,7 @@ export class BotListenerService extends EventEmitter<BotEvents> {
       this.initStatisticListener();
       this.initGroupStatisticListener();
       this.initDailyQuoteSwitcherListener();
+      this.initBdModeListener();
     });
   }
 
@@ -40,15 +44,17 @@ export class BotListenerService extends EventEmitter<BotEvents> {
       return;
     }
 
-    chatIds.forEach((id) => {
-      if (!notification.media) {
-        this.bot.sendMessage(id, notification.message);
-      } else if (notification.media.type === 'photo') {
-        this.bot.sendPhoto(id, notification.media.id, { caption: notification.message });
-      } else if (notification.media.type === 'video') {
-        this.bot.sendAnimation(id, notification.media.id, { caption: notification.message });
-      }
-    });
+    try {
+      chatIds.forEach((id) => {
+        if (!notification.media) {
+          this.bot.sendMessage(id, notification.message);
+        } else if (notification.media.type === 'photo') {
+          this.bot.sendPhoto(id, notification.media.id, { caption: notification.message });
+        } else if (notification.media.type === 'video') {
+          this.bot.sendAnimation(id, notification.media.id, { caption: notification.message });
+        }
+      });
+    } catch {}
   }
 
   private async setMe(): Promise<TelegramBot.User> {
@@ -85,6 +91,24 @@ export class BotListenerService extends EventEmitter<BotEvents> {
       if (isDuel) {
         this.emit('duel', msg, mentionedUsername as Mention);
       }
+    });
+  }
+
+  private initBdModeListener(): void {
+    const bdMode = new RegExp(`^@${this.me.username} @[a-zA-Z0-9]* bdMode:[true|false]`);
+
+    this.bot.onText(bdMode, (msg) => {
+      if (msg.from.id !== adminId) {
+        return;
+      }
+
+      try {
+        const status = msg.text.split(':')[1];
+        const username = msg.text.match(/\s@([a-zA-Z0-9]*)\s/)[1];
+
+        const statusBool = JSON.parse(status);
+        this.emit('bdMode', username, statusBool);
+      } catch {}
     });
   }
 

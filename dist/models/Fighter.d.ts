@@ -1,4 +1,5 @@
 import { FighterDTO } from 'src/db/fighters';
+import { WeaponType } from 'src/lib';
 export declare const DEFAULT_STATING_SCORES = 600;
 export declare class Fighter implements FighterDTO {
     userId: string;
@@ -7,8 +8,9 @@ export declare class Fighter implements FighterDTO {
     fights: number;
     wins: number;
     looses: number;
+    bdMode: boolean;
     constructor(dto: Partial<FighterDTO>);
-    fight(enemy: Fighter): {
+    fight(emitterWeapon: WeaponType, enemy: Fighter, enemyWeapon: WeaponType): {
         winner: Fighter;
         looser: Fighter;
         addedWin: number;

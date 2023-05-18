@@ -30,6 +30,7 @@ export interface FighterDTO {
     fights: number;
     wins: number;
     looses: number;
+    bdMode: boolean;
 }
 export declare class FightersTable implements FighterDTO {
     userId: string;
@@ -38,6 +39,7 @@ export declare class FightersTable implements FighterDTO {
     fights: number;
     wins: number;
     looses: number;
+    bdMode: boolean;
 }
 export declare const FighterSchema: import("mongoose").Schema<FightersTable, import("mongoose").Model<FightersTable, any, any, any, import("mongoose").Document<unknown, any, FightersTable> & Omit<FightersTable & {
     _id: import("mongoose").Types.ObjectId;

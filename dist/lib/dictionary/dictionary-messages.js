@@ -13,7 +13,7 @@ exports.TextKeys = {
     fighter2ScoresAdded: '$fighter2ScoresAdded',
 };
 exports.DictionaryActionTitles = {
-    [types_1.ActionType.AcceptFight]: 'Войти в ♂dungeon♂',
+    [types_1.ActionType.AcceptFight]: 'Спуститься в ♂dungeon♂',
     [types_1.WeaponType.Rock]: 'Ass',
     [types_1.WeaponType.Scissors]: 'Finger',
     [types_1.WeaponType.Paper]: 'Dick',
@@ -23,6 +23,7 @@ exports.DictionaryMessages = {
         messagesBody: [
             `@${exports.TextKeys.fighter1Name} желает надрать кому нибудь зад`,
             `@${exports.TextKeys.fighter1Name} спускается в ♂dungeon♂ и желает померяться ♂semen♂`,
+            `@${exports.TextKeys.fighter1Name}: "Я новый ♂dungeon master♂! Кто не согласен, отзовись или молчи вечно!"`,
         ],
         medias: [
             {
@@ -37,8 +38,9 @@ exports.DictionaryMessages = {
     },
     StartDuel: {
         messagesBody: [
-            `@${exports.TextKeys.fighter1Name} изьявил желание надрать ${exports.TextKeys.fighter2Name} зад, примет ли он бой?`,
+            `@${exports.TextKeys.fighter1Name} изьявил желание надрать ${exports.TextKeys.fighter2Name} ⚣ass⚣, примет ли он бой?`,
             `@${exports.TextKeys.fighter1Name} хочет проверить ${exports.TextKeys.fighter2Name} на прочность`,
+            `@${exports.TextKeys.fighter2Name} отказался страховать ${exports.TextKeys.fighter1Name} на жиме лежа, в этом ⚣gym⚣ такое не прощают`,
         ],
         medias: [
             {
@@ -250,6 +252,9 @@ exports.DictionaryMessages = {
             `Ебать ты!\nВсе белое!\n${exports.TextKeys.fighter1Name} доказал, что он ⚣man⚣.\nУмело используя ${exports.TextKeys.fighter1Weapon} он лишает ${exports.TextKeys.fighter2Name} ${exports.TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
             `${exports.TextKeys.fighter2Name}, дружок пирожок,\nкажется ты ошибся дверью,\nклуб для ♂slaves♂ на 2 блока ниже`,
             `${exports.TextKeys.fighter1Name} Вот это ты дал используя ${exports.TextKeys.fighter1Weapon},\nвсе в semen, ${exports.TextKeys.fighter2Name} обесчестен,\nу него стало на ${exports.TextKeys.fighter2ScoresAdded} мл. меньше ⚣semen⚣ и сломанный ${exports.TextKeys.fighter2Weapon}`,
+            `У\n${exports.TextKeys.fighter2Name} ${exports.TextKeys.fighter2Weapon}\nиз стали, но у\n${exports.TextKeys.fighter1Name} ${exports.TextKeys.fighter1Weapon} из алмаза! Он забирает у ${exports.TextKeys.fighter2Name} ${exports.TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
+            `${exports.TextKeys.fighter1Name} проводит болевой на ${exports.TextKeys.fighter2Weapon} бедного ⚣jabroni⚣ ${exports.TextKeys.fighter2Name}`,
+            `${exports.TextKeys.fighter1Name} наносит открытый перелом ${exports.TextKeys.fighter2Weapon} ${exports.TextKeys.fighter2Name} и забирает ${exports.TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
         ],
         messagesHeader: [
             `${exports.TextKeys.fighter1Name} - ${exports.TextKeys.fighter1ScoresTotal}(${exports.TextKeys.fighter1ScoresAdded}) мл.\n${exports.TextKeys.fighter2Name} - ${exports.TextKeys.fighter2ScoresTotal}(${exports.TextKeys.fighter2ScoresAdded}) мл.\n\n`,
@@ -282,6 +287,10 @@ exports.DictionaryMessages = {
             {
                 type: 'video',
                 id: 'CgACAgIAAxkBAAIBdGRg07KbShCenFh7mk9Sn3OD34UkAAK4LgACjwUIS4FlUk_jRbdoLwQ',
+            },
+            {
+                type: 'video',
+                id: 'CgACAgIAAxkBAAIJzmRmamOlEvUUQFNfGFBUoZAv8CCsAAIrKAACReQ5S9n0kp2iPpudLwQ',
             },
         ],
     },

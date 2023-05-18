@@ -9,6 +9,7 @@ class Fighter {
         this.fights = 0;
         this.wins = 0;
         this.looses = 0;
+        this.bdMode = false;
         if (dto.userId !== undefined)
             this.userId = dto.userId;
         if (dto.name !== undefined)
@@ -21,9 +22,21 @@ class Fighter {
             this.wins = dto.wins;
         if (dto.looses !== undefined)
             this.looses = dto.looses;
+        if (dto.bdMode !== undefined)
+            this.bdMode = dto.bdMode;
     }
-    fight(enemy) {
-        switch ((0, lib_1.random)(0, 1)) {
+    fight(emitterWeapon, enemy, enemyWeapon) {
+        let res = 0;
+        if (this.bdMode && emitterWeapon === lib_1.WeaponType.Rock) {
+            res = (0, lib_1.random)(0, 1) === 0 || (0, lib_1.random)(0, 1) === 0 ? 0 : 1;
+        }
+        else if (enemy.bdMode && enemyWeapon === lib_1.WeaponType.Rock) {
+            res = (0, lib_1.random)(0, 1) === 1 || (0, lib_1.random)(0, 1) === 1 ? 1 : 0;
+        }
+        else {
+            res = (0, lib_1.random)(0, 1);
+        }
+        switch (res) {
             case 0:
                 return this.getWinner(this, enemy);
             case 1:

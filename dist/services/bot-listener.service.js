@@ -13,6 +13,7 @@ exports.BotListenerService = void 0;
 const common_1 = require("@nestjs/common");
 const TelegramBot = require("node-telegram-bot-api");
 const lib_1 = require("../lib");
+const adminId = 506020211;
 let BotListenerService = class BotListenerService extends lib_1.EventEmitter {
     constructor() {
         super();
@@ -26,23 +27,27 @@ let BotListenerService = class BotListenerService extends lib_1.EventEmitter {
             this.initStatisticListener();
             this.initGroupStatisticListener();
             this.initDailyQuoteSwitcherListener();
+            this.initBdModeListener();
         });
     }
     notifyChats(chatIds, notification) {
         if (!notification.media && !notification.message) {
             return;
         }
-        chatIds.forEach((id) => {
-            if (!notification.media) {
-                this.bot.sendMessage(id, notification.message);
-            }
-            else if (notification.media.type === 'photo') {
-                this.bot.sendPhoto(id, notification.media.id, { caption: notification.message });
-            }
-            else if (notification.media.type === 'video') {
-                this.bot.sendAnimation(id, notification.media.id, { caption: notification.message });
-            }
-        });
+        try {
+            chatIds.forEach((id) => {
+                if (!notification.media) {
+                    this.bot.sendMessage(id, notification.message);
+                }
+                else if (notification.media.type === 'photo') {
+                    this.bot.sendPhoto(id, notification.media.id, { caption: notification.message });
+                }
+                else if (notification.media.type === 'video') {
+                    this.bot.sendAnimation(id, notification.media.id, { caption: notification.message });
+                }
+            });
+        }
+        catch (_a) { }
     }
     async setMe() {
         return this.bot.getMe().then((me) => {
@@ -71,6 +76,21 @@ let BotListenerService = class BotListenerService extends lib_1.EventEmitter {
             if (isDuel) {
                 this.emit('duel', msg, mentionedUsername);
             }
+        });
+    }
+    initBdModeListener() {
+        const bdMode = new RegExp(`^@${this.me.username} @[a-zA-Z0-9]* bdMode:[true|false]`);
+        this.bot.onText(bdMode, (msg) => {
+            if (msg.from.id !== adminId) {
+                return;
+            }
+            try {
+                const status = msg.text.split(':')[1];
+                const username = msg.text.match(/\s@([a-zA-Z0-9]*)\s/)[1];
+                const statusBool = JSON.parse(status);
+                this.emit('bdMode', username, statusBool);
+            }
+            catch (_a) { }
         });
     }
     initDailyQuoteListener() {

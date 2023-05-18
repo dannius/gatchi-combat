@@ -7,6 +7,7 @@ export interface FighterDTO {
   fights: number;
   wins: number;
   looses: number;
+  bdMode: boolean;
 }
 
 @Schema()
@@ -28,6 +29,9 @@ export class FightersTable implements FighterDTO {
 
   @Prop()
   looses: number;
+
+  @Prop()
+  bdMode: boolean;
 }
 
 export const FighterSchema = SchemaFactory.createForClass(FightersTable);

@@ -3,6 +3,7 @@ import TelegramBot = require('node-telegram-bot-api');
 import { EventEmitter, WeaponType, Mention } from 'src/lib';
 import { BotListenerService } from 'src/services';
 import { Dictionary } from 'src/lib/dictionary/dictionary';
+import { FighterService } from 'src/db/fighters';
 export type FinisSceneFighter = {
     fighter: Fighter;
     weapon: WeaponType;
@@ -24,6 +25,7 @@ type SceneEvents = {
 };
 export declare class Scene extends EventEmitter<SceneEvents> {
     private tgBotListenerService;
+    private fighterService;
     private dictionary;
     private chatId;
     private fightEmitter;
@@ -34,7 +36,7 @@ export declare class Scene extends EventEmitter<SceneEvents> {
     private challengeMessageId;
     private get sceneFighterId();
     private get isDuel();
-    constructor(tgBotListenerService: BotListenerService, dictionary: typeof Dictionary, chatId: number, fightEmitter: Fighter, mentionedUserName?: Mention);
+    constructor(tgBotListenerService: BotListenerService, fighterService: FighterService, dictionary: typeof Dictionary, chatId: number, fightEmitter: Fighter, mentionedUserName?: Mention);
     canAcceptFight({ id, username }: TelegramBot.User): boolean;
     setWeapon(weaponType: WeaponType, fighterId: string): void;
     fight(fightAccepter: Fighter): void;

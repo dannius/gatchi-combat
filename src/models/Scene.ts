@@ -6,6 +6,7 @@ import { BotListenerService } from 'src/services';
 
 import { Dictionary } from 'src/lib/dictionary/dictionary';
 import { DictionaryActionTitles } from 'src/lib/dictionary/dictionary-messages';
+import { FighterService } from 'src/db/fighters';
 
 // 10 min
 const SCENE_LIVE_TIME = 10 * 1000 * 60;
@@ -52,6 +53,7 @@ export class Scene extends EventEmitter<SceneEvents> {
 
   constructor(
     private tgBotListenerService: BotListenerService,
+    private fighterService: FighterService,
     private dictionary: typeof Dictionary,
     private chatId: number,
     private fightEmitter: Fighter,
@@ -219,16 +221,26 @@ export class Scene extends EventEmitter<SceneEvents> {
       await delay(FIGHT_DELAY);
 
       await this.tgBotListenerService.bot.deleteMessage(this.chatId, challengeMessage.message_id);
-      const { winner, looser, addedWin, addedLose } = this.fightEmitter.fight(this.fightAccepter);
+      const { winner, looser, addedWin, addedLose } = this.fightEmitter.fight(
+        this.getWeapon(this.fightEmitter.userId),
+        this.fightAccepter,
+        this.getWeapon(this.fightAccepter.userId),
+      );
+
+      const latestWinnerDto = await this.fighterService.get({ userId: winner.userId });
+      const latestLooserDto = await this.fighterService.get({ userId: looser.userId });
+
+      const latestWinner = new Fighter({ ...latestWinnerDto, scores: latestWinnerDto.scores + addedWin });
+      const latestLooser = new Fighter({ ...latestLooserDto, scores: latestLooserDto.scores - addedLose });
 
       const winObject = {
-        fighter: winner,
+        fighter: latestWinner,
         addedScores: addedWin,
         weapon: this.getWeapon(winner.userId),
       };
 
       const loseObject = {
-        fighter: looser,
+        fighter: latestLooser,
         addedScores: addedLose,
         weapon: this.getWeapon(looser.userId),
       };

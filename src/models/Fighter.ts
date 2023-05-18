@@ -1,5 +1,5 @@
 import { FighterDTO } from 'src/db/fighters';
-import { random } from 'src/lib';
+import { WeaponType, random } from 'src/lib';
 export const DEFAULT_STATING_SCORES = 600;
 
 export class Fighter implements FighterDTO {
@@ -9,6 +9,7 @@ export class Fighter implements FighterDTO {
   public fights = 0;
   public wins = 0;
   public looses = 0;
+  public bdMode = false;
 
   constructor(dto: Partial<FighterDTO>) {
     if (dto.userId !== undefined) this.userId = dto.userId;
@@ -17,10 +18,25 @@ export class Fighter implements FighterDTO {
     if (dto.fights !== undefined) this.fights = dto.fights;
     if (dto.wins !== undefined) this.wins = dto.wins;
     if (dto.looses !== undefined) this.looses = dto.looses;
+    if (dto.bdMode !== undefined) this.bdMode = dto.bdMode;
   }
 
-  public fight(enemy: Fighter): { winner: Fighter; looser: Fighter; addedWin: number; addedLose: number } {
-    switch (random(0, 1)) {
+  public fight(
+    emitterWeapon: WeaponType,
+    enemy: Fighter,
+    enemyWeapon: WeaponType,
+  ): { winner: Fighter; looser: Fighter; addedWin: number; addedLose: number } {
+    let res = 0;
+
+    if (this.bdMode && emitterWeapon === WeaponType.Rock) {
+      res = random(0, 1) === 0 || random(0, 1) === 0 ? 0 : 1;
+    } else if (enemy.bdMode && enemyWeapon === WeaponType.Rock) {
+      res = random(0, 1) === 1 || random(0, 1) === 1 ? 1 : 0;
+    } else {
+      res = random(0, 1);
+    }
+
+    switch (res) {
       case 0:
         return this.getWinner(this, enemy);
       case 1:

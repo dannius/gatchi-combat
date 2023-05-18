@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Scene = void 0;
+const Fighter_1 = require("./Fighter");
 const keyboards_1 = require("../lib/keyboards");
 const lib_1 = require("../lib");
 const dictionary_messages_1 = require("../lib/dictionary/dictionary-messages");
@@ -13,9 +14,10 @@ class Scene extends lib_1.EventEmitter {
     get isDuel() {
         return !!this.mentionedUserName;
     }
-    constructor(tgBotListenerService, dictionary, chatId, fightEmitter, mentionedUserName) {
+    constructor(tgBotListenerService, fighterService, dictionary, chatId, fightEmitter, mentionedUserName) {
         super();
         this.tgBotListenerService = tgBotListenerService;
+        this.fighterService = fighterService;
         this.dictionary = dictionary;
         this.chatId = chatId;
         this.fightEmitter = fightEmitter;
@@ -160,14 +162,18 @@ class Scene extends lib_1.EventEmitter {
             await this.fightStageThree(challengeMessage.message_id);
             await (0, lib_1.delay)(FIGHT_DELAY);
             await this.tgBotListenerService.bot.deleteMessage(this.chatId, challengeMessage.message_id);
-            const { winner, looser, addedWin, addedLose } = this.fightEmitter.fight(this.fightAccepter);
+            const { winner, looser, addedWin, addedLose } = this.fightEmitter.fight(this.getWeapon(this.fightEmitter.userId), this.fightAccepter, this.getWeapon(this.fightAccepter.userId));
+            const latestWinnerDto = await this.fighterService.get({ userId: winner.userId });
+            const latestLooserDto = await this.fighterService.get({ userId: looser.userId });
+            const latestWinner = new Fighter_1.Fighter(Object.assign(Object.assign({}, latestWinnerDto), { scores: latestWinnerDto.scores + addedWin }));
+            const latestLooser = new Fighter_1.Fighter(Object.assign(Object.assign({}, latestLooserDto), { scores: latestLooserDto.scores - addedLose }));
             const winObject = {
-                fighter: winner,
+                fighter: latestWinner,
                 addedScores: addedWin,
                 weapon: this.getWeapon(winner.userId),
             };
             const loseObject = {
-                fighter: looser,
+                fighter: latestLooser,
                 addedScores: addedLose,
                 weapon: this.getWeapon(looser.userId),
             };

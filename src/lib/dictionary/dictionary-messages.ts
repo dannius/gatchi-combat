@@ -309,6 +309,10 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
         type: 'video',
         id: 'CgACAgIAAxkBAAIBdGRg07KbShCenFh7mk9Sn3OD34UkAAK4LgACjwUIS4FlUk_jRbdoLwQ',
       },
+      {
+        type: 'video',
+        id: 'CgACAgIAAxkBAAIJzmRmamOlEvUUQFNfGFBUoZAv8CCsAAIrKAACReQ5S9n0kp2iPpudLwQ',
+      },
     ],
   },
 };

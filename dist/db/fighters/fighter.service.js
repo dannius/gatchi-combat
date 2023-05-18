@@ -25,8 +25,8 @@ let FighterService = class FighterService {
         const createFighter = new this.fighterModel(fighterDto);
         return createFighter.save();
     }
-    async get(userId) {
-        return this.fighterModel.findOne({ userId }).exec();
+    async get(params) {
+        return this.fighterModel.findOne(params).exec();
     }
     async findAllWithLimit(limit = 100) {
         return this.fighterModel.find().sort({ scores: -1 }).limit(limit).exec();

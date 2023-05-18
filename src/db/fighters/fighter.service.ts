@@ -13,8 +13,8 @@ export class FighterService {
     return createFighter.save();
   }
 
-  async get(userId: string): Promise<FighterDTO> {
-    return this.fighterModel.findOne({ userId }).exec();
+  async get(params: { userId?: string; name?: string }): Promise<FighterDTO> {
+    return this.fighterModel.findOne(params).exec();
   }
 
   async findAllWithLimit(limit = 100): Promise<FighterDTO[]> {

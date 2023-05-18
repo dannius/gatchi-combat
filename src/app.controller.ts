@@ -1,3 +1,4 @@
+import { DictionaryActionTitles, Media } from './lib/dictionary/dictionary-messages';
 import { Controller, Get } from '@nestjs/common';
 import { Fighter, Group, Scene } from './models';
 import { BotListenerService } from './services';
@@ -32,15 +33,27 @@ export class AppController {
     this.initStatsListener();
     this.initGroupStatsListener();
     this.toggleDailyQuoteListener();
+    this.initBdModeSubscription();
 
     // debug
     if (process.env.DEBUG === 'true') {
       this.debugListeners();
     }
 
-    // if (process.env.FILES === 'true') {
-    // this.filesListener();
-    // }
+    if (process.env.FILES === 'true') {
+      this.filesListener();
+    }
+
+    // this.botListenerService.bot.on('message', (e) => {
+    //   const chat = new Group({ groupId: e.chat.id });
+    //   const fighter = new Fighter({ name: 'dand', userId: '123' });
+
+    //   chat.fighters.(fighter.userId, fighter);
+
+    //   this.fightersService.create(fighter);
+    //   this.groupService.create(chat);
+    //   console.log(1);
+    // });
 
     this.setDailyQuote();
 
@@ -158,9 +171,16 @@ export class AppController {
   }
 
   private async createFightScene(message: TelegramBot.Message, mentionedUsername?: Mention): Promise<void> {
-    const fighter = await this.createOrGetExistingFighter(`${message.from.id}`, message.from.username);
+    const fighter = await this.createOrGetExistingFighter(message.from);
 
-    const scene = new Scene(this.botListenerService, Dictionary, message.chat.id, fighter, mentionedUsername);
+    const scene = new Scene(
+      this.botListenerService,
+      this.fightersService,
+      Dictionary,
+      message.chat.id,
+      fighter,
+      mentionedUsername,
+    );
     this.scenes.set(scene.id, scene);
 
     scene.on('fightFinished', async (winner, looser) => {
@@ -189,6 +209,60 @@ export class AppController {
     scene.on('destroy', () => {
       this.scenes.delete(scene.id);
     });
+  }
+
+  private initBdModeSubscription(): void {
+    this.botListenerService.on('bdMode', async (name, status) => {
+      const dbUser = await this.fightersService.get({ name });
+
+      if (dbUser.bdMode === status) {
+        return;
+      }
+
+      dbUser.bdMode = status;
+
+      await this.fightersService.update(dbUser);
+      const groups = await this.groupService.findAll();
+
+      const filteredGroups = groups.filter((ch) => !!ch.fighters.get(`${dbUser.userId}`));
+
+      if (filteredGroups.length) {
+        const ids = filteredGroups.map((g) => g.groupId);
+        const notify = this.getBdNotification(name, status);
+
+        this.botListenerService.notifyChats(ids, notify);
+      }
+    });
+  }
+
+  private getBdNotification(name: string, status: boolean): { message: string; media: Media } {
+    if (status) {
+      const media = {
+        type: 'video',
+        id: 'CgACAgIAAxkBAAIJzmRmamOlEvUUQFNfGFBUoZAv8CCsAAIrKAACReQ5S9n0kp2iPpudLwQ',
+      } as Media;
+
+      return {
+        message: `@${name}\nВ день рождения ты получаешь магический ${
+          DictionaryActionTitles[WeaponType.Rock]
+        },\nC ним шансы на победу увеличиваются в 2 раза. Используй ${
+          DictionaryActionTitles[WeaponType.Rock]
+        } по назначению, докажи что ты ⚣man⚣, реализуй свои ⚣deep dark fantasies⚣`,
+        media,
+      };
+    } else {
+      const media = {
+        type: 'video',
+        id: 'CgACAgIAAxkBAAOZZGA4VFfriqPgUhVdK3d_4raVGmwAAtcrAAKPBQhLCim-e_yJ30MvBA',
+      } as Media;
+
+      return {
+        message: `@${name}\nМагия исчезла, твой ${
+          DictionaryActionTitles[WeaponType.Rock]
+        } вернулся в обычное состояние, но ты все еще можешь его использовать, жду тебя в ⚣dungeon⚣`,
+        media,
+      };
+    }
   }
 
   private initCallbackQuerySubscription(): void {
@@ -224,29 +298,32 @@ export class AppController {
       return;
     }
 
-    const fighter = await this.createOrGetExistingFighter(`${query.from.id}`, query.from.username);
+    const fighter = await this.createOrGetExistingFighter(query.from);
     scene.fight(fighter);
   }
 
-  private async createOrGetExistingFighter(id: string, name: string): Promise<Fighter> {
-    const dbFighter = await this.fightersService.get(id);
+  private async createOrGetExistingFighter(from: TelegramBot.User): Promise<Fighter> {
+    const userId = `${from.id}`;
+
+    const dbFighter = await this.fightersService.get({ userId });
 
     if (dbFighter) {
       return new Fighter(dbFighter);
     }
 
-    const newFighter = new Fighter({ userId: `${id}`, name });
+    const name = from.username || from.first_name;
+    const newFighter = new Fighter({ userId, name });
     this.fightersService.create(newFighter);
 
     return newFighter;
   }
 
-  // private filesListener(): void {
-  //   this.botListenerService.bot.on('message', (query) => {
-  //     // console.log(query?.photo);
-  //     console.log(query?.document?.file_id);
-  //   });
-  // }
+  private filesListener(): void {
+    this.botListenerService.bot.on('message', (query) => {
+      console.log(query?.photo);
+      console.log(query?.document?.file_id);
+    });
+  }
 
   private debugListeners(): void {
     const stages = Object.keys(Dictionary);

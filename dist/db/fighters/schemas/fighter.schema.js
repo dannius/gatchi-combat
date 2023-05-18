@@ -37,6 +37,10 @@ __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", Number)
 ], FightersTable.prototype, "looses", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Boolean)
+], FightersTable.prototype, "bdMode", void 0);
 FightersTable = __decorate([
     (0, mongoose_1.Schema)()
 ], FightersTable);

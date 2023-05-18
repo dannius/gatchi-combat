@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppController = void 0;
+const dictionary_messages_1 = require("./lib/dictionary/dictionary-messages");
 const common_1 = require("@nestjs/common");
 const models_1 = require("./models");
 const services_1 = require("./services");
@@ -36,8 +37,12 @@ let AppController = class AppController {
         this.initStatsListener();
         this.initGroupStatsListener();
         this.toggleDailyQuoteListener();
+        this.initBdModeSubscription();
         if (process.env.DEBUG === 'true') {
             this.debugListeners();
+        }
+        if (process.env.FILES === 'true') {
+            this.filesListener();
         }
         this.setDailyQuote();
         (0, deaily_repeat_1.dailyRepeat)(12, 1, async () => {
@@ -124,8 +129,8 @@ let AppController = class AppController {
         this.botListenerService.on('challengeQuery', (message) => this.createFightScene(message));
     }
     async createFightScene(message, mentionedUsername) {
-        const fighter = await this.createOrGetExistingFighter(`${message.from.id}`, message.from.username);
-        const scene = new models_1.Scene(this.botListenerService, dictionary_1.Dictionary, message.chat.id, fighter, mentionedUsername);
+        const fighter = await this.createOrGetExistingFighter(message.from);
+        const scene = new models_1.Scene(this.botListenerService, this.fightersService, dictionary_1.Dictionary, message.chat.id, fighter, mentionedUsername);
         this.scenes.set(scene.id, scene);
         scene.on('fightFinished', async (winner, looser) => {
             this.finishedScenes++;
@@ -150,6 +155,45 @@ let AppController = class AppController {
         scene.on('destroy', () => {
             this.scenes.delete(scene.id);
         });
+    }
+    initBdModeSubscription() {
+        this.botListenerService.on('bdMode', async (name, status) => {
+            const dbUser = await this.fightersService.get({ name });
+            if (dbUser.bdMode === status) {
+                return;
+            }
+            dbUser.bdMode = status;
+            await this.fightersService.update(dbUser);
+            const groups = await this.groupService.findAll();
+            const filteredGroups = groups.filter((ch) => !!ch.fighters.get(`${dbUser.userId}`));
+            if (filteredGroups.length) {
+                const ids = filteredGroups.map((g) => g.groupId);
+                const notify = this.getBdNotification(name, status);
+                this.botListenerService.notifyChats(ids, notify);
+            }
+        });
+    }
+    getBdNotification(name, status) {
+        if (status) {
+            const media = {
+                type: 'video',
+                id: 'CgACAgIAAxkBAAIJzmRmamOlEvUUQFNfGFBUoZAv8CCsAAIrKAACReQ5S9n0kp2iPpudLwQ',
+            };
+            return {
+                message: `@${name}\nВ день рождения ты получаешь магический ${dictionary_messages_1.DictionaryActionTitles[lib_1.WeaponType.Rock]},\nC ним шансы на победу увеличиваются в 2 раза. Используй ${dictionary_messages_1.DictionaryActionTitles[lib_1.WeaponType.Rock]} по назначению, докажи что ты ⚣man⚣, реализуй свои ⚣deep dark fantasies⚣`,
+                media,
+            };
+        }
+        else {
+            const media = {
+                type: 'video',
+                id: 'CgACAgIAAxkBAAOZZGA4VFfriqPgUhVdK3d_4raVGmwAAtcrAAKPBQhLCim-e_yJ30MvBA',
+            };
+            return {
+                message: `@${name}\nМагия исчезла, твой ${dictionary_messages_1.DictionaryActionTitles[lib_1.WeaponType.Rock]} вернулся в обычное состояние, но ты все еще можешь его использовать, жду тебя в ⚣dungeon⚣`,
+                media,
+            };
+        }
     }
     initCallbackQuerySubscription() {
         this.botListenerService.on('callbackQuery', (query) => {
@@ -178,17 +222,26 @@ let AppController = class AppController {
         if (!scene.canAcceptFight(query.from)) {
             return;
         }
-        const fighter = await this.createOrGetExistingFighter(`${query.from.id}`, query.from.username);
+        const fighter = await this.createOrGetExistingFighter(query.from);
         scene.fight(fighter);
     }
-    async createOrGetExistingFighter(id, name) {
-        const dbFighter = await this.fightersService.get(id);
+    async createOrGetExistingFighter(from) {
+        const userId = `${from.id}`;
+        const dbFighter = await this.fightersService.get({ userId });
         if (dbFighter) {
             return new models_1.Fighter(dbFighter);
         }
-        const newFighter = new models_1.Fighter({ userId: `${id}`, name });
+        const name = from.username || from.first_name;
+        const newFighter = new models_1.Fighter({ userId, name });
         this.fightersService.create(newFighter);
         return newFighter;
+    }
+    filesListener() {
+        this.botListenerService.bot.on('message', (query) => {
+            var _a;
+            console.log(query === null || query === void 0 ? void 0 : query.photo);
+            console.log((_a = query === null || query === void 0 ? void 0 : query.document) === null || _a === void 0 ? void 0 : _a.file_id);
+        });
     }
     debugListeners() {
         const stages = Object.keys(dictionary_1.Dictionary);

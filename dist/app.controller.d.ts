@@ -23,9 +23,12 @@ export declare class AppController {
     private initDuelSubscription;
     private initChallangeQuerySubscription;
     private createFightScene;
+    private initBdModeSubscription;
+    private getBdNotification;
     private initCallbackQuerySubscription;
     private acceptFight;
     private createOrGetExistingFighter;
+    private filesListener;
     private debugListeners;
     getHello(): Promise<string>;
 }

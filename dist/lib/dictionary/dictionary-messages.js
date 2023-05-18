@@ -264,7 +264,8 @@ exports.DictionaryMessages = {
             `У\n${exports.TextKeys.fighter2Name} ${exports.TextKeys.fighter2Weapon}\nиз стали, но у\n${exports.TextKeys.fighter1Name} ${exports.TextKeys.fighter1Weapon} из алмаза! Он забирает у ${exports.TextKeys.fighter2Name} ${exports.TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
             `${exports.TextKeys.fighter1Name} проводит болевой на ${exports.TextKeys.fighter2Weapon} бедного ⚣jabroni⚣ ${exports.TextKeys.fighter2Name}`,
             `${exports.TextKeys.fighter1Name} наносит открытый перелом ${exports.TextKeys.fighter2Weapon} ${exports.TextKeys.fighter2Name} и забирает ${exports.TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
-            `${exports.TextKeys.fighter2Name} неождал, такой резкой атаки с помощью ${exports.TextKeys.fighter2Weapon} от ${exports.TextKeys.fighter1Name}. ${exports.TextKeys.fighter2Name} опустошен на ${exports.TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
+            `${exports.TextKeys.fighter2Name} неождал, такой резкой атаки с помощью ${exports.TextKeys.fighter1Weapon} от ${exports.TextKeys.fighter1Name}. ${exports.TextKeys.fighter2Name} опустошен на ${exports.TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
+            `${exports.TextKeys.fighter2Weapon} у ${exports.TextKeys.fighter2Name} оказался как у настоящего ♂slaves♂. Такой ♂dungeon master♂ как ${exports.TextKeys.fighter1Name} такого не прощает. ${exports.TextKeys.fighter2Name} нужно чаще посещать ♂gym♂`,
         ],
         messagesHeader: [
             `${exports.TextKeys.fighter1Name} - ${exports.TextKeys.fighter1ScoresTotal}(${exports.TextKeys.fighter1ScoresAdded}) мл.\n${exports.TextKeys.fighter2Name} - ${exports.TextKeys.fighter2ScoresTotal}(${exports.TextKeys.fighter2ScoresAdded}) мл.\n\n`,

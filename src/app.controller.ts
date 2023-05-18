@@ -35,6 +35,45 @@ export class AppController {
     this.toggleDailyQuoteListener();
     this.initBdModeSubscription();
 
+    setTimeout(() => {
+      const bdMode = new RegExp(`^@${this.botListenerService.me.username} /migrate`);
+
+      this.botListenerService.bot.onText(bdMode, async (msg) => {
+        const groups = await this.groupService.findAll();
+        const fighters = await this.fightersService.findAllWithLimit(999);
+
+        const fighterObjs = fighters
+          .map((f) => {
+            const obj = new Fighter(f);
+
+            obj.username = obj.name;
+
+            return obj;
+          })
+          .filter((f) => f.name && f.name !== 'undefined' && f.name !== 'null');
+
+        fighterObjs.forEach(async (f) => {
+          await this.fightersService.update(f);
+        });
+
+        groups.forEach(async (g) => {
+          const fightersMap = new Map();
+          Array.from(g.fighters).map(async ([key, value]) => {
+            if (key && key !== 'undefined' && key !== 'null') {
+              const fighter = fighterObjs.find((obj) => obj.name === value.name);
+              if (fighter) {
+                value.name = fighter.name;
+                fightersMap.set(key, value);
+
+                g.fighters = fightersMap;
+                await this.groupService.update(g);
+              }
+            }
+          });
+        });
+      });
+    }, 1000);
+
     // debug
     if (process.env.DEBUG === 'true') {
       this.debugListeners();
@@ -222,7 +261,7 @@ export class AppController {
     });
   }
 
-  private getBdNotification(name: string, status: boolean): { message: string; media: Media } {
+  private getBdNotification(name: Mention, status: boolean): { message: string; media: Media } {
     if (status) {
       const media = {
         type: 'video',

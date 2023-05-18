@@ -21,9 +21,10 @@ exports.DictionaryActionTitles = {
 exports.DictionaryMessages = {
     StartChallenge: {
         messagesBody: [
-            `@${exports.TextKeys.fighter1Name} желает надрать кому нибудь зад`,
+            `@${exports.TextKeys.fighter1Name} желает надрать кому-нибудь зад`,
             `@${exports.TextKeys.fighter1Name} спускается в ♂dungeon♂ и желает померяться ♂semen♂`,
             `@${exports.TextKeys.fighter1Name}: "Я новый ♂dungeon master♂! Кто не согласен, отзовись или молчи вечно!"`,
+            `@${exports.TextKeys.fighter1Name}: спустился в ♂gym♂ и провозгласил себя ♂boss of gym♂`,
         ],
         medias: [
             {
@@ -54,7 +55,11 @@ exports.DictionaryMessages = {
         ],
     },
     FightEmitterSelectWeapon: {
-        messagesBody: [`@${exports.TextKeys.fighter1Name} выбирай оружие`],
+        messagesBody: [
+            `@${exports.TextKeys.fighter1Name} выбирай оружие`,
+            `Чем же @${exports.TextKeys.fighter1Name} хочет ♂fuck♂ очередного ♂slave♂`,
+            `@${exports.TextKeys.fighter1Name} очень серьезен в выборе ♂weapon♂`,
+        ],
         medias: [
             {
                 type: 'video',
@@ -91,7 +96,11 @@ exports.DictionaryMessages = {
         ],
     },
     FightAccepterSelectWeapon: {
-        messagesBody: [`Твой ход @${exports.TextKeys.fighter1Name}`],
+        messagesBody: [
+            `Твой ход @${exports.TextKeys.fighter1Name}`,
+            `@${exports.TextKeys.fighter1Name} выбери лучший ⚣fuck way⚣`,
+            `@${exports.TextKeys.fighter1Name} выбирает свой ⚣favorite fuck⚣`,
+        ],
         medias: [
             {
                 type: 'video',
@@ -255,6 +264,7 @@ exports.DictionaryMessages = {
             `У\n${exports.TextKeys.fighter2Name} ${exports.TextKeys.fighter2Weapon}\nиз стали, но у\n${exports.TextKeys.fighter1Name} ${exports.TextKeys.fighter1Weapon} из алмаза! Он забирает у ${exports.TextKeys.fighter2Name} ${exports.TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
             `${exports.TextKeys.fighter1Name} проводит болевой на ${exports.TextKeys.fighter2Weapon} бедного ⚣jabroni⚣ ${exports.TextKeys.fighter2Name}`,
             `${exports.TextKeys.fighter1Name} наносит открытый перелом ${exports.TextKeys.fighter2Weapon} ${exports.TextKeys.fighter2Name} и забирает ${exports.TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
+            `${exports.TextKeys.fighter2Name} неождал, такой резкой атаки с помощью ${exports.TextKeys.fighter2Weapon} от ${exports.TextKeys.fighter1Name}. ${exports.TextKeys.fighter2Name} опустошен на ${exports.TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
         ],
         messagesHeader: [
             `${exports.TextKeys.fighter1Name} - ${exports.TextKeys.fighter1ScoresTotal}(${exports.TextKeys.fighter1ScoresAdded}) мл.\n${exports.TextKeys.fighter2Name} - ${exports.TextKeys.fighter2ScoresTotal}(${exports.TextKeys.fighter2ScoresAdded}) мл.\n\n`,

@@ -134,8 +134,6 @@ let AppController = class AppController {
         this.scenes.set(scene.id, scene);
         scene.on('fightFinished', async (winner, looser) => {
             this.finishedScenes++;
-            this.fightersService.update(winner.fighter);
-            this.fightersService.update(looser.fighter);
             const groupDto = await this.groupService.get(message.chat.id);
             const group = new models_1.Group(groupDto ? groupDto : { groupId: message.chat.id });
             group.updateFightersScores(winner, looser);
@@ -227,12 +225,14 @@ let AppController = class AppController {
     }
     async createOrGetExistingFighter(from) {
         const userId = `${from.id}`;
+        const { username, first_name } = from;
         const dbFighter = await this.fightersService.get({ userId });
         if (dbFighter) {
+            dbFighter.username = username;
+            dbFighter.name = first_name;
             return new models_1.Fighter(dbFighter);
         }
-        const name = from.username || from.first_name;
-        const newFighter = new models_1.Fighter({ userId, name });
+        const newFighter = new models_1.Fighter({ userId, name: first_name, username });
         this.fightersService.create(newFighter);
         return newFighter;
     }

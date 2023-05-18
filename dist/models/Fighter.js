@@ -14,6 +14,8 @@ class Fighter {
             this.userId = dto.userId;
         if (dto.name !== undefined)
             this.name = dto.name;
+        if (dto.username !== undefined)
+            this.username = dto.username;
         if (dto.scores !== undefined)
             this.scores = dto.scores;
         if (dto.fights !== undefined)

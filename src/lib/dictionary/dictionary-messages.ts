@@ -42,10 +42,10 @@ export const DictionaryActionTitles: Record<ActionType | WeaponType, string> = {
 export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBaseParams> = {
   StartChallenge: {
     messagesBody: [
-      `@${TextKeys.fighter1Name} желает надрать кому-нибудь зад`,
-      `@${TextKeys.fighter1Name} спускается в ♂dungeon♂ и желает померяться ♂semen♂`,
-      `@${TextKeys.fighter1Name}: "Я новый ♂dungeon master♂! Кто не согласен, отзовись или молчи вечно!"`,
-      `@${TextKeys.fighter1Name}: спустился в ♂gym♂ и провозгласил себя ♂boss of gym♂`,
+      `${TextKeys.fighter1Name} желает надрать кому-нибудь зад`,
+      `${TextKeys.fighter1Name} спускается в ♂dungeon♂ и желает померяться ♂semen♂`,
+      `${TextKeys.fighter1Name}: "Я новый ♂dungeon master♂! Кто не согласен, отзовись или молчи вечно!"`,
+      `${TextKeys.fighter1Name}: спустился в ♂gym♂ и провозгласил себя ♂boss of gym♂`,
     ],
     medias: [
       {
@@ -60,9 +60,9 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
   },
   StartDuel: {
     messagesBody: [
-      `@${TextKeys.fighter1Name} изьявил желание надрать ${TextKeys.fighter2Name} ⚣ass⚣, примет ли он бой?`,
-      `@${TextKeys.fighter1Name} хочет проверить ${TextKeys.fighter2Name} на прочность`,
-      `@${TextKeys.fighter2Name} отказался страховать ${TextKeys.fighter1Name} на жиме лежа, в этом ⚣gym⚣ такое не прощают`,
+      `${TextKeys.fighter1Name} изьявил желание надрать ${TextKeys.fighter2Name} ⚣ass⚣, примет ли он бой?`,
+      `${TextKeys.fighter1Name} хочет проверить ${TextKeys.fighter2Name} на прочность`,
+      `${TextKeys.fighter2Name} отказался страховать ${TextKeys.fighter1Name} на жиме лежа, в этом ⚣gym⚣ такое не прощают`,
     ],
     medias: [
       {
@@ -77,9 +77,9 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
   },
   FightEmitterSelectWeapon: {
     messagesBody: [
-      `@${TextKeys.fighter1Name} выбирай оружие`,
-      `Чем же @${TextKeys.fighter1Name} хочет ♂fuck♂ очередного ♂slave♂`,
-      `@${TextKeys.fighter1Name} очень серьезен в выборе ♂weapon♂`,
+      `${TextKeys.fighter1Name} выбирай оружие`,
+      `Чем же ${TextKeys.fighter1Name} хочет ♂fuck♂ очередного ♂slave♂`,
+      `${TextKeys.fighter1Name} очень серьезен в выборе ♂weapon♂`,
     ],
     medias: [
       {
@@ -118,9 +118,9 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
   },
   FightAccepterSelectWeapon: {
     messagesBody: [
-      `Твой ход @${TextKeys.fighter1Name}`,
-      `@${TextKeys.fighter1Name} выбери лучший ⚣fuck way⚣`,
-      `@${TextKeys.fighter1Name} выбирает свой ⚣favorite fuck⚣`,
+      `Твой ход ${TextKeys.fighter1Name}`,
+      `${TextKeys.fighter1Name} выбери лучший ⚣fuck way⚣`,
+      `${TextKeys.fighter1Name} выбирает свой ⚣favorite fuck⚣`,
     ],
     medias: [
       {
@@ -282,11 +282,11 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
       `Ебать ты!\nВсе белое!\n${TextKeys.fighter1Name} доказал, что он ⚣man⚣.\nУмело используя ${TextKeys.fighter1Weapon} он лишает ${TextKeys.fighter2Name} ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
       `${TextKeys.fighter2Name}, дружок пирожок,\nкажется ты ошибся дверью,\nклуб для ♂slaves♂ на 2 блока ниже`,
       `${TextKeys.fighter1Name} Вот это ты дал используя ${TextKeys.fighter1Weapon},\nвсе в semen, ${TextKeys.fighter2Name} обесчестен,\nу него стало на ${TextKeys.fighter2ScoresAdded} мл. меньше ⚣semen⚣ и сломанный ${TextKeys.fighter2Weapon}`,
-      `У\n${TextKeys.fighter2Name} ${TextKeys.fighter2Weapon}\nиз стали, но у\n${TextKeys.fighter1Name} ${TextKeys.fighter1Weapon} из алмаза! Он забирает у ${TextKeys.fighter2Name} ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
+      `У ${TextKeys.fighter2Name} ${TextKeys.fighter2Weapon} из стали,\nно у${TextKeys.fighter1Name} ${TextKeys.fighter1Weapon} из алмаза!\n${TextKeys.fighter1Name}  забирает у ${TextKeys.fighter2Name} ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
       `${TextKeys.fighter1Name} проводит болевой на ${TextKeys.fighter2Weapon} бедного ⚣jabroni⚣ ${TextKeys.fighter2Name}`,
       `${TextKeys.fighter1Name} наносит открытый перелом ${TextKeys.fighter2Weapon} ${TextKeys.fighter2Name} и забирает ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
-      `${TextKeys.fighter2Name} неождал, такой резкой атаки с помощью ${TextKeys.fighter1Weapon} от ${TextKeys.fighter1Name}. ${TextKeys.fighter2Name} опустошен на ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
-      `${TextKeys.fighter2Weapon} у ${TextKeys.fighter2Name} оказался как у настоящего ♂slaves♂. Такой ♂dungeon master♂ как ${TextKeys.fighter1Name} такого не прощает. ${TextKeys.fighter2Name} нужно чаще посещать ♂gym♂`,
+      `${TextKeys.fighter2Name} неождал, такой резкой атаки с помощью ${TextKeys.fighter1Weapon} от ${TextKeys.fighter1Name}.\n${TextKeys.fighter2Name} опустошен на ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
+      `${TextKeys.fighter2Weapon} у ${TextKeys.fighter2Name} оказался как у настоящего ♂slaves♂.\nТакой ♂dungeon master♂ как ${TextKeys.fighter1Name} не прощает.\n${TextKeys.fighter2Name} нужно чаще посещать ♂gym♂`,
     ],
     messagesHeader: [
       `${TextKeys.fighter1Name} - ${TextKeys.fighter1ScoresTotal}(${TextKeys.fighter1ScoresAdded}) мл.\n${TextKeys.fighter2Name} - ${TextKeys.fighter2ScoresTotal}(${TextKeys.fighter2ScoresAdded}) мл.\n\n`,

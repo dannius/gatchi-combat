@@ -25,6 +25,7 @@
 /// <reference types="mongoose/types/inferschematype" />
 export interface FighterDTO {
     userId: string;
+    username: string;
     name: string;
     scores: number;
     fights: number;
@@ -34,6 +35,7 @@ export interface FighterDTO {
 }
 export declare class FightersTable implements FighterDTO {
     userId: string;
+    username: string;
     name: string;
     scores: number;
     fights: number;

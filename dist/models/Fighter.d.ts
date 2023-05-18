@@ -3,6 +3,7 @@ import { WeaponType } from 'src/lib';
 export declare const DEFAULT_STATING_SCORES = 600;
 export declare class Fighter implements FighterDTO {
     userId: string;
+    username: string;
     name: string;
     scores: number;
     fights: number;

@@ -142,7 +142,10 @@ export class Scene extends EventEmitter<SceneEvents> {
 
   private beforeFightEmitterWeaponChooseListener(): void {
     this.on('beforeFightEmitterWeaponChoosen', async () => {
-      const caption = this.dictionary.FightEmitterSelectWeapon.getMessage({ fighter1Name: this.fightEmitter.name });
+      const caption = this.dictionary.FightEmitterSelectWeapon.getMessage({
+        fighter1Name: this.fightEmitter.username ? `@${this.fightEmitter.username}` : this.fightEmitter.name,
+        fighter2Name: this.fightAccepter.username ? `@${this.fightAccepter.username}` : this.fightAccepter.name,
+      });
       const media = this.dictionary.FightEmitterSelectWeapon.getMedia();
       const reply_markup = getChoseWeaponReplyMarkup(this.id);
       const params = { caption, reply_markup };
@@ -169,7 +172,11 @@ export class Scene extends EventEmitter<SceneEvents> {
 
   private beforeFightAccepterWeaponChooseListener(): void {
     this.on('beforeFightAccepterWeaponChoosen', async () => {
-      const caption = this.dictionary.FightAccepterSelectWeapon.getMessage({ fighter1Name: this.fightAccepter.name });
+      const caption = this.dictionary.FightAccepterSelectWeapon.getMessage({
+        fighter1Name: this.fightEmitter.username ? `@${this.fightEmitter.username}` : this.fightEmitter.name,
+        fighter2Name: this.fightAccepter.username ? `@${this.fightAccepter.username}` : this.fightAccepter.name,
+        fighter1Weapon: this.getWeapon(this.fightEmitter.userId),
+      });
       const media = this.dictionary.FightAccepterSelectWeapon.getMedia();
       const reply_markup = getChoseWeaponReplyMarkup(this.id);
       const params = { caption, reply_markup };
@@ -230,17 +237,17 @@ export class Scene extends EventEmitter<SceneEvents> {
       const latestWinnerDto = await this.fighterService.get({ userId: winner.userId });
       const latestLooserDto = await this.fighterService.get({ userId: looser.userId });
 
-      const latestWinner = new Fighter({ ...latestWinnerDto, scores: latestWinnerDto.scores + addedWin });
-      const latestLooser = new Fighter({ ...latestLooserDto, scores: latestLooserDto.scores - addedLose });
+      winner.scores = latestWinnerDto.scores + addedWin;
+      looser.scores = latestLooserDto.scores - addedLose;
 
       const winObject = {
-        fighter: latestWinner,
+        fighter: winner,
         addedScores: addedWin,
         weapon: this.getWeapon(winner.userId),
       };
 
       const loseObject = {
-        fighter: latestLooser,
+        fighter: looser,
         addedScores: addedLose,
         weapon: this.getWeapon(looser.userId),
       };
@@ -258,9 +265,12 @@ export class Scene extends EventEmitter<SceneEvents> {
       looser.fighter.fights += 1;
       looser.fighter.looses += 1;
 
+      this.fighterService.update(winner.fighter);
+      this.fighterService.update(looser.fighter);
+
       const caption = this.dictionary.Final.getMessage({
-        fighter1Name: winner.fighter.name,
-        fighter2Name: looser.fighter.name,
+        fighter1Name: this.fightEmitter.username ? this.fightEmitter.username : this.fightEmitter.name,
+        fighter2Name: this.fightAccepter.username ? this.fightAccepter.username : this.fightAccepter.name,
         fighter1Weapon: DictionaryActionTitles[this.getWeapon(winner.fighter.userId)],
         fighter2Weapon: DictionaryActionTitles[this.getWeapon(looser.fighter.userId)],
         fighter1ScoresTotal: `${winner.fighter.scores}`,
@@ -281,7 +291,9 @@ export class Scene extends EventEmitter<SceneEvents> {
   }
 
   private startChallenge(): void {
-    const caption = this.dictionary.StartChallenge.getMessage({ fighter1Name: this.fightEmitter.name });
+    const caption = this.dictionary.StartChallenge.getMessage({
+      fighter1Name: this.fightEmitter.username ? `@${this.fightEmitter.username}` : this.fightEmitter.name,
+    });
     const media = this.dictionary.StartChallenge.getMedia();
 
     if (media.type === 'photo') {
@@ -309,7 +321,7 @@ export class Scene extends EventEmitter<SceneEvents> {
 
   private startDuel(mentionedUsername: Mention): void {
     const caption = this.dictionary.StartDuel.getMessage({
-      fighter1Name: this.fightEmitter.name,
+      fighter1Name: this.fightEmitter.username ? `@${this.fightEmitter.username}` : this.fightEmitter.name,
       fighter2Name: mentionedUsername,
     });
 

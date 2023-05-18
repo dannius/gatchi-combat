@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Scene = void 0;
-const Fighter_1 = require("./Fighter");
 const keyboards_1 = require("../lib/keyboards");
 const lib_1 = require("../lib");
 const dictionary_messages_1 = require("../lib/dictionary/dictionary-messages");
@@ -89,7 +88,10 @@ class Scene extends lib_1.EventEmitter {
     }
     beforeFightEmitterWeaponChooseListener() {
         this.on('beforeFightEmitterWeaponChoosen', async () => {
-            const caption = this.dictionary.FightEmitterSelectWeapon.getMessage({ fighter1Name: this.fightEmitter.name });
+            const caption = this.dictionary.FightEmitterSelectWeapon.getMessage({
+                fighter1Name: this.fightEmitter.username ? `@${this.fightEmitter.username}` : this.fightEmitter.name,
+                fighter2Name: this.fightAccepter.username ? `@${this.fightAccepter.username}` : this.fightAccepter.name,
+            });
             const media = this.dictionary.FightEmitterSelectWeapon.getMedia();
             const reply_markup = (0, keyboards_1.getChoseWeaponReplyMarkup)(this.id);
             const params = { caption, reply_markup };
@@ -115,7 +117,11 @@ class Scene extends lib_1.EventEmitter {
     }
     beforeFightAccepterWeaponChooseListener() {
         this.on('beforeFightAccepterWeaponChoosen', async () => {
-            const caption = this.dictionary.FightAccepterSelectWeapon.getMessage({ fighter1Name: this.fightAccepter.name });
+            const caption = this.dictionary.FightAccepterSelectWeapon.getMessage({
+                fighter1Name: this.fightEmitter.username ? `@${this.fightEmitter.username}` : this.fightEmitter.name,
+                fighter2Name: this.fightAccepter.username ? `@${this.fightAccepter.username}` : this.fightAccepter.name,
+                fighter1Weapon: this.getWeapon(this.fightEmitter.userId),
+            });
             const media = this.dictionary.FightAccepterSelectWeapon.getMedia();
             const reply_markup = (0, keyboards_1.getChoseWeaponReplyMarkup)(this.id);
             const params = { caption, reply_markup };
@@ -165,15 +171,15 @@ class Scene extends lib_1.EventEmitter {
             const { winner, looser, addedWin, addedLose } = this.fightEmitter.fight(this.getWeapon(this.fightEmitter.userId), this.fightAccepter, this.getWeapon(this.fightAccepter.userId));
             const latestWinnerDto = await this.fighterService.get({ userId: winner.userId });
             const latestLooserDto = await this.fighterService.get({ userId: looser.userId });
-            const latestWinner = new Fighter_1.Fighter(Object.assign(Object.assign({}, latestWinnerDto), { scores: latestWinnerDto.scores + addedWin }));
-            const latestLooser = new Fighter_1.Fighter(Object.assign(Object.assign({}, latestLooserDto), { scores: latestLooserDto.scores - addedLose }));
+            winner.scores = latestWinnerDto.scores + addedWin;
+            looser.scores = latestLooserDto.scores - addedLose;
             const winObject = {
-                fighter: latestWinner,
+                fighter: winner,
                 addedScores: addedWin,
                 weapon: this.getWeapon(winner.userId),
             };
             const loseObject = {
-                fighter: latestLooser,
+                fighter: looser,
                 addedScores: addedLose,
                 weapon: this.getWeapon(looser.userId),
             };
@@ -186,9 +192,11 @@ class Scene extends lib_1.EventEmitter {
             winner.fighter.wins += 1;
             looser.fighter.fights += 1;
             looser.fighter.looses += 1;
+            this.fighterService.update(winner.fighter);
+            this.fighterService.update(looser.fighter);
             const caption = this.dictionary.Final.getMessage({
-                fighter1Name: winner.fighter.name,
-                fighter2Name: looser.fighter.name,
+                fighter1Name: this.fightEmitter.username ? this.fightEmitter.username : this.fightEmitter.name,
+                fighter2Name: this.fightAccepter.username ? this.fightAccepter.username : this.fightAccepter.name,
                 fighter1Weapon: dictionary_messages_1.DictionaryActionTitles[this.getWeapon(winner.fighter.userId)],
                 fighter2Weapon: dictionary_messages_1.DictionaryActionTitles[this.getWeapon(looser.fighter.userId)],
                 fighter1ScoresTotal: `${winner.fighter.scores}`,
@@ -207,7 +215,9 @@ class Scene extends lib_1.EventEmitter {
         });
     }
     startChallenge() {
-        const caption = this.dictionary.StartChallenge.getMessage({ fighter1Name: this.fightEmitter.name });
+        const caption = this.dictionary.StartChallenge.getMessage({
+            fighter1Name: this.fightEmitter.username ? `@${this.fightEmitter.username}` : this.fightEmitter.name,
+        });
         const media = this.dictionary.StartChallenge.getMedia();
         if (media.type === 'photo') {
             this.tgBotListenerService.bot
@@ -234,7 +244,7 @@ class Scene extends lib_1.EventEmitter {
     }
     startDuel(mentionedUsername) {
         const caption = this.dictionary.StartDuel.getMessage({
-            fighter1Name: this.fightEmitter.name,
+            fighter1Name: this.fightEmitter.username ? `@${this.fightEmitter.username}` : this.fightEmitter.name,
             fighter2Name: mentionedUsername,
         });
         const media = this.dictionary.StartDuel.getMedia();

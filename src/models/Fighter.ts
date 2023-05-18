@@ -4,6 +4,7 @@ export const DEFAULT_STATING_SCORES = 600;
 
 export class Fighter implements FighterDTO {
   public userId: string;
+  public username: string;
   public name: string;
   public scores = DEFAULT_STATING_SCORES;
   public fights = 0;
@@ -14,6 +15,7 @@ export class Fighter implements FighterDTO {
   constructor(dto: Partial<FighterDTO>) {
     if (dto.userId !== undefined) this.userId = dto.userId;
     if (dto.name !== undefined) this.name = dto.name;
+    if (dto.username !== undefined) this.username = dto.username;
     if (dto.scores !== undefined) this.scores = dto.scores;
     if (dto.fights !== undefined) this.fights = dto.fights;
     if (dto.wins !== undefined) this.wins = dto.wins;

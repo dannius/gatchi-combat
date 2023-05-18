@@ -44,17 +44,6 @@ export class AppController {
       this.filesListener();
     }
 
-    // this.botListenerService.bot.on('message', (e) => {
-    //   const chat = new Group({ groupId: e.chat.id });
-    //   const fighter = new Fighter({ name: 'dand', userId: '123' });
-
-    //   chat.fighters.(fighter.userId, fighter);
-
-    //   this.fightersService.create(fighter);
-    //   this.groupService.create(chat);
-    //   console.log(1);
-    // });
-
     this.setDailyQuote();
 
     dailyRepeat(12, 1, async () => {
@@ -185,8 +174,6 @@ export class AppController {
 
     scene.on('fightFinished', async (winner, looser) => {
       this.finishedScenes++;
-      this.fightersService.update(winner.fighter);
-      this.fightersService.update(looser.fighter);
 
       const groupDto = await this.groupService.get(message.chat.id);
       const group = new Group(groupDto ? groupDto : { groupId: message.chat.id });
@@ -304,15 +291,20 @@ export class AppController {
 
   private async createOrGetExistingFighter(from: TelegramBot.User): Promise<Fighter> {
     const userId = `${from.id}`;
+    const { username, first_name } = from;
 
     const dbFighter = await this.fightersService.get({ userId });
 
     if (dbFighter) {
+      // in case of changed
+      dbFighter.username = username;
+      dbFighter.name = first_name;
+      //
+
       return new Fighter(dbFighter);
     }
 
-    const name = from.username || from.first_name;
-    const newFighter = new Fighter({ userId, name });
+    const newFighter = new Fighter({ userId, name: first_name, username });
     this.fightersService.create(newFighter);
 
     return newFighter;

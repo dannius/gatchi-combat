@@ -268,8 +268,8 @@ export class Scene extends EventEmitter<SceneEvents> {
     // finish
     this.on('fightFinished', (winner, looser) => {
       const caption = this.dictionary.Final.getMessage({
-        fighter1Name: this.fightEmitter.username ? this.fightEmitter.username : this.fightEmitter.name,
-        fighter2Name: this.fightAccepter.username ? this.fightAccepter.username : this.fightAccepter.name,
+        fighter1Name: winner.fighter.username ? winner.fighter.username : winner.fighter.name,
+        fighter2Name: looser.fighter.username ? looser.fighter.username : looser.fighter.name,
         fighter1Weapon: DictionaryActionTitles[this.getWeapon(winner.fighter.userId)],
         fighter2Weapon: DictionaryActionTitles[this.getWeapon(looser.fighter.userId)],
         fighter1ScoresTotal: `${winner.fighter.scores}`,

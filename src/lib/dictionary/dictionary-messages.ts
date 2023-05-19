@@ -50,11 +50,11 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
     medias: [
       {
         type: 'photo',
-        id: 'AgACAgIAAxkBAANRZGAiLRGdv_GqcjTqxsT8MbOcKnYAAprGMRuPBQhLIK8h7VRC-AoBAAMCAANtAAMvBA',
+        id: '',
       },
       {
         type: 'video',
-        id: 'CgACAgIAAxkBAANkZGA2YbkRkCBJObW1qMZZe2OW-IAAAp8rAAKPBQhLjhZczgmGy-QvBA',
+        id: '',
       },
     ],
   },
@@ -122,9 +122,9 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
   },
   FightAccepterSelectWeapon: {
     messagesBody: [
-      `Твой ход ${TextKeys.fighter1Name}`,
-      `${TextKeys.fighter1Name} выбери лучший ⚣fuck way⚣`,
-      `${TextKeys.fighter1Name} выбирает свой ⚣favorite fuck⚣`,
+      `Твой ход ${TextKeys.fighter2Name}`,
+      `${TextKeys.fighter2Name} выбери лучший ⚣fuck way⚣`,
+      `${TextKeys.fighter2Name} выбирает свой ⚣favorite fuck⚣`,
     ],
     medias: [
       {
@@ -321,7 +321,7 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
       `У ${TextKeys.fighter2Name} ${TextKeys.fighter2Weapon} из стали,\nно у${TextKeys.fighter1Name} ${TextKeys.fighter1Weapon} из алмаза!\n${TextKeys.fighter1Name}  забирает у ${TextKeys.fighter2Name} ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
       `${TextKeys.fighter1Name} проводит болевой на ${TextKeys.fighter2Weapon} бедного ⚣jabroni⚣ ${TextKeys.fighter2Name}`,
       `${TextKeys.fighter1Name} наносит открытый перелом ${TextKeys.fighter2Weapon} ${TextKeys.fighter2Name} и забирает ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
-      `${TextKeys.fighter2Name} неождал, такой резкой атаки с помощью ${TextKeys.fighter1Weapon} от ${TextKeys.fighter1Name}.\n${TextKeys.fighter2Name} опустошен на ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
+      `${TextKeys.fighter2Name} неождал, такой резкой атаки с помощью ${TextKeys.fighter1Weapon} от ${TextKeys.fighter1Name}.\n ${TextKeys.fighter2Name} опустошен на ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
       `${TextKeys.fighter2Weapon} у ${TextKeys.fighter2Name} оказался как у настоящего ♂slaves♂.\nТакой ♂dungeon master♂ как ${TextKeys.fighter1Name} не прощает.\n${TextKeys.fighter2Name} нужно чаще посещать ♂gym♂`,
     ],
     messagesHeader: [

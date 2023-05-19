@@ -86,8 +86,6 @@ class Fighter {
     }
     getWinner(winner, loser) {
         const resultScore = this.getScoreResult(winner.scores, loser.scores);
-        winner.scores += resultScore.winnerScore;
-        loser.scores -= resultScore.looserScore;
         return {
             winner: winner,
             looser: loser,

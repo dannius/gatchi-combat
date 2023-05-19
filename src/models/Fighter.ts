@@ -92,8 +92,6 @@ export class Fighter implements FighterDTO {
     loser: Fighter,
   ): { winner: Fighter; looser: Fighter; addedWin: number; addedLose: number } {
     const resultScore = this.getScoreResult(winner.scores, loser.scores);
-    winner.scores += resultScore.winnerScore;
-    loser.scores -= resultScore.looserScore;
 
     return {
       winner: winner,

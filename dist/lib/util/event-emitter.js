@@ -2,18 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EventEmitter = void 0;
 class EventEmitter {
-    constructor() {
-        this.eventListeners = {};
-    }
+    eventListeners = {};
     on(eventName, listener) {
-        var _a;
-        const listeners = (_a = this.eventListeners[eventName]) !== null && _a !== void 0 ? _a : new Set();
+        const listeners = this.eventListeners[eventName] ?? new Set();
         listeners.add(listener);
         this.eventListeners[eventName] = listeners;
     }
     emit(eventName, ...args) {
-        var _a;
-        const listeners = (_a = this.eventListeners[eventName]) !== null && _a !== void 0 ? _a : new Set();
+        const listeners = this.eventListeners[eventName] ?? new Set();
         for (const listener of listeners) {
             listener(...args);
         }

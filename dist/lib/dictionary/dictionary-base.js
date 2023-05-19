@@ -4,10 +4,10 @@ exports.DictionaryBase = void 0;
 const random_1 = require("../util/random");
 const dictionary_messages_1 = require("./dictionary-messages");
 class DictionaryBase {
+    medias = [];
+    messagesHeader = [];
+    messagesBody = [];
     constructor({ messagesBody, messagesHeader, medias }) {
-        this.medias = [];
-        this.messagesHeader = [];
-        this.messagesBody = [];
         if (messagesBody) {
             this.messagesBody = messagesBody;
         }
@@ -34,7 +34,7 @@ class DictionaryBase {
         return `${header}${body}`;
     }
     replaceMessageVars(params, msg) {
-        return Object.entries(params).reduce((msg, [textKey, textVal]) => msg.replace(dictionary_messages_1.TextKeys[textKey], textVal), msg);
+        return Object.entries(params).reduce((msg, [textKey, textVal]) => msg.replaceAll(dictionary_messages_1.TextKeys[textKey], textVal), msg);
     }
 }
 exports.DictionaryBase = DictionaryBase;

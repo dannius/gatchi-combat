@@ -4,8 +4,9 @@ export declare class Group implements GroupDTO {
     groupId: number;
     allowDailyQuote: boolean;
     fighters: Map<string, {
-        name: string;
+        username: string;
         scores: number;
+        name: string;
     }>;
     constructor(data: Partial<GroupDTO>);
     updateFightersScores(winner: FinisSceneFighter, looser: FinisSceneFighter): void;

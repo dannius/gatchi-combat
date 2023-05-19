@@ -18,6 +18,7 @@ const common_1 = require("@nestjs/common");
 const mongoose_2 = require("@nestjs/mongoose");
 const scene_schema_1 = require("./schemas/scene.schema");
 let SceneService = class SceneService {
+    scemeModel;
     constructor(scemeModel) {
         this.scemeModel = scemeModel;
     }

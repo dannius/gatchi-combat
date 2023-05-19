@@ -97,9 +97,9 @@ export class AppController {
 
         this.botListenerService.notifyChats([message.chat.id], {
           message: fighter
-            ? `(${yourIndex + 1} из ${fighters.length})\nУ тебя в баке ${fighter.scores} ⚣semen⚣\n${
+            ? `(${yourIndex + 1} из ${fighters.length}). У тебя в баке ${fighter.scores} ⚣semen⚣\n${
                 fighter.wins
-              } Побед\n${fighter.looses} Поражений`
+              } Побед/${fighter.looses} Поражений`
             : 'Пусто',
         });
       }
@@ -150,10 +150,12 @@ export class AppController {
     return newGroup;
   }
 
-  private async getGroupStatsMessage(fighters: Pick<FighterDTO, 'userId' | 'scores' | 'name'>[]): Promise<string> {
+  private async getGroupStatsMessage(
+    fighters: Pick<FighterDTO, 'userId' | 'scores' | 'username' | 'name'>[],
+  ): Promise<string> {
     const stats = Array.from(fighters)
       .sort((a, b) => (a.scores > b.scores ? -1 : 1))
-      .reduce((acc, curr, index) => `${acc}\n${index + 1}) ${curr.name} - ${curr.scores} мл.`, '');
+      .reduce((acc, curr, index) => `${acc}\n${index + 1}) ${curr.username || curr.name} - ${curr.scores} мл.`, '');
 
     return stats;
   }

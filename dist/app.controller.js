@@ -22,13 +22,18 @@ const fighters_1 = require("./db/fighters");
 const groups_1 = require("./db/groups");
 const scene_1 = require("./db/scene");
 let AppController = class AppController {
+    botListenerService;
+    fightersService;
+    groupService;
+    sceneService;
+    scenes = new Map();
+    finishedScenes = 0;
+    quoteOfTheDay;
     constructor(botListenerService, fightersService, groupService, sceneService) {
         this.botListenerService = botListenerService;
         this.fightersService = fightersService;
         this.groupService = groupService;
         this.sceneService = sceneService;
-        this.scenes = new Map();
-        this.finishedScenes = 0;
         this.initCallbackQuerySubscription();
         this.initChallangeQuerySubscription();
         this.initDuelSubscription();
@@ -87,7 +92,7 @@ let AppController = class AppController {
                 const fighter = fighters[yourIndex];
                 this.botListenerService.notifyChats([message.chat.id], {
                     message: fighter
-                        ? `(${yourIndex + 1} из ${fighters.length})\nУ тебя в баке ${fighter.scores} ⚣semen⚣\n${fighter.wins} Побед\n${fighter.looses} Поражений`
+                        ? `(${yourIndex + 1} из ${fighters.length}). У тебя в баке ${fighter.scores} ⚣semen⚣\n${fighter.wins} Побед/${fighter.looses} Поражений`
                         : 'Пусто',
                 });
             }
@@ -100,7 +105,7 @@ let AppController = class AppController {
                 return;
             }
             const fighters = Array.from(groupDto.fighters)
-                .map(([userId, rest]) => (Object.assign({ userId }, rest)))
+                .map(([userId, rest]) => ({ userId, ...rest }))
                 .sort((a, b) => (a.scores > b.scores ? -1 : 1));
             const stats = await this.getGroupStatsMessage(fighters);
             this.botListenerService.notifyChats([message.chat.id], {
@@ -129,7 +134,7 @@ let AppController = class AppController {
     async getGroupStatsMessage(fighters) {
         const stats = Array.from(fighters)
             .sort((a, b) => (a.scores > b.scores ? -1 : 1))
-            .reduce((acc, curr, index) => `${acc}\n${index + 1}) ${curr.name} - ${curr.scores} мл.`, '');
+            .reduce((acc, curr, index) => `${acc}\n${index + 1}) ${curr.username || curr.name} - ${curr.scores} мл.`, '');
         return stats;
     }
     async getGlobalStatsMessage(fighters) {
@@ -254,9 +259,8 @@ let AppController = class AppController {
     }
     filesListener() {
         this.botListenerService.bot.on('message', (query) => {
-            var _a;
-            console.log(query === null || query === void 0 ? void 0 : query.photo);
-            console.log((_a = query === null || query === void 0 ? void 0 : query.document) === null || _a === void 0 ? void 0 : _a.file_id);
+            console.log(query?.photo);
+            console.log(query?.document?.file_id);
         });
     }
     debugListeners() {
@@ -266,11 +270,10 @@ let AppController = class AppController {
         });
         const reg = new RegExp(`\/debug\\s(${stages.join('|')})$`);
         this.botListenerService.bot.onText(reg, (message) => {
-            var _a;
             const chatId = message.chat.id;
             const [_, stage] = message.text.split(' ');
             const stageObject = dictionary_1.Dictionary[stage];
-            if (!((_a = stageObject === null || stageObject === void 0 ? void 0 : stageObject.medias) === null || _a === void 0 ? void 0 : _a.length)) {
+            if (!stageObject?.medias?.length) {
                 return;
             }
             stageObject.medias.forEach((media) => {

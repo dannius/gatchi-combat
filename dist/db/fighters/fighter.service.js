@@ -18,6 +18,7 @@ const common_1 = require("@nestjs/common");
 const mongoose_2 = require("@nestjs/mongoose");
 const fighter_schema_1 = require("./schemas/fighter.schema");
 let FighterService = class FighterService {
+    fighterModel;
     constructor(fighterModel) {
         this.fighterModel = fighterModel;
     }

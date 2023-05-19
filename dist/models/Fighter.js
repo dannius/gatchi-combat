@@ -4,12 +4,15 @@ exports.Fighter = exports.DEFAULT_STATING_SCORES = void 0;
 const lib_1 = require("../lib");
 exports.DEFAULT_STATING_SCORES = 600;
 class Fighter {
+    userId;
+    username;
+    name;
+    scores = exports.DEFAULT_STATING_SCORES;
+    fights = 0;
+    wins = 0;
+    looses = 0;
+    bdMode = false;
     constructor(dto) {
-        this.scores = exports.DEFAULT_STATING_SCORES;
-        this.fights = 0;
-        this.wins = 0;
-        this.looses = 0;
-        this.bdMode = false;
         if (dto.userId !== undefined)
             this.userId = dto.userId;
         if (dto.name !== undefined)

@@ -13,6 +13,10 @@ exports.SceneSchema = exports.ScenesTable = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const lib_1 = require("../../../lib");
 let ScenesTable = class ScenesTable {
+    winnerId;
+    looserId;
+    winnerWeapon;
+    looserWeapon;
 };
 __decorate([
     (0, mongoose_1.Prop)(),

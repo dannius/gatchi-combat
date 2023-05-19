@@ -18,6 +18,7 @@ const common_1 = require("@nestjs/common");
 const mongoose_2 = require("@nestjs/mongoose");
 const group_schema_1 = require("./schemas/group.schema");
 let GroupService = class GroupService {
+    groupModel;
     constructor(groupModel) {
         this.groupModel = groupModel;
     }

@@ -15,9 +15,10 @@ const TelegramBot = require("node-telegram-bot-api");
 const lib_1 = require("../lib");
 const adminId = 506020211;
 let BotListenerService = class BotListenerService extends lib_1.EventEmitter {
+    bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
+    me;
     constructor() {
         super();
-        this.bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
         this.setMe().then(() => {
             this.initMessageActionListeners();
             this.initCallbackQueryListener();
@@ -48,7 +49,7 @@ let BotListenerService = class BotListenerService extends lib_1.EventEmitter {
                 }
             });
         }
-        catch (_a) { }
+        catch { }
     }
     async setMe() {
         return this.bot.getMe().then((me) => {
@@ -67,13 +68,12 @@ let BotListenerService = class BotListenerService extends lib_1.EventEmitter {
     initDuelListener() {
         const mentionRegexp = new RegExp(`^@${this.me.username} @[a-zA-Z0-9]*`);
         this.bot.onText(mentionRegexp, (msg) => {
-            var _a;
             const mentions = msg.text.split(' ');
             const [botName, mentionedUsername] = mentions;
             if (mentionedUsername === botName) {
                 return;
             }
-            const isDuel = ((_a = msg.entities) === null || _a === void 0 ? void 0 : _a.length) === 2 && mentions.length === 2;
+            const isDuel = msg.entities?.length === 2 && mentions.length === 2;
             if (isDuel) {
                 this.emit('duel', msg, mentionedUsername);
             }
@@ -91,7 +91,7 @@ let BotListenerService = class BotListenerService extends lib_1.EventEmitter {
                 const statusBool = JSON.parse(status);
                 this.emit('bdMode', username, statusBool);
             }
-            catch (_a) { }
+            catch { }
         });
     }
     initDailyQuoteListener() {

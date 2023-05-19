@@ -7,6 +7,16 @@ const dictionary_messages_1 = require("../lib/dictionary/dictionary-messages");
 const SCENE_LIVE_TIME = 10 * 1000 * 60;
 const FIGHT_DELAY = 3 * 1000;
 class Scene extends lib_1.EventEmitter {
+    tgBotListenerService;
+    fighterService;
+    dictionary;
+    chatId;
+    fightEmitter;
+    mentionedUserName;
+    id = (0, lib_1.guid)();
+    fightAccepter;
+    weapons = new Map();
+    challengeMessageId;
     get sceneFighterId() {
         return this.fightEmitter.userId;
     }
@@ -21,8 +31,6 @@ class Scene extends lib_1.EventEmitter {
         this.chatId = chatId;
         this.fightEmitter = fightEmitter;
         this.mentionedUserName = mentionedUserName;
-        this.id = (0, lib_1.guid)();
-        this.weapons = new Map();
         if (this.mentionedUserName) {
             this.startDuel(mentionedUserName);
         }
@@ -45,7 +53,7 @@ class Scene extends lib_1.EventEmitter {
             try {
                 await this.tgBotListenerService.bot.deleteMessage(this.chatId, this.challengeMessageId);
             }
-            catch (_a) { }
+            catch { }
             this.emit('destroy');
         }, SCENE_LIVE_TIME);
     }
@@ -106,7 +114,7 @@ class Scene extends lib_1.EventEmitter {
                     this.challengeMessageId = message.message_id;
                 }
             }
-            catch (_a) { }
+            catch { }
         });
     }
     afterFightEmitterWeaponChooseListener() {
@@ -136,7 +144,7 @@ class Scene extends lib_1.EventEmitter {
                     this.challengeMessageId = message.message_id;
                 }
             }
-            catch (_a) { }
+            catch { }
         });
     }
     afterFightAccepterWeaponChooseListener() {
@@ -146,7 +154,7 @@ class Scene extends lib_1.EventEmitter {
                 this.weapons.set(this.fightAccepter.userId, weapon);
                 this.emit('fightStageOne');
             }
-            catch (_a) { }
+            catch { }
         });
     }
     initFightStageOneListener() {

@@ -3,6 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Group = void 0;
 const Fighter_1 = require("./Fighter");
 class Group {
+    groupId;
+    allowDailyQuote;
+    fighters;
     constructor(data) {
         this.groupId = data.groupId;
         this.allowDailyQuote = data.allowDailyQuote === undefined || data.allowDailyQuote;
@@ -17,8 +20,16 @@ class Group {
         const looserScores = looserGroup
             ? looserGroup.scores - looser.addedScores
             : Fighter_1.DEFAULT_STATING_SCORES - looser.addedScores;
-        this.fighters.set(`${winner.fighter.userId}`, { name: winner.fighter.name, scores: winnerScores });
-        this.fighters.set(`${looser.fighter.userId}`, { name: looser.fighter.name, scores: looserScores });
+        this.fighters.set(`${winner.fighter.userId}`, {
+            username: winner.fighter.username,
+            name: winner.fighter.name,
+            scores: winnerScores,
+        });
+        this.fighters.set(`${looser.fighter.userId}`, {
+            username: looser.fighter.username,
+            name: looser.fighter.name,
+            scores: looserScores,
+        });
     }
 }
 exports.Group = Group;

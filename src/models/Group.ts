@@ -5,12 +5,12 @@ import { DEFAULT_STATING_SCORES } from './Fighter';
 export class Group implements GroupDTO {
   groupId: number;
   allowDailyQuote: boolean;
-  fighters: Map<string, { name: string; scores: number }>;
+  fighters: Map<string, { username: string; scores: number; name: string }>;
 
   constructor(data: Partial<GroupDTO>) {
     this.groupId = data.groupId;
     this.allowDailyQuote = data.allowDailyQuote === undefined || data.allowDailyQuote;
-    this.fighters = data.fighters || new Map<string, { name: string; scores: number }>();
+    this.fighters = data.fighters || new Map<string, { username: string; scores: number, name: string }>();
   }
 
   public updateFightersScores(winner: FinisSceneFighter, looser: FinisSceneFighter): void {
@@ -24,7 +24,15 @@ export class Group implements GroupDTO {
       ? looserGroup.scores - looser.addedScores
       : DEFAULT_STATING_SCORES - looser.addedScores;
 
-    this.fighters.set(`${winner.fighter.userId}`, { name: winner.fighter.name, scores: winnerScores });
-    this.fighters.set(`${looser.fighter.userId}`, { name: looser.fighter.name, scores: looserScores });
+    this.fighters.set(`${winner.fighter.userId}`, {
+      username: winner.fighter.username,
+      name: winner.fighter.name,
+      scores: winnerScores,
+    });
+    this.fighters.set(`${looser.fighter.userId}`, {
+      username: looser.fighter.username,
+      name: looser.fighter.name,
+      scores: looserScores,
+    });
   }
 }

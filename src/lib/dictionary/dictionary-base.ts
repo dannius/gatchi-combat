@@ -45,6 +45,6 @@ export class DictionaryBase {
   }
 
   private replaceMessageVars(params: Partial<MessageDataset>, msg: string): string {
-    return Object.entries(params).reduce((msg, [textKey, textVal]) => msg.replace(TextKeys[textKey], textVal), msg);
+    return Object.entries(params).reduce((msg, [textKey, textVal]) => msg.replaceAll(TextKeys[textKey], textVal), msg);
   }
 }

@@ -27,15 +27,17 @@ export interface GroupDTO {
     groupId: number;
     allowDailyQuote: boolean;
     fighters: Map<string, {
-        name: string;
+        username: string;
         scores: number;
+        name: string;
     }>;
 }
 export declare class GroupsTable implements GroupDTO {
     groupId: number;
     fighters: Map<string, {
-        name: string;
+        username: string;
         scores: number;
+        name: string;
     }>;
     allowDailyQuote: boolean;
 }

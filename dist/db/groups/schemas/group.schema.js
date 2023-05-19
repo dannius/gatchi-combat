@@ -12,6 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GroupSchema = exports.GroupsTable = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 let GroupsTable = class GroupsTable {
+    groupId;
+    fighters;
+    allowDailyQuote;
 };
 __decorate([
     (0, mongoose_1.Prop)(),

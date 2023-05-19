@@ -12,6 +12,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FighterSchema = exports.FightersTable = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 let FightersTable = class FightersTable {
+    userId;
+    username;
+    name;
+    scores;
+    fights;
+    wins;
+    looses;
+    bdMode;
 };
 __decorate([
     (0, mongoose_1.Prop)(),

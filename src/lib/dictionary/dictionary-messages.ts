@@ -45,7 +45,7 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
       `${TextKeys.fighter1Name} желает надрать кому-нибудь зад`,
       `${TextKeys.fighter1Name} спускается в ♂dungeon♂ и желает померяться ♂semen♂`,
       `${TextKeys.fighter1Name}: "Я новый ♂dungeon master♂! Кто не согласен, отзовись или молчи вечно!"`,
-      `${TextKeys.fighter1Name}: спустился в ♂gym♂ и провозгласил себя ♂boss of gym♂`,
+      `${TextKeys.fighter1Name}: спустился в ♂dungeon♂ и провозгласил себя ♂boss of gym♂`,
     ],
     medias: [
       {

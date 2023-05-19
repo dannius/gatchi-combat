@@ -50,11 +50,11 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
     medias: [
       {
         type: 'photo',
-        id: '',
+        id: 'AgACAgIAAxkBAANRZGAiLRGdv_GqcjTqxsT8MbOcKnYAAprGMRuPBQhLIK8h7VRC-AoBAAMCAANtAAMvBA',
       },
       {
         type: 'video',
-        id: '',
+        id: 'CgACAgIAAxkBAANkZGA2YbkRkCBJObW1qMZZe2OW-IAAAp8rAAKPBQhLjhZczgmGy-QvBA',
       },
     ],
   },

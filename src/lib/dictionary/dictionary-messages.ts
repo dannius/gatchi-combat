@@ -321,7 +321,7 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
       `У ${TextKeys.fighter2Name} ${TextKeys.fighter2Weapon} из стали,\nно у ${TextKeys.fighter1Name} ${TextKeys.fighter1Weapon} из алмаза!\n${TextKeys.fighter1Name}  забирает у ${TextKeys.fighter2Name} ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
       `${TextKeys.fighter1Name} проводит болевой на ${TextKeys.fighter2Weapon} бедного ⚣jabroni⚣ ${TextKeys.fighter2Name}`,
       `${TextKeys.fighter1Name} наносит открытый перелом ${TextKeys.fighter2Weapon} ${TextKeys.fighter2Name} и забирает ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
-      `${TextKeys.fighter2Name} неождал, такой резкой атаки с помощью ${TextKeys.fighter1Weapon} от ${TextKeys.fighter1Name}.${TextKeys.fighter2Name} опустошен на ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
+      `${TextKeys.fighter2Name} не ожидал такой резкой атаки с помощью ${TextKeys.fighter1Weapon} от ${TextKeys.fighter1Name}. ${TextKeys.fighter2Name} опустошен на ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
       `${TextKeys.fighter2Weapon} у ${TextKeys.fighter2Name} оказался как у настоящего ♂slaves♂. Такой ♂dungeon master♂ как ${TextKeys.fighter1Name} не прощает бедного ⚣jabroni⚣.\n${TextKeys.fighter2Name} нужно чаще посещать ♂gym♂`,
     ],
     messagesHeader: [

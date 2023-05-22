@@ -178,7 +178,7 @@ let AppController = class AppController {
     initBdModeSubscription() {
         this.botListenerService.on('bdMode', async (username, status) => {
             const dbUser = await this.fightersService.get({ username });
-            if (dbUser.bdMode === status) {
+            if (!dbUser || dbUser.bdMode === status) {
                 return;
             }
             dbUser.bdMode = status;

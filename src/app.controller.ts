@@ -225,7 +225,7 @@ export class AppController {
     this.botListenerService.on('bdMode', async (username, status) => {
       const dbUser = await this.fightersService.get({ username });
 
-      if (dbUser.bdMode === status) {
+      if (!dbUser || dbUser.bdMode === status) {
         return;
       }
 
@@ -246,7 +246,7 @@ export class AppController {
     });
   }
 
-  private getBdNotification(name: Mention, status: boolean): { message: string; media: Media } {
+  private getBdNotification(name: string, status: boolean): { message: string; media: Media } {
     if (status) {
       const media = {
         type: 'video',

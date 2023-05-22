@@ -86,8 +86,8 @@ let BotListenerService = class BotListenerService extends lib_1.EventEmitter {
                 return;
             }
             try {
-                const status = msg.text.split(':')[1];
-                const username = msg.text.match(/\s@([a-zA-Z0-9]*)\s/)[1];
+                const status = msg.text.split(' ')[0].split(':')[1];
+                const username = msg.text.split(' ')[2].split('@')[1];
                 const statusBool = JSON.parse(status);
                 this.emit('bdMode', username, statusBool);
             }

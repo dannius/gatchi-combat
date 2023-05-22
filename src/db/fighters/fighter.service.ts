@@ -13,7 +13,7 @@ export class FighterService {
     return createFighter.save();
   }
 
-  async get(params: { userId?: string; name?: string }): Promise<FighterDTO> {
+  async get(params: { userId?: string; username?: string; name?: string }): Promise<FighterDTO> {
     return this.fighterModel.findOne(params).exec();
   }
 

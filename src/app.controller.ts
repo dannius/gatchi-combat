@@ -222,8 +222,8 @@ export class AppController {
   }
 
   private initBdModeSubscription(): void {
-    this.botListenerService.on('bdMode', async (name, status) => {
-      const dbUser = await this.fightersService.get({ name });
+    this.botListenerService.on('bdMode', async (username, status) => {
+      const dbUser = await this.fightersService.get({ username });
 
       if (dbUser.bdMode === status) {
         return;
@@ -236,9 +236,10 @@ export class AppController {
 
       const filteredGroups = groups.filter((ch) => !!ch.fighters.get(`${dbUser.userId}`));
 
+      console.log('bdMode');
       if (filteredGroups.length) {
         const ids = filteredGroups.map((g) => g.groupId);
-        const notify = this.getBdNotification(name, status);
+        const notify = this.getBdNotification(username, status);
 
         this.botListenerService.notifyChats(ids, notify);
       }

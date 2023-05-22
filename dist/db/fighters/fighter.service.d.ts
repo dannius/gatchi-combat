@@ -6,6 +6,7 @@ export declare class FighterService {
     create(fighterDto: FighterDTO): Promise<FighterDTO>;
     get(params: {
         userId?: string;
+        username?: string;
         name?: string;
     }): Promise<FighterDTO>;
     findAllWithLimit(limit?: number): Promise<FighterDTO[]>;

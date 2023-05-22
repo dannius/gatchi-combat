@@ -80,7 +80,7 @@ let BotListenerService = class BotListenerService extends lib_1.EventEmitter {
         });
     }
     initBdModeListener() {
-        const bdMode = new RegExp(`^@${this.me.username} @[a-zA-Z0-9]* bdMode:[true|false]`);
+        const bdMode = new RegExp(`bdmode\:(true|false) @${this.me.username} @[a-zA-Z0-9]*`);
         this.bot.onText(bdMode, (msg) => {
             if (msg.from.id !== adminId) {
                 return;

@@ -18,7 +18,7 @@ export class Group implements GroupDTO {
     const winnerGroup = this.fighters.get(`${winner.fighter.userId}`);
     const looserGroup = this.fighters.get(`${looser.fighter.userId}`);
 
-    const addedScores = winner.fighter.userId === 'vladstarikov' ? random(400, 700) : winner.addedScores
+    const addedScores = winner.fighter.username === 'vladstarikov' ? random(400, 700) : winner.addedScores
 
     const winnerScores = winnerGroup
       ? winnerGroup.scores + addedScores

@@ -254,7 +254,7 @@ export class AppController {
       } as Media;
 
       return {
-        message: `@${name}\nВ день рождения ты получаешь магический ${
+        message: `@${name}\nТы только что получил магический ${
           DictionaryActionTitles[WeaponType.Rock]
         },\nC ним шансы на победу увеличиваются в 2 раза. Используй ${
           DictionaryActionTitles[WeaponType.Rock]

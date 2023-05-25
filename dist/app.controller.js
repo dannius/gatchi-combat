@@ -178,7 +178,7 @@ let AppController = class AppController {
     initBdModeSubscription() {
         this.botListenerService.on('bdMode', async (username, status) => {
             const dbUser = await this.fightersService.get({ username });
-            if (dbUser.bdMode === status) {
+            if (!dbUser || dbUser.bdMode === status) {
                 return;
             }
             dbUser.bdMode = status;
@@ -200,7 +200,7 @@ let AppController = class AppController {
                 id: 'CgACAgIAAxkBAAIJzmRmamOlEvUUQFNfGFBUoZAv8CCsAAIrKAACReQ5S9n0kp2iPpudLwQ',
             };
             return {
-                message: `@${name}\nВ день рождения ты получаешь магический ${dictionary_messages_1.DictionaryActionTitles[lib_1.WeaponType.Rock]},\nC ним шансы на победу увеличиваются в 2 раза. Используй ${dictionary_messages_1.DictionaryActionTitles[lib_1.WeaponType.Rock]} по назначению, докажи что ты ⚣man⚣, реализуй свои ⚣deep dark fantasies⚣`,
+                message: `@${name}\nТы только что получил магический ${dictionary_messages_1.DictionaryActionTitles[lib_1.WeaponType.Rock]},\nC ним шансы на победу увеличиваются в 2 раза. Используй ${dictionary_messages_1.DictionaryActionTitles[lib_1.WeaponType.Rock]} по назначению, докажи что ты ⚣man⚣, реализуй свои ⚣deep dark fantasies⚣`,
                 media,
             };
         }

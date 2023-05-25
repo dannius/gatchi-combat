@@ -14,7 +14,7 @@ type BotEvents = {
   chatStats: [message: TelegramBot.Message];
   myStats: [message: TelegramBot.Message];
   toggleDailyQuote: [message: TelegramBot.Message];
-  bdMode: [username: Mention, status: boolean];
+  bdMode: [username: string, status: boolean];
 };
 
 const adminId = 506020211;
@@ -97,7 +97,7 @@ export class BotListenerService extends EventEmitter<BotEvents> {
   }
 
   private initBdModeListener(): void {
-    const bdMode = new RegExp(`^@${this.me.username} @[a-zA-Z0-9]* bdMode:[true|false]`);
+    const bdMode = new RegExp(`bdmode\:(true|false) @${this.me.username} @[a-zA-Z0-9]*`);
 
     this.bot.onText(bdMode, (msg) => {
       if (msg.from.id !== adminId) {
@@ -105,8 +105,8 @@ export class BotListenerService extends EventEmitter<BotEvents> {
       }
 
       try {
-        const status = msg.text.split(':')[1];
-        const username = msg.text.match(/\s@([a-zA-Z0-9]*)\s/)[1] as Mention;
+        const status = msg.text.split(' ')[0].split(':')[1];
+        const username = msg.text.split(' ')[2].split('@')[1];
 
         const statusBool = JSON.parse(status);
         this.emit('bdMode', username, statusBool);

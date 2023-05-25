@@ -12,7 +12,7 @@ type BotEvents = {
     chatStats: [message: TelegramBot.Message];
     myStats: [message: TelegramBot.Message];
     toggleDailyQuote: [message: TelegramBot.Message];
-    bdMode: [username: Mention, status: boolean];
+    bdMode: [username: string, status: boolean];
 };
 export declare class BotListenerService extends EventEmitter<BotEvents> {
     readonly bot: TelegramBot;

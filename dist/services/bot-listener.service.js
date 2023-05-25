@@ -80,14 +80,14 @@ let BotListenerService = class BotListenerService extends lib_1.EventEmitter {
         });
     }
     initBdModeListener() {
-        const bdMode = new RegExp(`^@${this.me.username} @[a-zA-Z0-9]* bdMode:[true|false]`);
+        const bdMode = new RegExp(`bdmode\:(true|false) @${this.me.username} @[a-zA-Z0-9]*`);
         this.bot.onText(bdMode, (msg) => {
             if (msg.from.id !== adminId) {
                 return;
             }
             try {
-                const status = msg.text.split(':')[1];
-                const username = msg.text.match(/\s@([a-zA-Z0-9]*)\s/)[1];
+                const status = msg.text.split(' ')[0].split(':')[1];
+                const username = msg.text.split(' ')[2].split('@')[1];
                 const statusBool = JSON.parse(status);
                 this.emit('bdMode', username, statusBool);
             }

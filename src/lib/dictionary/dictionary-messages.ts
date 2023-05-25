@@ -336,11 +336,11 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
     ],
     specialMessagesBody: {
       lose: [
-        `Уууу дружок пирожок.... \n${TextKeys.fighter1Name} провел битву в духе  ♂slaves♂ и всего лишь опустошил ${TextKeys.fighter2Name} на ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣. `,
-        `Неплохая защита ${TextKeys.fighter2Name} с помощью ${TextKeys.fighter2Weapon} от ${TextKeys.fighter1Name}. Твой  ${TextKeys.fighter2Weapon} показал что он не легкая добыча для любого ⚣man⚣ особенно такого как ${TextKeys.fighter1Name}.\nНо ${TextKeys.fighter2Name} все-таки опустошен на ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣. `,
+        `Уууу слабовато дружок пирожок.... \n${TextKeys.fighter1Name} провел битву в духе ♂slaves♂. Такого стыдного опустощения никто не ожидал.\n${TextKeys.fighter1Name} всего лишь опустошил ${TextKeys.fighter2Name} на ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣. `,
+        `Неплохая защита ${TextKeys.fighter2Name} от ${TextKeys.fighter1Weapon}.\n${TextKeys.fighter2Weapon} у ${TextKeys.fighter2Name} что надо.\n${TextKeys.fighter2Name} показал что он не легкая добыча для любого ⚣man⚣, особенно такого как ${TextKeys.fighter1Name}.\nНо ${TextKeys.fighter2Name} все-таки не удержал и потерял ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣. `,
       ],
       win: [
-        `ОГО! Какую легендарную комбинацию выдал ${TextKeys.fighter1Name}. Этот великолепный прием будут помнить все ⚣jabroni⚣ еще ни один год.\nЯ бы посоветовал ${TextKeys.fighter2Name} бежать без оглядки и не возращаться пока не получится восстановить ⚣semen⚣, потому что он теряет ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
+        `ОГО!\nКакую легендарную комбинацию выдал ${TextKeys.fighter1Name}. \nВеликолепный прием в стиле ⚣semen on your ${TextKeys.fighter2Weapon}⚣ будут помнить все ⚣jabroni⚣ еще ни один год.\nЯ бы посоветовал ${TextKeys.fighter2Name} бежать за салфетками и ⚣recovery semen⚣`,
       ],
     },
     medias: [

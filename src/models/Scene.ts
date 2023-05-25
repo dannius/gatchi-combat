@@ -1,7 +1,7 @@
 import { Fighter } from './Fighter';
 import { getAcceptFightReplyMarkup, getChoseWeaponReplyMarkup } from 'src/lib/keyboards';
 import TelegramBot = require('node-telegram-bot-api');
-import { EventEmitter, WeaponType, delay, guid, Mention } from 'src/lib';
+import { EventEmitter, WeaponType, delay, guid, Mention, TFightResultType } from 'src/lib';
 import { BotListenerService } from 'src/services';
 
 import { Dictionary } from 'src/lib/dictionary/dictionary';
@@ -29,7 +29,7 @@ type SceneEvents = {
   fightStageOne: [];
   fightStageTwo: [message: TelegramBot.Message];
   fightStageThree: [message: TelegramBot.Message];
-  fightFinished: [winner: FinisSceneFighter, looser: FinisSceneFighter];
+  fightFinished: [winner: FinisSceneFighter, looser: FinisSceneFighter, fightResultType: TFightResultType];
   // scene might be removed and not finished
   destroy: [];
 };
@@ -228,7 +228,7 @@ export class Scene extends EventEmitter<SceneEvents> {
       await delay(FIGHT_DELAY);
 
       await this.tgBotListenerService.bot.deleteMessage(this.chatId, challengeMessage.message_id);
-      const { winner, looser, addedWin, addedLose } = this.fightEmitter.fight(
+      const { winner, looser, addedWin, addedLose, fightResultType } = this.fightEmitter.fight(
         this.getWeapon(this.fightEmitter.userId),
         this.fightAccepter,
         this.getWeapon(this.fightAccepter.userId),
@@ -260,13 +260,13 @@ export class Scene extends EventEmitter<SceneEvents> {
         weapon: this.getWeapon(looser.userId),
       };
 
-      this.emit('fightFinished', winObject, loseObject);
+      this.emit('fightFinished', winObject, loseObject, fightResultType);
     });
   }
 
   private initFightFinishedListener(): void {
     // finish
-    this.on('fightFinished', (winner, looser) => {
+    this.on('fightFinished', (winner, looser, fightResultType) => {
       const caption = this.dictionary.Final.getMessage({
         fighter1Name: winner.fighter.username ? winner.fighter.username : winner.fighter.name,
         fighter2Name: looser.fighter.username ? looser.fighter.username : looser.fighter.name,
@@ -276,6 +276,7 @@ export class Scene extends EventEmitter<SceneEvents> {
         fighter2ScoresTotal: `${looser.fighter.scores}`,
         fighter1ScoresAdded: `+${winner.addedScores}`,
         fighter2ScoresAdded: `-${looser.addedScores}`,
+        fightResultType: fightResultType,
       });
 
       const media = this.dictionary.Final.getMedia();

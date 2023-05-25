@@ -1,5 +1,5 @@
 import { random } from '../util/random';
-import { DictionaryBaseParams, Media, TextKeys } from './dictionary-messages';
+import { DictionaryBaseParams, ISpecialMessagesBody, Media, TextKeys } from './dictionary-messages';
 
 type MessageDataset = { [P in keyof typeof TextKeys]: string };
 
@@ -7,14 +7,19 @@ export class DictionaryBase {
   public medias: Media[] = [];
   protected messagesHeader = [];
   protected messagesBody: string[] = [];
+  protected specialMessagesBody: ISpecialMessagesBody = { lose: [], win: [] };
 
-  constructor({ messagesBody, messagesHeader, medias }: DictionaryBaseParams) {
+  constructor({ messagesBody, messagesHeader, medias, specialMessagesBody }: DictionaryBaseParams) {
     if (messagesBody) {
       this.messagesBody = messagesBody;
     }
 
     if (messagesHeader) {
       this.messagesHeader = messagesHeader;
+    }
+
+    if (specialMessagesBody) {
+      this.specialMessagesBody = specialMessagesBody;
     }
 
     if (medias) {
@@ -27,9 +32,17 @@ export class DictionaryBase {
   }
 
   getMessage(params: Partial<MessageDataset>): string {
-    const bodyIndex = random(0, this.messagesBody.length - 1);
-    const message = this.messagesBody[bodyIndex];
-
+    let message: string;
+    if (params.fightResultType && (params.fightResultType === 'luckyLose' || params.fightResultType === 'luckyWin')) {
+      const bodyIndex =
+        params.fightResultType === 'luckyLose'
+          ? random(0, this.specialMessagesBody.lose.length - 1)
+          : random(0, this.specialMessagesBody.win.length - 1);
+      message = this.messagesBody[bodyIndex];
+    } else {
+      const bodyIndex = random(0, this.messagesBody.length - 1);
+      message = this.messagesBody[bodyIndex];
+    }
     let header = '';
 
     if (this.messagesHeader.length) {

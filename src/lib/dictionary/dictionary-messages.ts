@@ -5,9 +5,15 @@ export interface Media {
   type: 'video' | 'photo';
 }
 
+export interface ISpecialMessagesBody {
+  lose: string[];
+  win: string[];
+}
+
 export interface DictionaryBaseParams {
   messagesBody?: string[];
   messagesHeader?: string[];
+  specialMessagesBody?: ISpecialMessagesBody;
   medias?: Media[];
 }
 
@@ -20,6 +26,7 @@ export const TextKeys = {
   fighter2Weapon: '$fighter2Weapon',
   fighter2ScoresTotal: '$fighter2ScoresTotal',
   fighter2ScoresAdded: '$fighter2ScoresAdded',
+  fightResultType: '$fightResultType',
 };
 
 export type DictionaryMessageKeys =
@@ -327,6 +334,15 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
     messagesHeader: [
       `${TextKeys.fighter1Name} - ${TextKeys.fighter1ScoresTotal}(${TextKeys.fighter1ScoresAdded}) мл.\n${TextKeys.fighter2Name} - ${TextKeys.fighter2ScoresTotal}(${TextKeys.fighter2ScoresAdded}) мл.\n\n`,
     ],
+    specialMessagesBody: {
+      lose: [
+        `Уууу дружок пирожок.... \n${TextKeys.fighter1Name} провел битву в духе  ♂slaves♂ и всего лишь опустошил ${TextKeys.fighter2Name} на ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣. `,
+        `Неплохая защита ${TextKeys.fighter2Name} с помощью ${TextKeys.fighter2Weapon} от ${TextKeys.fighter1Name}. Твой  ${TextKeys.fighter2Weapon} показал что он не легкая добыча для любого ⚣man⚣ особенно такого как ${TextKeys.fighter1Name}.\nНо ${TextKeys.fighter2Name} все-таки опустошен на ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣. `,
+      ],
+      win: [
+        `ОГО! Какую легендарную комбинацию выдал ${TextKeys.fighter1Name}. Этот великолепный прием будут помнить все ⚣jabroni⚣ еще ни один год.\nЯ бы посоветовал ${TextKeys.fighter2Name} бежать без оглядки и не возращаться пока не получится восстановить ⚣semen⚣, потому что он теряет ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
+      ],
+    },
     medias: [
       {
         type: 'video',

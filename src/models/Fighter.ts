@@ -1,5 +1,5 @@
 import { FighterDTO } from 'src/db/fighters';
-import { WeaponType, random } from 'src/lib';
+import { WeaponType, random, TFightResultType } from 'src/lib';
 export const DEFAULT_STATING_SCORES = 600;
 
 export class Fighter implements FighterDTO {
@@ -27,7 +27,13 @@ export class Fighter implements FighterDTO {
     emitterWeapon: WeaponType,
     enemy: Fighter,
     enemyWeapon: WeaponType,
-  ): { winner: Fighter; looser: Fighter; addedWin: number; addedLose: number } {
+  ): {
+    winner: Fighter;
+    looser: Fighter;
+    addedWin: number;
+    addedLose: number;
+    fightResultType: TFightResultType;
+  } {
     let res;
 
     if (this.bdMode && emitterWeapon === WeaponType.Rock) {
@@ -46,7 +52,10 @@ export class Fighter implements FighterDTO {
     }
   }
 
-  private getScoreResult(scoreWin: number, scoreLose: number): { winnerScore: number; looserScore: number } {
+  private getScoreResult(
+    scoreWin: number,
+    scoreLose: number,
+  ): { winnerScore: number; looserScore: number; fightResultType: TFightResultType } {
     const scoreWinAbs = Math.abs(scoreWin);
     const scoreLoseAbs = Math.abs(scoreLose);
     const mathScores = Math.floor(scoreLoseAbs * 0.11 + Math.random() * 50);
@@ -60,7 +69,7 @@ export class Fighter implements FighterDTO {
     // lucky lose
     if (isLuckyLose) {
       const result = Math.floor(Math.random() * 10 + 1);
-      return { winnerScore: result, looserScore: result };
+      return { winnerScore: result, looserScore: result, fightResultType: 'luckyLose' };
       // lucky win
     } else if (isLuckyWin) {
       let result;
@@ -69,7 +78,7 @@ export class Fighter implements FighterDTO {
       } else {
         result = Math.floor(scoreLoseAbs * 0.4 + Math.random() * 80 + 30);
       }
-      return { winnerScore: result, looserScore: result };
+      return { winnerScore: result, looserScore: result, fightResultType: 'luckyWin' };
     }
 
     if ((scoreLoseAbs / scoreWinAbs) * 100 < 60) {
@@ -82,13 +91,19 @@ export class Fighter implements FighterDTO {
       finalLoseScore = result;
     }
 
-    return { winnerScore: finalWinScore, looserScore: finalLoseScore };
+    return { winnerScore: finalWinScore, looserScore: finalLoseScore, fightResultType: 'default' };
   }
 
   private getWinner(
     winner: Fighter,
     loser: Fighter,
-  ): { winner: Fighter; looser: Fighter; addedWin: number; addedLose: number } {
+  ): {
+    winner: Fighter;
+    looser: Fighter;
+    addedWin: number;
+    addedLose: number;
+    fightResultType: TFightResultType;
+  } {
     const resultScore = this.getScoreResult(winner.scores, loser.scores);
 
     return {
@@ -96,6 +111,7 @@ export class Fighter implements FighterDTO {
       looser: loser,
       addedWin: resultScore.winnerScore,
       addedLose: resultScore.looserScore,
+      fightResultType: resultScore.fightResultType,
     };
   }
 }

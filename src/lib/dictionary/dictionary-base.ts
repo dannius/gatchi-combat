@@ -34,11 +34,13 @@ export class DictionaryBase {
   getMessage(params: Partial<MessageDataset>): string {
     let message: string;
     if (params.fightResultType && (params.fightResultType === 'luckyLose' || params.fightResultType === 'luckyWin')) {
-      const bodyIndex =
-        params.fightResultType === 'luckyLose'
-          ? random(0, this.specialMessagesBody.lose.length - 1)
-          : random(0, this.specialMessagesBody.win.length - 1);
-      message = this.messagesBody[bodyIndex];
+      if (params.fightResultType === 'luckyLose') {
+        const bodyIndex = random(0, this.specialMessagesBody.lose.length - 1);
+        message = this.specialMessagesBody.lose[bodyIndex];
+      } else {
+        const bodyIndex = random(0, this.specialMessagesBody.win.length - 1);
+        message = this.specialMessagesBody.win[bodyIndex];
+      }
     } else {
       const bodyIndex = random(0, this.messagesBody.length - 1);
       message = this.messagesBody[bodyIndex];

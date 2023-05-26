@@ -31,7 +31,7 @@ class Fighter {
             this.bdMode = dto.bdMode;
     }
     fight(emitterWeapon, enemy, enemyWeapon) {
-        let res = 0;
+        let res;
         if (this.bdMode && emitterWeapon === lib_1.WeaponType.Rock) {
             res = (0, lib_1.random)(0, 1) === 0 || (0, lib_1.random)(0, 1) === 0 ? 0 : 1;
         }
@@ -51,38 +51,36 @@ class Fighter {
     getScoreResult(scoreWin, scoreLose) {
         const scoreWinAbs = Math.abs(scoreWin);
         const scoreLoseAbs = Math.abs(scoreLose);
-        const mathScores = scoreWinAbs > scoreLoseAbs
-            ? Math.floor(scoreLoseAbs * 0.11 + Math.random() * 50)
-            : Math.floor(scoreLoseAbs * 0.11 + Math.random() * 50 + 10);
+        const mathScores = Math.floor(scoreLoseAbs * 0.11 + Math.random() * 50);
         let finalWinScore = mathScores;
         let finalLoseScore = mathScores;
         const isLuckyWin = 1 === Math.floor(Math.random() * 15);
         const isLuckyLose = 2 === Math.floor(Math.random() * 15);
         if (isLuckyLose) {
             const result = Math.floor(Math.random() * 10 + 1);
-            return { winnerScore: result, looserScore: result };
+            return { winnerScore: result, looserScore: result, fightResultType: 'luckyLose' };
         }
         else if (isLuckyWin) {
             let result;
-            if (finalWinScore > finalLoseScore) {
-                result = Math.floor(finalWinScore * 0.4 + Math.random() * 80 + 30);
+            if (scoreWinAbs > scoreLoseAbs) {
+                result = Math.floor(scoreWinAbs * 0.4 + Math.random() * 80 + 30);
             }
             else {
-                result = Math.floor(finalLoseScore * 0.4 + Math.random() * 80 + 30);
+                result = Math.floor(scoreLoseAbs * 0.4 + Math.random() * 80 + 30);
             }
-            return { winnerScore: result, looserScore: result };
+            return { winnerScore: result, looserScore: result, fightResultType: 'luckyWin' };
         }
         if ((scoreLoseAbs / scoreWinAbs) * 100 < 60) {
-            const result = Math.floor(scoreLoseAbs * 0.05 + Math.random() * 30);
+            const result = Math.floor(scoreLoseAbs * 0.07 + Math.random() * 40);
             finalWinScore = result;
             finalLoseScore = result;
         }
         else if ((scoreWinAbs / scoreLoseAbs) * 100 < 60) {
-            const result = Math.floor(scoreLoseAbs * 0.2 + Math.random() * 60 + 10);
+            const result = Math.floor(scoreLoseAbs * 0.15 + Math.random() * 50 + 10);
             finalWinScore = result;
             finalLoseScore = result;
         }
-        return { winnerScore: finalWinScore, looserScore: finalLoseScore };
+        return { winnerScore: finalWinScore, looserScore: finalLoseScore, fightResultType: 'default' };
     }
     getWinner(winner, loser) {
         const resultScore = this.getScoreResult(winner.scores, loser.scores);
@@ -91,6 +89,7 @@ class Fighter {
             looser: loser,
             addedWin: resultScore.winnerScore,
             addedLose: resultScore.looserScore,
+            fightResultType: resultScore.fightResultType,
         };
     }
 }

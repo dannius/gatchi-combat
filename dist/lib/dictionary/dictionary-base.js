@@ -7,12 +7,16 @@ class DictionaryBase {
     medias = [];
     messagesHeader = [];
     messagesBody = [];
-    constructor({ messagesBody, messagesHeader, medias }) {
+    specialMessagesBody = { lose: [], win: [] };
+    constructor({ messagesBody, messagesHeader, medias, specialMessagesBody }) {
         if (messagesBody) {
             this.messagesBody = messagesBody;
         }
         if (messagesHeader) {
             this.messagesHeader = messagesHeader;
+        }
+        if (specialMessagesBody) {
+            this.specialMessagesBody = specialMessagesBody;
         }
         if (medias) {
             this.medias = medias;
@@ -22,8 +26,21 @@ class DictionaryBase {
         return this.medias[(0, random_1.random)(0, this.medias.length - 1)];
     }
     getMessage(params) {
-        const bodyIndex = (0, random_1.random)(0, this.messagesBody.length - 1);
-        const message = this.messagesBody[bodyIndex];
+        let message;
+        if (params.fightResultType && (params.fightResultType === 'luckyLose' || params.fightResultType === 'luckyWin')) {
+            if (params.fightResultType === 'luckyLose') {
+                const bodyIndex = (0, random_1.random)(0, this.specialMessagesBody.lose.length - 1);
+                message = this.specialMessagesBody.lose[bodyIndex];
+            }
+            else {
+                const bodyIndex = (0, random_1.random)(0, this.specialMessagesBody.win.length - 1);
+                message = this.specialMessagesBody.win[bodyIndex];
+            }
+        }
+        else {
+            const bodyIndex = (0, random_1.random)(0, this.messagesBody.length - 1);
+            message = this.messagesBody[bodyIndex];
+        }
         let header = '';
         if (this.messagesHeader.length) {
             const headerIndex = (0, random_1.random)(0, this.messagesHeader.length - 1);

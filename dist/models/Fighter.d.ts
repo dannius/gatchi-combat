@@ -1,5 +1,5 @@
 import { FighterDTO } from 'src/db/fighters';
-import { WeaponType } from 'src/lib';
+import { WeaponType, TFightResultType } from 'src/lib';
 export declare const DEFAULT_STATING_SCORES = 600;
 export declare class Fighter implements FighterDTO {
     userId: string;
@@ -16,6 +16,7 @@ export declare class Fighter implements FighterDTO {
         looser: Fighter;
         addedWin: number;
         addedLose: number;
+        fightResultType: TFightResultType;
     };
     private getScoreResult;
     private getWinner;

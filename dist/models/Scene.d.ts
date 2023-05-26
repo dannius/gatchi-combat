@@ -1,6 +1,6 @@
 import { Fighter } from './Fighter';
 import TelegramBot = require('node-telegram-bot-api');
-import { EventEmitter, WeaponType, Mention } from 'src/lib';
+import { EventEmitter, WeaponType, Mention, TFightResultType } from 'src/lib';
 import { BotListenerService } from 'src/services';
 import { Dictionary } from 'src/lib/dictionary/dictionary';
 import { FighterService } from 'src/db/fighters';
@@ -20,7 +20,7 @@ type SceneEvents = {
     fightStageOne: [];
     fightStageTwo: [message: TelegramBot.Message];
     fightStageThree: [message: TelegramBot.Message];
-    fightFinished: [winner: FinisSceneFighter, looser: FinisSceneFighter];
+    fightFinished: [winner: FinisSceneFighter, looser: FinisSceneFighter, fightResultType: TFightResultType];
     destroy: [];
 };
 export declare class Scene extends EventEmitter<SceneEvents> {

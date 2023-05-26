@@ -11,6 +11,7 @@ exports.TextKeys = {
     fighter2Weapon: '$fighter2Weapon',
     fighter2ScoresTotal: '$fighter2ScoresTotal',
     fighter2ScoresAdded: '$fighter2ScoresAdded',
+    fightResultType: '$fightResultType',
 };
 exports.DictionaryActionTitles = {
     [types_1.ActionType.AcceptFight]: 'Спуститься в ♂dungeon♂',
@@ -306,6 +307,15 @@ exports.DictionaryMessages = {
         messagesHeader: [
             `${exports.TextKeys.fighter1Name} - ${exports.TextKeys.fighter1ScoresTotal}(${exports.TextKeys.fighter1ScoresAdded}) мл.\n${exports.TextKeys.fighter2Name} - ${exports.TextKeys.fighter2ScoresTotal}(${exports.TextKeys.fighter2ScoresAdded}) мл.\n\n`,
         ],
+        specialMessagesBody: {
+            lose: [
+                `Уууу слабовато дружок пирожок.... \n${exports.TextKeys.fighter1Name} провел битву в духе ♂slaves♂. Такого стыдного опустощения никто не ожидал.\n${exports.TextKeys.fighter1Name} всего лишь опустошил ${exports.TextKeys.fighter2Name} на ${exports.TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣. `,
+                `Неплохая защита ${exports.TextKeys.fighter2Name} от ${exports.TextKeys.fighter1Weapon}.\n${exports.TextKeys.fighter2Weapon} у ${exports.TextKeys.fighter2Name} что надо.\n${exports.TextKeys.fighter2Name} показал что он не легкая добыча для любого ⚣man⚣, особенно такого как ${exports.TextKeys.fighter1Name}.\nНо ${exports.TextKeys.fighter2Name} все-таки не удержал и потерял ${exports.TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣. `,
+            ],
+            win: [
+                `ОГО!\nКакую легендарную комбинацию выдал ${exports.TextKeys.fighter1Name}. \nВеликолепный приём в стиле ⚣cum on your ${exports.TextKeys.fighter2Weapon}⚣ будут помнить все ⚣jabroni⚣ еще ни один год.\nЯ бы посоветовал ${exports.TextKeys.fighter2Name} бежать за салфетками и ⚣recovery semen⚣`,
+            ],
+        },
         medias: [
             {
                 type: 'video',

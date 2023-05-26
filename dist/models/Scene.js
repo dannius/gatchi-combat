@@ -176,7 +176,7 @@ class Scene extends lib_1.EventEmitter {
             await this.fightStageThree(challengeMessage.message_id);
             await (0, lib_1.delay)(FIGHT_DELAY);
             await this.tgBotListenerService.bot.deleteMessage(this.chatId, challengeMessage.message_id);
-            const { winner, looser, addedWin, addedLose } = this.fightEmitter.fight(this.getWeapon(this.fightEmitter.userId), this.fightAccepter, this.getWeapon(this.fightAccepter.userId));
+            const { winner, looser, addedWin, addedLose, fightResultType } = this.fightEmitter.fight(this.getWeapon(this.fightEmitter.userId), this.fightAccepter, this.getWeapon(this.fightAccepter.userId));
             const latestWinnerDto = await this.fighterService.get({ userId: winner.userId });
             const latestLooserDto = await this.fighterService.get({ userId: looser.userId });
             winner.scores = latestWinnerDto.scores + addedWin;
@@ -197,11 +197,11 @@ class Scene extends lib_1.EventEmitter {
                 addedScores: addedLose,
                 weapon: this.getWeapon(looser.userId),
             };
-            this.emit('fightFinished', winObject, loseObject);
+            this.emit('fightFinished', winObject, loseObject, fightResultType);
         });
     }
     initFightFinishedListener() {
-        this.on('fightFinished', (winner, looser) => {
+        this.on('fightFinished', (winner, looser, fightResultType) => {
             const caption = this.dictionary.Final.getMessage({
                 fighter1Name: winner.fighter.username ? winner.fighter.username : winner.fighter.name,
                 fighter2Name: looser.fighter.username ? looser.fighter.username : looser.fighter.name,
@@ -211,6 +211,7 @@ class Scene extends lib_1.EventEmitter {
                 fighter2ScoresTotal: `${looser.fighter.scores}`,
                 fighter1ScoresAdded: `+${winner.addedScores}`,
                 fighter2ScoresAdded: `-${looser.addedScores}`,
+                fightResultType: fightResultType,
             });
             const media = this.dictionary.Final.getMedia();
             if (media.type === 'photo') {

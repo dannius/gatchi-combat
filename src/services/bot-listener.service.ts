@@ -15,6 +15,7 @@ type BotEvents = {
   myStats: [message: TelegramBot.Message];
   toggleDailyQuote: [message: TelegramBot.Message];
   bdMode: [username: string, status: boolean];
+  resetUser: [username: string];
 };
 
 const adminId = 506020211;
@@ -38,6 +39,7 @@ export class BotListenerService extends EventEmitter<BotEvents> {
       this.initDailyQuoteSwitcherListener();
       this.initBdModeListener();
       this.initMyStatisticListener();
+      this.initResetUserListener();
     });
   }
 
@@ -150,6 +152,22 @@ export class BotListenerService extends EventEmitter<BotEvents> {
 
     this.bot.onText(StatsReg, (msg) => {
       this.emit('myStats', msg);
+    });
+  }
+
+  private initResetUserListener(): void {
+    const resetUser = new RegExp(`reset_user\: @[a-zA-Z0-9]*`);
+
+    this.bot.onText(resetUser, (msg) => {
+      if (msg.from.id !== adminId) {
+        return;
+      }
+
+      try {
+        const username = msg.text.split('@')[1];
+
+        this.emit('resetUser', username);
+      } catch {}
     });
   }
 

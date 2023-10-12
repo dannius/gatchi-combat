@@ -174,8 +174,23 @@ export class AppController {
   }
 
   private initDuelSubscription(): void {
-    this.botListenerService.on('duel', (message, mentionedUsername) => {
-      this.createFightScene(message, mentionedUsername);
+    this.botListenerService.on('duel', async (message, mentionedUsername) => {
+      const mentionedUserFromDb = await this.fightersService.get({ username: mentionedUsername });
+
+      if (mentionedUserFromDb?.userId === `${message.from.id}`) {
+        this.botListenerService.notifyChats([message.chat.id], {
+          message: 'Лох',
+          // media: {
+          //   type: 'audio',
+          //   // fuck audio
+          //   id: '',
+          // },
+        });
+
+        return;
+      }
+
+      this.createFightScene(message, `@${mentionedUsername}`);
     });
   }
 

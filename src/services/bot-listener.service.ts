@@ -1,4 +1,3 @@
-import { Mention } from 'src/lib';
 import { Injectable } from '@nestjs/common';
 import TelegramBot = require('node-telegram-bot-api');
 import { EventEmitter, NotifyMessage } from 'src/lib';
@@ -7,7 +6,7 @@ type BotEvents = {
   callbackQuery: [query: TelegramBot.CallbackQuery];
   challengeQuery: [message: TelegramBot.Message];
   addedToGroup: [message: TelegramBot.Message];
-  duel: [message: TelegramBot.Message, mentionedUser: Mention];
+  duel: [message: TelegramBot.Message, mentionedUser: string];
   dailyQuote: [message: TelegramBot.Message];
   randomQuote: [message: TelegramBot.Message];
   stats: [message: TelegramBot.Message];
@@ -40,6 +39,10 @@ export class BotListenerService extends EventEmitter<BotEvents> {
       this.initBdModeListener();
       this.initMyStatisticListener();
       this.initResetUserListener();
+
+      this.bot.on('message', (msg) => {
+        console.log(msg);
+      });
     });
   }
 
@@ -56,6 +59,8 @@ export class BotListenerService extends EventEmitter<BotEvents> {
           this.bot.sendPhoto(id, notification.media.id, { caption: notification.message });
         } else if (notification.media.type === 'video') {
           this.bot.sendAnimation(id, notification.media.id, { caption: notification.message });
+        } else if (notification.media.type === 'audio') {
+          this.bot.sendAudio(id, notification.media.id, { caption: notification.message });
         }
       });
     } catch {}
@@ -84,16 +89,18 @@ export class BotListenerService extends EventEmitter<BotEvents> {
 
     this.bot.onText(mentionRegexp, (msg) => {
       const mentions = msg.text.split(' ');
-      const [botName, mentionedUsername] = mentions;
+      const [botName, atMentionedUsername] = mentions;
 
-      if (mentionedUsername === botName) {
+      if (atMentionedUsername === botName) {
         return;
       }
 
       const isDuel = msg.entities?.length === 2 && mentions.length === 2;
 
       if (isDuel) {
-        this.emit('duel', msg, mentionedUsername as Mention);
+        const mentionedUsername = atMentionedUsername.split('@')[1];
+
+        this.emit('duel', msg, mentionedUsername);
       }
     });
   }

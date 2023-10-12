@@ -2,7 +2,7 @@ import { ActionType, WeaponType } from '../types';
 
 export interface Media {
   id: string;
-  type: 'video' | 'photo';
+  type: 'video' | 'photo' | 'audio';
 }
 
 export interface ISpecialMessagesBody {

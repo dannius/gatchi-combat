@@ -179,11 +179,11 @@ export class AppController {
 
       if (mentionedUserFromDb?.userId === `${message.from.id}`) {
         this.botListenerService.notifyChats([message.chat.id], {
-          message: 'Лох',
+          message: '',
           media: {
             type: 'audio',
             // fuck audio
-            id: 'AwACAgIAAxkBAAEBcMplKFbK8mXC11YSkGj8xHu54cbGdgACukAAArrbQEkHSbmpDd1hWzAE',
+            id: 'AwACAgIAAxkBAAEBcM5lKFfFdELyprtutoI06ry1PTjW7AACv0AAArrbQEnPqi8muAABlzYwBA',
           },
         });
 

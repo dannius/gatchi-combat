@@ -330,6 +330,8 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
       `${TextKeys.fighter1Name} наносит открытый перелом ${TextKeys.fighter2Weapon} ${TextKeys.fighter2Name} и забирает ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
       `${TextKeys.fighter2Name} не ожидал такой резкой атаки с помощью ${TextKeys.fighter1Weapon} от ${TextKeys.fighter1Name}. ${TextKeys.fighter2Name} опустошен на ${TextKeys.fighter2ScoresAdded} мл. ⚣semen⚣.`,
       `${TextKeys.fighter2Weapon} у ${TextKeys.fighter2Name} оказался как у настоящего ♂slaves♂. Такой ♂dungeon master♂ как ${TextKeys.fighter1Name} не прощает бедного ⚣jabroni⚣.\n${TextKeys.fighter2Name} нужно чаще посещать ♂gym♂`,
+      `${TextKeys.fighter1Name} замотал асфальт в рулоны и заставил ${TextKeys.fighter2Name} поцеловать его ${TextKeys.fighter1Weapon}. Один совет для ${TextKeys.fighter2Name} - в следующий раз используй ${TextKeys.fighter2Weapon} для удовольствия, а не для драки`,
+      `Когда-то ${TextKeys.fighter2Name} гордился своим ${TextKeys.fighter2Weapon}, но сегодня явно не тот день. ${TextKeys.fighter1Name} сделал великолепный ♂cum♂, утопивший гордость ${TextKeys.fighter2Name} в ♂semen♂`,
     ],
     messagesHeader: [
       `${TextKeys.fighter1Name} - ${TextKeys.fighter1ScoresTotal}(${TextKeys.fighter1ScoresAdded}) мл.\n${TextKeys.fighter2Name} - ${TextKeys.fighter2ScoresTotal}(${TextKeys.fighter2ScoresAdded}) мл.\n\n`,
@@ -341,6 +343,7 @@ export const DictionaryMessages: Record<DictionaryMessageKeys, DictionaryBasePar
       ],
       win: [
         `ОГО!\nКакую легендарную комбинацию выдал ${TextKeys.fighter1Name}. \nВеликолепный приём в стиле ⚣cum on your ${TextKeys.fighter2Weapon}⚣ будут помнить все ⚣jabroni⚣ еще ни один год.\nЯ бы посоветовал ${TextKeys.fighter2Name} бежать за салфетками и ⚣recovery semen⚣`,
+        `ЛЕГЕНДАРНАЯ ⚣semen⚣ атака от ${TextKeys.fighter1Name}. Это настолько болезненое поражение для ${TextKeys.fighter2Name}, что голые женщины уже не кажутся такими отвратительными`,
       ],
     },
     medias: [

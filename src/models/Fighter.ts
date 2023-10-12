@@ -57,7 +57,7 @@ export class Fighter implements FighterDTO {
     scoreLose: number,
   ): { winnerScore: number; looserScore: number; fightResultType: TFightResultType } {
     const scoreWinAbs = Math.abs(scoreWin);
-    const scoreLoseAbs = Math.abs(scoreLose);
+    const scoreLoseAbs = scoreLose < 0 ? Math.floor(Math.random() * 50) : scoreLose;
     const mathScores = Math.floor(scoreLoseAbs * 0.11 + Math.random() * 50);
 
     let finalWinScore = mathScores;

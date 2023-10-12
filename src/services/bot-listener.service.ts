@@ -40,9 +40,9 @@ export class BotListenerService extends EventEmitter<BotEvents> {
       this.initMyStatisticListener();
       this.initResetUserListener();
 
-      this.bot.on('message', (msg) => {
-        console.log(msg);
-      });
+      // this.bot.on('message', (msg) => {
+      //   console.log(msg);
+      // });
     });
   }
 

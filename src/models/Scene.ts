@@ -5,7 +5,7 @@ import { EventEmitter, WeaponType, delay, guid, Mention, TFightResultType } from
 import { BotListenerService } from 'src/services';
 
 import { Dictionary } from 'src/lib/dictionary/dictionary';
-import { DictionaryActionTitles } from 'src/lib/dictionary/dictionary-messages';
+import { DictionaryActionTitles, Media } from 'src/lib/dictionary/dictionary-messages';
 import { FighterService } from 'src/db/fighters';
 
 // 10 min
@@ -365,7 +365,7 @@ export class Scene extends EventEmitter<SceneEvents> {
 
     return await this.tgBotListenerService.bot.editMessageMedia(
       {
-        type: media.type,
+        type: media.type as 'photo' | 'video',
         media: media.id,
       },
       {
@@ -380,7 +380,7 @@ export class Scene extends EventEmitter<SceneEvents> {
 
     return await this.tgBotListenerService.bot.editMessageMedia(
       {
-        type: media.type,
+        type: media.type as 'photo' | 'video',
         media: media.id,
       },
       {

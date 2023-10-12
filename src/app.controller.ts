@@ -35,6 +35,7 @@ export class AppController {
     this.initGroupStatsListener();
     this.toggleDailyQuoteListener();
     this.initBdModeSubscription();
+    this.initResetUserListener();
 
     // debug
     if (process.env.DEBUG === 'true') {
@@ -236,7 +237,6 @@ export class AppController {
 
       const filteredGroups = groups.filter((ch) => !!ch.fighters.get(`${dbUser.userId}`));
 
-      console.log('bdMode');
       if (filteredGroups.length) {
         const ids = filteredGroups.map((g) => g.groupId);
         const notify = this.getBdNotification(username, status);
@@ -244,6 +244,39 @@ export class AppController {
         this.botListenerService.notifyChats(ids, notify);
       }
     });
+  }
+
+  private initResetUserListener(): void {
+    this.botListenerService.on('resetUser', async (username) => {
+      const dbUser = await this.fightersService.get({ username });
+
+      if (!dbUser) {
+        return;
+      }
+
+      const updatedUser = this.resetUser(dbUser);
+      await this.fightersService.update(updatedUser);
+
+      const groups = await this.groupService.findAll();
+      const filteredGroups = groups.filter((ch) => !!ch.fighters.get(`${updatedUser.userId}`));
+
+      if (filteredGroups.length) {
+        filteredGroups.forEach((g) => {
+          g.fighters.set(updatedUser.userId, updatedUser);
+          this.groupService.update(g);
+        });
+      }
+    });
+  }
+
+  private resetUser(existingUser: FighterDTO): FighterDTO {
+    const newFighter = new Fighter({
+      userId: existingUser.userId,
+      name: existingUser.name,
+      username: existingUser.username,
+    });
+
+    return newFighter;
   }
 
   private getBdNotification(name: string, status: boolean): { message: string; media: Media } {

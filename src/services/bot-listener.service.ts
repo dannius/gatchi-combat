@@ -183,10 +183,6 @@ export class BotListenerService extends EventEmitter<BotEvents> {
     const resetUser = new RegExp(`\/ban @[a-zA-Z0-9]*`);
 
     this.bot.onText(resetUser, (msg) => {
-      if (msg.from.id !== adminId) {
-        return;
-      }
-
       try {
         const username = msg.text.split('@')[1];
 

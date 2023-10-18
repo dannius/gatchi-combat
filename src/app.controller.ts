@@ -81,6 +81,7 @@ export class AppController {
       const count = 20;
       const fighters = await this.fightersService.findAllWithLimit(count);
       const stats = await this.getGroupStatsMessage(fighters);
+      console.log(stats);
 
       this.botListenerService.notifyChats([message.chat.id], {
         message: stats ? `Топ ${count} ⚣masters⚣:${stats}` : 'Пусто',
@@ -95,6 +96,7 @@ export class AppController {
       const yourIndex = fighters.findIndex((fighter) => fighter.userId === `${message.from.id}`);
       if (yourIndex >= 0) {
         const fighter = fighters[yourIndex];
+        console.log(fighters);
 
         this.botListenerService.notifyChats([message.chat.id], {
           message: fighter

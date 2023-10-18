@@ -97,6 +97,7 @@ export class AppController {
       if (yourIndex >= 0) {
         const fighter = fighters[yourIndex];
         console.log(fighters);
+        console.log(JSON.stringify(fighter), 1);
 
         this.botListenerService.notifyChats([message.chat.id], {
           message: fighter

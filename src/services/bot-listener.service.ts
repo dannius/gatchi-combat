@@ -15,6 +15,7 @@ type BotEvents = {
   toggleDailyQuote: [message: TelegramBot.Message];
   bdMode: [username: string, status: boolean];
   resetUser: [username: string];
+  banUser: [username: string];
 };
 
 const adminId = 506020211;
@@ -39,6 +40,7 @@ export class BotListenerService extends EventEmitter<BotEvents> {
       this.initBdModeListener();
       this.initMyStatisticListener();
       this.initResetUserListener();
+      this.initBanUserListener();
 
       // this.bot.on('message', (msg) => {
       //   console.log(msg);
@@ -174,6 +176,22 @@ export class BotListenerService extends EventEmitter<BotEvents> {
         const username = msg.text.split('@')[1];
 
         this.emit('resetUser', username);
+      } catch {}
+    });
+  }
+
+  private initBanUserListener(): void {
+    const resetUser = new RegExp(`ban\: @[a-zA-Z0-9]*`);
+
+    this.bot.onText(resetUser, (msg) => {
+      if (msg.from.id !== adminId) {
+        return;
+      }
+
+      try {
+        const username = msg.text.split('@')[1];
+
+        this.bot.sendMessage(msg.chat.id, `@${username} забанен`);
       } catch {}
     });
   }

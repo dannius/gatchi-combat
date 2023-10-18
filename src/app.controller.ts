@@ -82,6 +82,7 @@ export class AppController {
       const fighters = await this.fightersService.findAllWithLimit(count);
       const stats = await this.getGroupStatsMessage(fighters);
       console.log(stats);
+      console.log(123);
 
       this.botListenerService.notifyChats([message.chat.id], {
         message: stats ? `Топ ${count} ⚣masters⚣:${stats}` : 'Пусто',
@@ -98,6 +99,10 @@ export class AppController {
         const fighter = fighters[yourIndex];
         console.log(fighters);
         console.log(JSON.stringify(fighter), 1);
+
+        this.botListenerService.notifyChats([message.chat.id], {
+          message: JSON.stringify({ ...fighter, index: yourIndex }),
+        });
 
         this.botListenerService.notifyChats([message.chat.id], {
           message: fighter

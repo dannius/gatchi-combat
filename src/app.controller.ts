@@ -97,10 +97,6 @@ export class AppController {
         const fighter = fighters[yourIndex];
 
         this.botListenerService.notifyChats([message.chat.id], {
-          message: JSON.stringify({ ...fighter, index: yourIndex }),
-        });
-
-        this.botListenerService.notifyChats([message.chat.id], {
           message: fighter
             ? `(${yourIndex + 1} из ${fighters.length}). У тебя в баке ${fighter.scores} ⚣semen⚣\n${
                 fighter.wins
